@@ -31,7 +31,7 @@ namespace AuthService.Api.Controllers
 
                 if (method == HttpMethod.Post)
                 {
-                    return Created(string.Empty, response.Data);
+                    return Created(string.Empty, new { response.Message });
                 }
 
                 if (method == HttpMethod.Put || method == HttpMethod.Delete)
