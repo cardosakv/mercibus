@@ -6,6 +6,11 @@
     public class RegisterRequest
     {
         /// <summary>
+        /// User name.
+        /// </summary>
+        public string? Name { get; set; }
+
+        /// <summary>
         /// User email.
         /// </summary>
         public string? Email { get; set; }
