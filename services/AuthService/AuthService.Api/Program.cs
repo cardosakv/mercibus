@@ -1,9 +1,19 @@
+using AuthService.Api.Controllers;
+using AuthService.Application.Interfaces.Services;
+using AuthService.Application.Services;
+using AuthService.Application.Validators;
+using FluentValidation;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
+builder.Services.AddFluentValidationAutoValidation(config => config.OverrideDefaultResultFactoryWith<CustomResultFactory>());
+
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
