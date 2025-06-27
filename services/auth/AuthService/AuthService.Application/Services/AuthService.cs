@@ -11,42 +11,52 @@ namespace Auth.Application.Services
     {
         public async Task<Response> RegisterAsync(RegisterRequest request)
         {
-            var response = new Response();
-
             try
             {
-                var user = new User { Email = request.Email };
+                var user = new User 
+                { 
+                    UserName = request.UserName, 
+                    Email = request.Email 
+                };
 
                 var createResult = await userManager.CreateAsync(user, request.Password);
                 if (!createResult.Succeeded)
                 {
                     var error = createResult.Errors.First();
-                    response.IsSuccess = false;
-                    response.Message = error.Description;
-                    response.ErrorType = IdentityErrorMapper.MapToErrorType(error.Code);
-                    return response;
+                    return new Response
+                    {
+                        IsSuccess = false,
+                        Message = error.Description,
+                        ErrorType = IdentityErrorMapper.MapToErrorType(error.Code)
+                    };
                 }
 
                 var roleResult = await userManager.AddToRoleAsync(user, Roles.Customer);
                 if (!roleResult.Succeeded)
                 {
                     var error = roleResult.Errors.First();
-                    response.IsSuccess = false;
-                    response.Message = error.Description;
-                    response.ErrorType = IdentityErrorMapper.MapToErrorType(error.Code);
-                    return response;
+                    return new Response
+                    {
+                        IsSuccess = false,
+                        Message = error.Description,
+                        ErrorType = IdentityErrorMapper.MapToErrorType(error.Code)
+                    };
                 }
 
-                response.IsSuccess = true;
-                response.Message = "User registered successfully.";
-                return response;
+                return new Response
+                {
+                    IsSuccess = true,
+                    Message = Messages.USER_REGISTERED
+                };
             }
             catch
             {
-                response.IsSuccess = false;
-                response.Message = "An error occurred while registering the user.";
-                response.ErrorType = ErrorType.Internal;
-                return response;
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = Messages.UNEXPECTED_ERROR,
+                    ErrorType = ErrorType.Internal
+                };
             }
         }
     }
