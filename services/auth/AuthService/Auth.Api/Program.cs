@@ -15,7 +15,8 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Add validators.
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
-builder.Services.AddFluentValidationAutoValidation(config => config.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
+builder.Services.AddFluentValidationAutoValidation(config => 
+    config.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
 
 // Add identity services.
 builder.Services.AddIdentity<User, IdentityRole>()
