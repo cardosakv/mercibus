@@ -1,13 +1,13 @@
-﻿using Auth.Application.Common;
+using Auth.Application.Common;
 using Auth.Application.DTOs;
 using Auth.Application.Interfaces;
-using Auth.Domain.Common;
 using Auth.Domain.Entities;
+using Auth.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 
 namespace Auth.Application.Services
 {
-    public class AuthService(UserManager<User> userManager) : IAuthService
+    public class AuthService(UserManager<User> userManager, AppDbContext dbContext) : IAuthService
     {
         public async Task<Response> RegisterAsync(RegisterRequest request)
         {
@@ -15,10 +15,12 @@ namespace Auth.Application.Services
             {
                 var user = new User 
                 { 
-                    UserName = request.UserName, 
+                    UserName = request.Username, 
                     Email = request.Email 
                 };
 
+                await using var transaction = await dbContext.Database.BeginTransactionAsync();
+                    
                 var createResult = await userManager.CreateAsync(user, request.Password);
                 if (!createResult.Succeeded)
                 {
@@ -31,9 +33,11 @@ namespace Auth.Application.Services
                     };
                 }
 
-                var roleResult = await userManager.AddToRoleAsync(user, Roles.Customer);
+                var roleResult = await userManager.AddToRoleAsync(user, "TEST");
                 if (!roleResult.Succeeded)
                 {
+                    await transaction.RollbackAsync();
+                    
                     var error = roleResult.Errors.First();
                     return new Response
                     {
@@ -43,13 +47,15 @@ namespace Auth.Application.Services
                     };
                 }
 
+                await transaction.CommitAsync();
+                
                 return new Response
                 {
                     IsSuccess = true,
                     Message = Messages.USER_REGISTERED
                 };
             }
-            catch
+            catch (Exception ex)
             {
                 return new Response
                 {

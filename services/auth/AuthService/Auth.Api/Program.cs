@@ -18,7 +18,8 @@ builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>()
 builder.Services.AddFluentValidationAutoValidation(config => config.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
 
 // Add identity services.
-builder.Services.AddIdentityCore<User>().AddEntityFrameworkStores<AppDbContext>();
+builder.Services.AddIdentity<User, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>();
 
 // Add database context.
 builder.Services.AddDbContext<AppDbContext>(options =>

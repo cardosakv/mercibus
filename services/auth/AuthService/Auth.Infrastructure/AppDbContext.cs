@@ -29,9 +29,31 @@ namespace Auth.Infrastructure
             modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
             modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
             modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
+            
+            // Seed roles
+            var roles = new List<IdentityRole>
+            {
+                new()
+                {
+                    Id = "1",
+                    Name = Domain.Common.Roles.Guest,
+                    NormalizedName = Domain.Common.Roles.Guest.ToUpper()
+                },
+                new()
+                {
+                    Id = "2",
+                    Name = Domain.Common.Roles.Customer,
+                    NormalizedName = Domain.Common.Roles.Customer.ToUpper()
+                },
+                new()
+                {
+                    Id = "3",
+                    Name = Domain.Common.Roles.Admin,
+                    NormalizedName = Domain.Common.Roles.Admin.ToUpper()
+                }
+            };
 
-            // Set default schema
-            modelBuilder.HasDefaultSchema("identity");
+            modelBuilder.Entity<IdentityRole>().HasData(roles);
         }
     }
 }

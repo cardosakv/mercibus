@@ -3,11 +3,11 @@ using FluentValidation;
 
 namespace Auth.Application.Validators
 {
-    public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
+    public abstract class RegisterRequestValidator : AbstractValidator<RegisterRequest>
     {
-        public RegisterRequestValidator() 
+        protected RegisterRequestValidator() 
         { 
-            RuleFor(x => x.UserName)
+            RuleFor(x => x.Username)
                 .NotEmpty().WithMessage("Username is required.")
                 .MinimumLength(3).WithMessage("Username must be at least 3 characters long.")
                 .MaximumLength(20).WithMessage("Username must not exceed 20 characters.")

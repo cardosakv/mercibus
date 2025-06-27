@@ -8,7 +8,7 @@
         /// <summary>
         /// Username handle.
         /// </summary>
-        public required string UserName { get; set; }
+        public required string Username { get; set; }
 
         /// <summary>
         /// User email.
