@@ -6,13 +6,18 @@ namespace Auth.Application.DTOs
     public class AuthToken
     {
         /// <summary>
+        /// Token type.
+        /// </summary>
+        public string TokenType { get; set; } = "Bearer";
+        
+        /// <summary>
         /// Short-live token.
         /// </summary>
         public required string AccessToken { get; set; }
 
         /// <summary>
-        /// Expiration time of the access token.
+        /// Expiration time of the access token in milliseconds.
         /// </summary>
-        public required DateTime ExpiresAt { get; set; }
+        public required long ExpiresIn { get; set; }
     }
 }

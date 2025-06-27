@@ -15,7 +15,6 @@ namespace Auth.Application.Services
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(configuration["Jwt:Key"] ?? string.Empty);
-            var expiry = DateTime.Now.AddMinutes(Convert.ToDouble(configuration["Jwt:ExpireMinutes"]));
 
             var claims = new List<Claim>
             {
@@ -24,12 +23,15 @@ namespace Auth.Application.Services
                 new Claim(ClaimTypes.Role, role),
             };
             
+            var expireMillis = Convert.ToInt64(configuration["Jwt:ExpireMillis"]);
+            var expireTime = DateTime.Now.AddMilliseconds(expireMillis);
+            
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
                 Issuer = configuration["Jwt:Issuer"] ?? string.Empty,
                 Audience = configuration["Jwt:Audience"] ?? string.Empty,
-                Expires = expiry,
+                Expires = expireTime,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             
@@ -39,9 +41,8 @@ namespace Auth.Application.Services
             return new AuthToken
             {
                 AccessToken = tokenString,
-                ExpiresAt = expiry
+                ExpiresIn = expireMillis
             };
         }
     }
 }
-
