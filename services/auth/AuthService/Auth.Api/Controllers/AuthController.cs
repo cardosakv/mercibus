@@ -15,5 +15,13 @@ namespace Auth.Api.Controllers
             var response = await authService.RegisterAsync(request);
             return HandleResponse(response, HttpContext.Request.Method);
         }
+
+        [HttpPost]
+        [Route("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        {
+            var response = await authService.LoginAsync(request);
+            return HandleResponse(response, HttpContext.Request.Method);
+        }
     }
 }

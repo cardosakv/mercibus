@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Auth.Application.Common
+﻿namespace Auth.Application.Common
 {
     public static class Messages
     {
-        public const string USER_REGISTERED = "User registered successfully.";
-        public const string UNEXPECTED_ERROR = "An unexpected error occurred while processing your request.";
+        public const string UserRegistered = "User registered successfully.";
+        public const string UserNotFound = "User not found.";
+        public const string PasswordIncorrect = "Password incorrect.";
+        public const string UserForbidden = "User forbidden.";
+        public const string UnexpectedError = "An unexpected error occurred while processing your request.";
     }
 }

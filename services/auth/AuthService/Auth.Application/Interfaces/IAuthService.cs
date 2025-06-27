@@ -9,10 +9,17 @@ namespace Auth.Application.Interfaces
     public interface IAuthService
     {
         /// <summary>
-        /// Registers a new user asynchronously.
+        /// Registers a new user.
         /// </summary>
         /// <param name="request">The registration request containing user email and password.</param>
-        /// <returns><see cref="Response{T}"/> with a boolean value indicating whether the registration was successful.</returns>
+        /// <returns><see cref="Response"/> with a boolean value indicating whether the registration was successful.</returns>
         Task<Response> RegisterAsync(RegisterRequest request);
+        
+        /// <summary>
+        /// Logins a user.
+        /// </summary>
+        /// <param name="request">The registration request containing username and password.</param>
+        /// <returns><see cref="Response"/> with a boolean value indicating whether the registration was successful.</returns>
+        Task<Response> LoginAsync(LoginRequest request);
     }
 }
