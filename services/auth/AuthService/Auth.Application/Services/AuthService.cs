@@ -1,6 +1,7 @@
 using Auth.Application.Common;
 using Auth.Application.DTOs;
 using Auth.Application.Interfaces;
+using Auth.Domain.Common;
 using Auth.Domain.Entities;
 using Auth.Infrastructure;
 using Microsoft.AspNetCore.Identity;
@@ -33,7 +34,7 @@ namespace Auth.Application.Services
                     };
                 }
 
-                var roleResult = await userManager.AddToRoleAsync(user, "TEST");
+                var roleResult = await userManager.AddToRoleAsync(user, Roles.Customer);
                 if (!roleResult.Succeeded)
                 {
                     await transaction.RollbackAsync();
