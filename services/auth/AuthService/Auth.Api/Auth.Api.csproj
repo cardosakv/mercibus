@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
+    <UserSecretsId>17d9cf1b-28dc-463e-9fa4-2c331aa7af19</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
