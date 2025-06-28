@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Auth.Application.Common;
+using Auth.Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Auth.Api.Controllers
@@ -17,9 +18,9 @@ namespace Auth.Api.Controllers
                 return httpMethod switch
                 {
                     "GET" => Ok(response.Data),
-                    "POST" => response.Data is not null ? 
-                        Ok(response.Data) :
-                        Created(string.Empty, new { response.Message }),
+                    "POST" => response.Data is not null
+                        ? Ok(response.Data)
+                        : Created(string.Empty, new { response.Message }),
                     "PUT" or "DELETE" => NoContent(),
                     _ => Ok(response.Data)
                 };
@@ -32,8 +33,8 @@ namespace Auth.Api.Controllers
         {
             return response.ErrorType switch
             {
-                ErrorType.BadRequest => BadRequest(new { response.Message }),
-                ErrorType.Validation => BadRequest(new { response.Message }),
+                ErrorType.BadRequest => BadRequest(new BadRequestResponse { Errors = [response.Message] }),
+                ErrorType.Validation => BadRequest(new BadRequestResponse { Errors = [response.Message] }),
                 ErrorType.NotFound => NotFound(new { response.Message }),
                 ErrorType.Conflict => Conflict(new { response.Message }),
                 ErrorType.Unauthorized => Unauthorized(new { response.Message }),

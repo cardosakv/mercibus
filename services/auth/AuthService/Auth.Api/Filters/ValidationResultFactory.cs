@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Auth.Application.DTOs;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Results;
 
@@ -9,13 +10,13 @@ namespace Auth.Api.Filters
     /// </summary>
     public class ValidationResultFactory : IFluentValidationAutoValidationResultFactory
     {
-        public IActionResult CreateActionResult(ActionExecutingContext context, ValidationProblemDetails? validationProblemDetails)
+        public IActionResult CreateActionResult(ActionExecutingContext context,
+            ValidationProblemDetails? validationProblemDetails)
         {
             return new BadRequestObjectResult(
-                new
+                new BadRequestResponse
                 {
-                    Message = "One or more validations errors occured.",
-                    validationProblemDetails?.Errors
+                    Errors = validationProblemDetails?.Errors.SelectMany(x => x.Value).ToList() ?? []
                 }
             );
         }
