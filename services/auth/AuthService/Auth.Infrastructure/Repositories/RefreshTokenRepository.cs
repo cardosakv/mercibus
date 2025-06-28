@@ -15,11 +15,13 @@ namespace Auth.Infrastructure.Repositories
             var token = new RefreshToken
             {
                 UserId = userId,
-                ExpiresAt = DateTime.Now.AddDays(7),
+                ExpiresAt = DateTime.UtcNow.AddDays(7),
                 TokenHash = Utils.HashString(refreshTokenString)
             };
             
             await dbContext.RefreshTokens.AddAsync(token);
+            await dbContext.SaveChangesAsync();
+            
             return refreshTokenString;
         }
 

@@ -61,8 +61,6 @@ namespace Auth.Application.Services
             }
             catch (Exception)
             {
-                await transactionService.RollbackAsync();
-
                 return new Response
                 {
                     IsSuccess = false,
@@ -109,8 +107,12 @@ namespace Auth.Application.Services
                     };
                 }
 
+                await transactionService.BeginAsync();
+                
                 var (accessToken, expiresIn) = tokenService.CreateAccessToken(user, role.First());
                 var refreshToken = await refreshTokenRepository.CreateTokenAsync(user.Id);
+                
+                await transactionService.CommitAsync();
 
                 return new Response
                 {
@@ -173,8 +175,8 @@ namespace Auth.Application.Services
                 
                 await transactionService.BeginAsync();
                 
-                var newRefreshToken = await refreshTokenRepository.RotateTokenAsync(persistedToken);
                 var (newAccessToken, expiresIn) = tokenService.CreateAccessToken(user, role.First());
+                var newRefreshToken = await refreshTokenRepository.RotateTokenAsync(persistedToken);
                 
                 await transactionService.CommitAsync();
 
@@ -191,8 +193,6 @@ namespace Auth.Application.Services
             }
             catch (Exception)
             {
-                await transactionService.RollbackAsync();
-                
                 return new Response
                 {
                     IsSuccess = false,
