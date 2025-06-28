@@ -2,19 +2,22 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Results;
 
-/// <summary>
-/// Custom validation result factory.
-/// </summary>
-public class ValidationResultFactory : IFluentValidationAutoValidationResultFactory
+namespace Auth.Api.Filters
 {
-    public IActionResult CreateActionResult(ActionExecutingContext context, ValidationProblemDetails? validationProblemDetails)
+    /// <summary>
+    /// Custom validation result factory.
+    /// </summary>
+    public abstract class ValidationResultFactory : IFluentValidationAutoValidationResultFactory
     {
-        return new BadRequestObjectResult(
-            new
-            {
-                Message = "One or more validations errors occured.",
-                validationProblemDetails?.Errors
-            }
-        );
+        public IActionResult CreateActionResult(ActionExecutingContext context, ValidationProblemDetails? validationProblemDetails)
+        {
+            return new BadRequestObjectResult(
+                new
+                {
+                    Message = "One or more validations errors occured.",
+                    validationProblemDetails?.Errors
+                }
+            );
+        }
     }
 }

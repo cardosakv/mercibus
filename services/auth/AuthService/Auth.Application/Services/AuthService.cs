@@ -114,7 +114,6 @@ namespace Auth.Application.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
                 return new Response
                 {
                     IsSuccess = false,

@@ -1,5 +1,5 @@
+using Auth.Application.DTOs;
 using FluentValidation;
-using Microsoft.AspNetCore.Identity.Data;
 
 namespace Auth.Application.Validators
 {
@@ -10,9 +10,11 @@ namespace Auth.Application.Validators
     {
         protected LoginRequestValidator()
         {
-            RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("Email is required.")
-                .EmailAddress().WithMessage("Email is invalid.");
+            RuleFor(x => x.Username)
+                .NotEmpty().WithMessage("Username is required.")
+                .MinimumLength(3).WithMessage("Username must be at least 3 characters long.")
+                .MaximumLength(20).WithMessage("Username must not exceed 20 characters.")
+                .Matches(@"^[a-zA-Z0-9_]+$").WithMessage("Username can only contain letters, numbers, and underscores.");
 
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("Password is required.")

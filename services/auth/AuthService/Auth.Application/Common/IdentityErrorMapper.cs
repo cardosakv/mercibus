@@ -1,5 +1,8 @@
 ﻿namespace Auth.Application.Common
 {
+    /// <summary>
+    /// Utility mapper for ASP.Net Core Identity errors.
+    /// </summary>
     public static class IdentityErrorMapper
     {
         public static ErrorType MapToErrorType(string code)

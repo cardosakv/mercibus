@@ -1,4 +1,5 @@
 using System.Text;
+using Auth.Api.Filters;
 using Auth.Application.Interfaces;
 using Auth.Application.Services;
 using Auth.Application.Validators;

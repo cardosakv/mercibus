@@ -1,5 +1,8 @@
 ﻿namespace Auth.Application.Common
 {
+    /// <summary>
+    /// API response messages.
+    /// </summary>
     public static class Messages
     {
         public const string UserRegistered = "User registered successfully.";
