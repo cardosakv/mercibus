@@ -1,18 +1,17 @@
-namespace Auth.Application.DTOs
+namespace Auth.Application.DTOs;
+
+/// <summary>
+/// Represents a request to login a user.
+/// </summary>
+public class LoginRequest
 {
     /// <summary>
-    /// Represents a request to login a user.
+    /// Username handle.
     /// </summary>
-    public class LoginRequest
-    {
-        /// <summary>
-        /// Username handle.
-        /// </summary>
-        public required string Username { get; set; }
+    public required string Username { get; set; }
 
-        /// <summary>
-        /// User password in plain text.
-        /// </summary>
-        public required string Password { get; set; }
-    }
+    /// <summary>
+    /// User password in plain text.
+    /// </summary>
+    public required string Password { get; set; }
 }

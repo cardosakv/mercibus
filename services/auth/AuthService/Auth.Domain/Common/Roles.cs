@@ -1,12 +1,11 @@
-﻿namespace Auth.Domain.Common
+﻿namespace Auth.Domain.Common;
+
+/// <summary>
+/// User roles.
+/// </summary>
+public static class Roles
 {
-    /// <summary>
-    /// User roles.
-    /// </summary>
-    public static class Roles
-    {
-        public const string Admin = "Admin";
-        public const string Customer = "Customer";
-        public const string Guest = "Guest";
-    }
+    public const string Admin = "Admin";
+    public const string Customer = "Customer";
+    public const string Guest = "Guest";
 }

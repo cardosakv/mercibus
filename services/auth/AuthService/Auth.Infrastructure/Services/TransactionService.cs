@@ -1,28 +1,27 @@
 using Auth.Application.Interfaces;
 
-namespace Auth.Infrastructure.Services
+namespace Auth.Infrastructure.Services;
+
+public class TransactionService(AppDbContext dbContext) : ITransactionService
 {
-    public class TransactionService(AppDbContext dbContext) : ITransactionService
+    public async Task BeginAsync()
     {
-        public async Task BeginAsync()
-        {
-             await dbContext.Database.BeginTransactionAsync();
-        }
+        await dbContext.Database.BeginTransactionAsync();
+    }
 
-        public async Task CommitAsync()
+    public async Task CommitAsync()
+    {
+        if (dbContext.Database.CurrentTransaction is not null)
         {
-            if (dbContext.Database.CurrentTransaction is not null)
-            {
-                await dbContext.Database.CommitTransactionAsync();
-            }
+            await dbContext.Database.CommitTransactionAsync();
         }
+    }
 
-        public async Task RollbackAsync()
+    public async Task RollbackAsync()
+    {
+        if (dbContext.Database.CurrentTransaction is not null)
         {
-            if (dbContext.Database.CurrentTransaction is not null)
-            {
-                await dbContext.Database.RollbackTransactionAsync();
-            }
+            await dbContext.Database.RollbackTransactionAsync();
         }
     }
 }

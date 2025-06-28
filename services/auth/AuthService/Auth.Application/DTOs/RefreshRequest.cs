@@ -1,13 +1,12 @@
-namespace Auth.Application.DTOs
+namespace Auth.Application.DTOs;
+
+/// <summary>
+/// Refresh access token request.
+/// </summary>
+public class RefreshRequest
 {
     /// <summary>
-    /// Refresh access token request.
+    /// Refresh token string.
     /// </summary>
-    public class RefreshRequest
-    {
-        /// <summary>
-        /// Refresh token string.
-        /// </summary>
-        public required string RefreshToken { get; set; }
-    }
+    public required string RefreshToken { get; set; }
 }
