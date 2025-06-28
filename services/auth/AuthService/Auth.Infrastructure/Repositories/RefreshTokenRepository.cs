@@ -2,11 +2,10 @@ using Auth.Application.Common;
 using Auth.Application.Interfaces;
 using Auth.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace Auth.Infrastructure.Repositories;
 
-public class RefreshTokenRepository(AppDbContext dbContext, IConfiguration configuration) : IRefreshTokenRepository
+public class RefreshTokenRepository(AppDbContext dbContext) : IRefreshTokenRepository
 {
     public async Task<string> CreateTokenAsync(string userId)
     {
