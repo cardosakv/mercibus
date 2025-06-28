@@ -9,7 +9,7 @@ namespace Auth.Application.DTOs
         /// Token type.
         /// </summary>
         public string TokenType { get; set; } = "Bearer";
-        
+
         /// <summary>
         /// Short-live token.
         /// </summary>
@@ -19,5 +19,10 @@ namespace Auth.Application.DTOs
         /// Expiration time of the access token in milliseconds.
         /// </summary>
         public required long ExpiresIn { get; set; }
+
+        /// <summary>
+        /// Persisted refresh token.
+        /// </summary>
+        public required string RefreshToken { get; set; }
     }
 }

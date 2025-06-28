@@ -19,7 +19,14 @@ namespace Auth.Application.Interfaces
         /// Logins a user.
         /// </summary>
         /// <param name="request">The registration request containing username and password.</param>
-        /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
+        /// <returns><see cref="Response"/> with the generated token.</returns>
         Task<Response> LoginAsync(LoginRequest request);
+        
+        /// <summary>
+        /// Provides new tokens using the refresh token.
+        /// </summary>
+        /// <param name="request">The refresh request containing refresh token string.</param>
+        /// <returns><see cref="Response"/> with the generated token.</returns>
+        Task<Response> RefreshTokenAsync(RefreshRequest request);
     }
 }

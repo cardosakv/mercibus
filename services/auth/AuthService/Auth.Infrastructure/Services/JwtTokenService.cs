@@ -1,7 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Auth.Application.DTOs;
 using Auth.Application.Interfaces;
 using Auth.Domain.Entities;
 using Microsoft.Extensions.Configuration;
@@ -9,9 +8,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Auth.Infrastructure.Services
 {
-    public class TokenService(IConfiguration configuration) : ITokenService
+    public class JwtTokenService(IConfiguration configuration) : ITokenService
     {
-        public AuthToken CreateToken(User user, string role)
+        public (string, long) CreateAccessToken(User user, string role)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(configuration["Jwt:Key"] ?? string.Empty);
@@ -38,11 +37,7 @@ namespace Auth.Infrastructure.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
 
-            return new AuthToken
-            {
-                AccessToken = tokenString,
-                ExpiresIn = expireMillis
-            };
+            return  (tokenString, expireMillis);
         }
     }
 }

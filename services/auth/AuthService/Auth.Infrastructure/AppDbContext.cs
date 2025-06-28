@@ -10,6 +10,8 @@ namespace Auth.Infrastructure
     /// </summary>
     public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<User>(options)
     {
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -54,6 +56,21 @@ namespace Auth.Infrastructure
             };
 
             modelBuilder.Entity<IdentityRole>().HasData(roles);
+            
+            // Configure Refresh Token entity properties
+            modelBuilder.Entity<RefreshToken>(entity =>
+            {
+                entity.Property(r => r.Id).ValueGeneratedOnAdd();
+                entity.Property(r => r.TokenHash);
+                entity.Property(r => r.UserId);
+                entity.Property(r => r.ExpiresAt);
+                entity.Property(r => r.IsRevoked).HasDefaultValue(false);
+
+                entity.HasOne<User>()
+                    .WithMany()
+                    .HasForeignKey(r => r.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
         }
     }
 }
