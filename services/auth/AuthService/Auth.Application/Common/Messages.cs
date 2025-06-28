@@ -6,9 +6,9 @@
     public static class Messages
     {
         public const string UserRegistered = "User registered successfully.";
-        public const string UserNotFound = "User not found.";
-        public const string PasswordIncorrect = "Password incorrect.";
-        public const string UserForbidden = "User forbidden.";
-        public const string UnexpectedError = "An unexpected error occurred while processing your request.";
+        public const string UserNotFound = "The specified user was not found.";
+        public const string PasswordIncorrect = "The password provided is incorrect.";
+        public const string UserForbidden = "You do not have permission to perform this action.";
+        public const string UnexpectedError = "An unexpected error occurred while processing the request.";
     }
 }
