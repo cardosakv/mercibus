@@ -1,3 +1,4 @@
+using System.Text;
 using Auth.Application.Common;
 using Auth.Application.DTOs;
 using Auth.Application.Interfaces;
@@ -6,6 +7,7 @@ using Auth.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Auth.Application.Services
 {
@@ -258,11 +260,11 @@ namespace Auth.Application.Services
                 }
 
                 var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
-                var baseUrl = httpContextAccessor.HttpContext.Request.Scheme + "://" +
-                              httpContextAccessor.HttpContext.Request.Host;
+
+                var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
                 var confirmEndpoint =
                     linkGenerator.GetUriByAction(httpContextAccessor.HttpContext, "ConfirmEmail", "Auth");
-                var confirmLink = confirmEndpoint + "?userId=" + user.Id + "&token=" + token;
+                var confirmLink = confirmEndpoint + "?userId=" + user.Id + "&token=" + encodedToken;
 
                 var emailSent = await emailService.SendConfirmationLink(request.Email, confirmLink);
                 if (!emailSent)
@@ -307,7 +309,8 @@ namespace Auth.Application.Services
                     };
                 }
 
-                var verifyResult = await userManager.ConfirmEmailAsync(user, token);
+                var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+                var verifyResult = await userManager.ConfirmEmailAsync(user, decodedToken);
                 if (!verifyResult.Succeeded)
                 {
                     var error = verifyResult.Errors.First();
