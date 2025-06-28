@@ -6,9 +6,9 @@ namespace Auth.Application.Validators
     /// <summary>
     /// Validator for login requests.
     /// </summary>
-    public abstract class LoginRequestValidator : AbstractValidator<LoginRequest>
+    public class LoginRequestValidator : AbstractValidator<LoginRequest>
     {
-        protected LoginRequestValidator()
+        public LoginRequestValidator()
         {
             RuleFor(x => x.Username)
                 .NotEmpty().WithMessage("Username is required.")

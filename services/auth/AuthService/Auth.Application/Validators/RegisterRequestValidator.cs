@@ -6,9 +6,9 @@ namespace Auth.Application.Validators
     /// <summary>
     /// Validator for register requests.
     /// </summary>
-    public abstract class RegisterRequestValidator : AbstractValidator<RegisterRequest>
+    public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
     {
-        protected RegisterRequestValidator() 
+        public  RegisterRequestValidator() 
         { 
             RuleFor(x => x.Username)
                 .NotEmpty().WithMessage("Username is required.")
