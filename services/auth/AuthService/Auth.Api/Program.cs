@@ -1,3 +1,5 @@
+using System.Net;
+using System.Net.Mail;
 using System.Text;
 using Auth.Api.Filters;
 using Auth.Application.Interfaces;
@@ -20,23 +22,38 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, JwtTokenService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
 // Add validators.
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<SendConfirmationEmailRequestValidator>();
 builder.Services.AddFluentValidationAutoValidation(config =>
     config.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
 
 // Add identity services.
 builder.Services.AddIdentityCore<User>()
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<AppDbContext>();
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddTokenProvider<DataProtectorTokenProvider<User>>("Default")
+    .AddDefaultTokenProviders();
 
 // Add database context.
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Add email provider.
+builder.Services.AddFluentEmail(builder.Configuration["Email:Sender"])
+    .AddRazorRenderer()
+    .AddSmtpSender(new SmtpClient(builder.Configuration["Email:Server"])
+    {
+        EnableSsl = true,
+        Port = Convert.ToInt32(builder.Configuration["Email:Port"]),
+        Credentials = new NetworkCredential(builder.Configuration["Email:Username"],
+            builder.Configuration["Email:Password"])
+    });
 
 // Add authentication.
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -74,13 +91,13 @@ builder.Services.AddSwaggerGen(options =>
             Id = "Bearer"
         }
     });
-    
+
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
             {
-                Reference = new  OpenApiReference
+                Reference = new OpenApiReference
                 {
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
@@ -94,6 +111,7 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

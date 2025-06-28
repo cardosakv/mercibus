@@ -3,15 +3,20 @@ using Auth.Application.DTOs;
 using Auth.Application.Interfaces;
 using Auth.Domain.Common;
 using Auth.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Routing;
 
 namespace Auth.Application.Services
 {
     public class AuthService(
         UserManager<User> userManager,
         ITokenService tokenService,
+        IEmailService emailService,
         ITransactionService transactionService,
-        IRefreshTokenRepository refreshTokenRepository) : IAuthService
+        IRefreshTokenRepository refreshTokenRepository,
+        IHttpContextAccessor httpContextAccessor,
+        LinkGenerator linkGenerator) : IAuthService
     {
         public async Task<Response> RegisterAsync(RegisterRequest request)
         {
@@ -218,6 +223,66 @@ namespace Auth.Application.Services
             catch (Exception)
             {
                 await transactionService.RollbackAsync();
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = Messages.UnexpectedError,
+                    ErrorType = ErrorType.Internal
+                };
+            }
+        }
+
+        public async Task<Response> SendConfirmationEmail(SendConfirmationEmailRequest request)
+        {
+            try
+            {
+                var user = await userManager.FindByEmailAsync(request.Email);
+                if (user is null)
+                {
+                    return new Response
+                    {
+                        IsSuccess = false,
+                        Message = Messages.UserNotFound,
+                        ErrorType = ErrorType.NotFound
+                    };
+                }
+
+                if (httpContextAccessor.HttpContext is null)
+                {
+                    return new Response
+                    {
+                        IsSuccess = false,
+                        Message = Messages.UnexpectedError,
+                        ErrorType = ErrorType.Internal
+                    };
+                }
+
+                var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                var baseUrl = httpContextAccessor.HttpContext.Request.Scheme + "://" +
+                              httpContextAccessor.HttpContext.Request.Host;
+                var confirmEndpoint =
+                    linkGenerator.GetUriByAction(httpContextAccessor.HttpContext, "ConfirmEmail", "Auth");
+                var confirmLink = confirmEndpoint + "?userId=" + user.Id + "&token=" + token;
+
+                var emailSent = await emailService.SendConfirmationLink(request.Email, confirmLink);
+                if (!emailSent)
+                {
+                    return new Response
+                    {
+                        IsSuccess = false,
+                        Message = Messages.UnexpectedError,
+                        ErrorType = ErrorType.Internal
+                    };
+                }
+
+                return new Response
+                {
+                    IsSuccess = true,
+                    Message = Messages.EmailConfirmationSent
+                };
+            }
+            catch (Exception)
+            {
                 return new Response
                 {
                     IsSuccess = false,
