@@ -7,7 +7,7 @@ namespace Auth.Api.Filters
     /// <summary>
     /// Custom validation result factory.
     /// </summary>
-    public abstract class ValidationResultFactory : IFluentValidationAutoValidationResultFactory
+    public class ValidationResultFactory : IFluentValidationAutoValidationResultFactory
     {
         public IActionResult CreateActionResult(ActionExecutingContext context, ValidationProblemDetails? validationProblemDetails)
         {
