@@ -11,12 +11,18 @@ namespace Auth.Infrastructure.Services
 
         public async Task CommitAsync()
         {
-            await dbContext.Database.CommitTransactionAsync();
+            if (dbContext.Database.CurrentTransaction is not null)
+            {
+                await dbContext.Database.CommitTransactionAsync();
+            }
         }
 
         public async Task RollbackAsync()
         {
-            await dbContext.Database.RollbackTransactionAsync();
+            if (dbContext.Database.CurrentTransaction is not null)
+            {
+                await dbContext.Database.RollbackTransactionAsync();
+            }
         }
     }
 }
