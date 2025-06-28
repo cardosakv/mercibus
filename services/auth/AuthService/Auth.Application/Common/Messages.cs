@@ -7,6 +7,7 @@
     {
         public const string UserRegistered = "User registered successfully.";
         public const string EmailConfirmationSent = "Email confirmation sent successfully.";
+        public const string EmailVerified = "Email verified successfully.";
         public const string UserNotFound = "The specified user was not found.";
         public const string PasswordIncorrect = "The password provided is incorrect.";
         public const string UserForbidden = "You do not have permission to perform this action.";

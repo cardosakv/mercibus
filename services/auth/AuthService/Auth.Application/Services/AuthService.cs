@@ -291,5 +291,49 @@ namespace Auth.Application.Services
                 };
             }
         }
+
+        public async Task<Response> ConfirmEmail(string userId, string token)
+        {
+            try
+            {
+                var user = await userManager.FindByIdAsync(userId);
+                if (user is null)
+                {
+                    return new Response
+                    {
+                        IsSuccess = false,
+                        Message = Messages.UserNotFound,
+                        ErrorType = ErrorType.NotFound
+                    };
+                }
+
+                var verifyResult = await userManager.ConfirmEmailAsync(user, token);
+                if (!verifyResult.Succeeded)
+                {
+                    var error = verifyResult.Errors.First();
+                    return new Response
+                    {
+                        IsSuccess = false,
+                        Message = error.Description,
+                        ErrorType = IdentityErrorMapper.MapToErrorType(error.Code)
+                    };
+                }
+
+                return new Response
+                {
+                    IsSuccess = true,
+                    Message = Messages.EmailVerified
+                };
+            }
+            catch (Exception)
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = Messages.UnexpectedError,
+                    ErrorType = ErrorType.Internal
+                };
+            }
+        }
     }
 }

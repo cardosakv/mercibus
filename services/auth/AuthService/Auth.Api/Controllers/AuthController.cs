@@ -42,5 +42,13 @@ namespace Auth.Api.Controllers
             var response = await authService.SendConfirmationEmail(request);
             return HandleResponse(response, HttpContext.Request.Method);
         }
+
+        [HttpGet]
+        [Route("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            var response = await authService.ConfirmEmail(userId, token);
+            return HandleResponse(response, HttpContext.Request.Method);
+        }
     }
 }
