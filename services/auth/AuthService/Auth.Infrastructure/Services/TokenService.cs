@@ -7,7 +7,7 @@ using Auth.Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Auth.Application.Services
+namespace Auth.Infrastructure.Services
 {
     public class TokenService(IConfiguration configuration) : ITokenService
     {

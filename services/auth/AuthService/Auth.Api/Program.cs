@@ -5,6 +5,7 @@ using Auth.Application.Services;
 using Auth.Application.Validators;
 using Auth.Domain.Entities;
 using Auth.Infrastructure;
+using Auth.Infrastructure.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -18,6 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
 
 // Add validators.
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();

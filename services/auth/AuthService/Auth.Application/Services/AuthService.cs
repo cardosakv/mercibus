@@ -3,25 +3,27 @@ using Auth.Application.DTOs;
 using Auth.Application.Interfaces;
 using Auth.Domain.Common;
 using Auth.Domain.Entities;
-using Auth.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 
 namespace Auth.Application.Services
 {
-    public class AuthService(UserManager<User> userManager, ITokenService tokenService,  AppDbContext dbContext) : IAuthService
+    public class AuthService(
+        UserManager<User> userManager,
+        ITokenService tokenService,
+        ITransactionService transactionService) : IAuthService
     {
         public async Task<Response> RegisterAsync(RegisterRequest request)
         {
             try
             {
-                var user = new User 
-                { 
-                    UserName = request.Username, 
-                    Email = request.Email 
+                var user = new User
+                {
+                    UserName = request.Username,
+                    Email = request.Email
                 };
 
-                await using var transaction = await dbContext.Database.BeginTransactionAsync();
-                    
+                await transactionService.BeginAsync();
+
                 var createResult = await userManager.CreateAsync(user, request.Password);
                 if (!createResult.Succeeded)
                 {
@@ -37,8 +39,8 @@ namespace Auth.Application.Services
                 var roleResult = await userManager.AddToRoleAsync(user, Roles.Customer);
                 if (!roleResult.Succeeded)
                 {
-                    await transaction.RollbackAsync();
-                    
+                    await transactionService.RollbackAsync();
+
                     var error = roleResult.Errors.First();
                     return new Response
                     {
@@ -48,8 +50,8 @@ namespace Auth.Application.Services
                     };
                 }
 
-                await transaction.CommitAsync();
-                
+                await transactionService.CommitAsync();
+
                 return new Response
                 {
                     IsSuccess = true,
@@ -58,6 +60,8 @@ namespace Auth.Application.Services
             }
             catch (Exception)
             {
+                await transactionService.RollbackAsync();
+
                 return new Response
                 {
                     IsSuccess = false,
@@ -81,7 +85,7 @@ namespace Auth.Application.Services
                         ErrorType = ErrorType.NotFound
                     };
                 }
-                
+
                 var passwordValid = await userManager.CheckPasswordAsync(user, request.Password);
                 if (!passwordValid)
                 {
@@ -103,7 +107,7 @@ namespace Auth.Application.Services
                         ErrorType = ErrorType.Forbidden
                     };
                 }
-                
+
                 var authToken = tokenService.CreateToken(user, role.First());
 
                 return new Response
@@ -112,7 +116,7 @@ namespace Auth.Application.Services
                     Data = authToken
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new Response
                 {
