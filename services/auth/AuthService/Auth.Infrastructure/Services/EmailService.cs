@@ -7,7 +7,7 @@ namespace Auth.Infrastructure.Services
     {
         public async Task<bool> SendConfirmationLink(string email, string confirmationLink)
         {
-            var template = Directory.GetCurrentDirectory() + "\\Content\\EmailTemplate.cshtml";
+            var template = Directory.GetCurrentDirectory() + @"\Content\EmailTemplate.cshtml";
             var response = await fluentEmail
                 .To(email)
                 .Subject("Mercibus Confirmation")
