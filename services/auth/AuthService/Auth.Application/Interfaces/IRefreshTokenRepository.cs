@@ -27,5 +27,12 @@ namespace Auth.Application.Interfaces
         /// <param name="refreshToken">Previous refresh token.</param>
         /// <returns>New refresh token string.</returns>
         Task<string> RotateTokenAsync(RefreshToken refreshToken);
+        
+        /// <summary>
+        /// Invalidates the token in persistence.
+        /// </summary>
+        /// <param name="refreshToken">Refresh token.</param>
+        /// <returns>Boolean indicating success or failure.</returns>
+        Task<bool> RevokeTokenAsync(RefreshToken refreshToken);
     }
 }

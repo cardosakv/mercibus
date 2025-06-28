@@ -17,13 +17,13 @@ namespace Auth.Application.Services
         {
             try
             {
+                await transactionService.BeginAsync();
+
                 var user = new User
                 {
                     UserName = request.Username,
                     Email = request.Email
                 };
-
-                await transactionService.BeginAsync();
 
                 var createResult = await userManager.CreateAsync(user, request.Password);
                 if (!createResult.Succeeded)
@@ -61,6 +61,7 @@ namespace Auth.Application.Services
             }
             catch (Exception)
             {
+                await transactionService.RollbackAsync();
                 return new Response
                 {
                     IsSuccess = false,
@@ -74,6 +75,8 @@ namespace Auth.Application.Services
         {
             try
             {
+                await transactionService.BeginAsync();
+
                 var user = await userManager.FindByNameAsync(request.Username);
                 if (user is null)
                 {
@@ -107,11 +110,9 @@ namespace Auth.Application.Services
                     };
                 }
 
-                await transactionService.BeginAsync();
-                
                 var (accessToken, expiresIn) = tokenService.CreateAccessToken(user, role.First());
                 var refreshToken = await refreshTokenRepository.CreateTokenAsync(user.Id);
-                
+
                 await transactionService.CommitAsync();
 
                 return new Response
@@ -127,6 +128,7 @@ namespace Auth.Application.Services
             }
             catch (Exception)
             {
+                await transactionService.RollbackAsync();
                 return new Response
                 {
                     IsSuccess = false,
@@ -140,6 +142,8 @@ namespace Auth.Application.Services
         {
             try
             {
+                await transactionService.BeginAsync();
+
                 var persistedToken = await refreshTokenRepository.RetrieveTokenAsync(request.RefreshToken);
                 if (persistedToken is null)
                 {
@@ -150,7 +154,29 @@ namespace Auth.Application.Services
                         ErrorType = ErrorType.Forbidden
                     };
                 }
-                
+
+                if (persistedToken.ExpiresAt < DateTime.UtcNow)
+                {
+                    var revoked = await refreshTokenRepository.RevokeTokenAsync(persistedToken);
+                    if (!revoked)
+                    {
+                        await transactionService.RollbackAsync();
+                        return new Response
+                        {
+                            IsSuccess = false,
+                            Message = Messages.UnexpectedError,
+                            ErrorType = ErrorType.Internal
+                        };
+                    }
+
+                    return new Response
+                    {
+                        IsSuccess = false,
+                        Message = Messages.RefreshTokenExpired,
+                        ErrorType = ErrorType.Unauthorized
+                    };
+                }
+
                 var user = await userManager.FindByIdAsync(persistedToken.UserId);
                 if (user is null)
                 {
@@ -161,7 +187,7 @@ namespace Auth.Application.Services
                         ErrorType = ErrorType.NotFound
                     };
                 }
-                
+
                 var role = await userManager.GetRolesAsync(user);
                 if (role.Count == 0)
                 {
@@ -172,12 +198,10 @@ namespace Auth.Application.Services
                         ErrorType = ErrorType.Forbidden
                     };
                 }
-                
-                await transactionService.BeginAsync();
-                
+
                 var (newAccessToken, expiresIn) = tokenService.CreateAccessToken(user, role.First());
                 var newRefreshToken = await refreshTokenRepository.RotateTokenAsync(persistedToken);
-                
+
                 await transactionService.CommitAsync();
 
                 return new Response
@@ -193,6 +217,7 @@ namespace Auth.Application.Services
             }
             catch (Exception)
             {
+                await transactionService.RollbackAsync();
                 return new Response
                 {
                     IsSuccess = false,

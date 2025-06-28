@@ -36,5 +36,11 @@ namespace Auth.Infrastructure.Repositories
             refreshToken.IsRevoked = true;
             return await CreateTokenAsync(refreshToken.UserId);
         }
+
+        public async Task<bool> RevokeTokenAsync(RefreshToken refreshToken)
+        {
+            refreshToken.IsRevoked = true;
+            return await dbContext.SaveChangesAsync() > 0;
+        }
     }
 }
