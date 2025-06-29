@@ -20,7 +20,7 @@ public abstract class BaseController : ControllerBase
                 "GET" => Ok(response.Data),
                 "POST" => response.Data is not null
                     ? Ok(response.Data)
-                    : Created(string.Empty, new { response.Message }),
+                    : Ok(new StandardResponse { Message = response.Message }),
                 "PUT" or "DELETE" => NoContent(),
                 _ => Ok(response.Data)
             };
@@ -35,12 +35,14 @@ public abstract class BaseController : ControllerBase
         {
             ErrorType.BadRequest => BadRequest(new BadRequestResponse { Errors = [response.Message] }),
             ErrorType.Validation => BadRequest(new BadRequestResponse { Errors = [response.Message] }),
-            ErrorType.NotFound => NotFound(new { response.Message }),
-            ErrorType.Conflict => Conflict(new { response.Message }),
-            ErrorType.Unauthorized => Unauthorized(new { response.Message }),
+            ErrorType.NotFound => NotFound(new StandardResponse { Message = response.Message }),
+            ErrorType.Conflict => Conflict(new StandardResponse { Message = response.Message }),
+            ErrorType.Unauthorized => Unauthorized(new StandardResponse { Message = response.Message }),
             ErrorType.Forbidden => Forbid(),
-            ErrorType.Locked => StatusCode((int)HttpStatusCode.Locked, new { response.Message }),
-            _ => StatusCode((int)HttpStatusCode.InternalServerError, new { response.Message })
+            ErrorType.Locked => StatusCode((int)HttpStatusCode.Locked,
+                new StandardResponse { Message = response.Message }),
+            _ => StatusCode((int)HttpStatusCode.InternalServerError,
+                new StandardResponse { Message = response.Message })
         };
     }
 }
