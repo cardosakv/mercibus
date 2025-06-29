@@ -9,8 +9,8 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Auth.Api/Auth.Api.csproj", "Auth.Api/"]
 COPY ["Auth.Infrastructure/Auth.Infrastructure.csproj", "Auth.Infrastructure/"]
-COPY ["Auth.Domain/Auth.Domain.csproj", "Auth.Domain/"]
 COPY ["Auth.Application/Auth.Application.csproj", "Auth.Application/"]
+COPY ["Auth.Domain/Auth.Domain.csproj", "Auth.Domain/"]
 RUN dotnet restore "Auth.Api/Auth.Api.csproj"
 COPY . .
 WORKDIR "/src/Auth.Api"
