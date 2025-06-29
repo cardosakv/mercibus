@@ -571,4 +571,59 @@ public class AuthService(
             };
         }
     }
+
+    public async Task<Response> GetInfoAsync(string? userId)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = Messages.UserNotFound,
+                    ErrorType = ErrorType.NotFound
+                };
+            }
+
+            var user = await userManager.FindByIdAsync(userId);
+            if (user is null)
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = Messages.UserNotFound,
+                    ErrorType = ErrorType.NotFound
+                };
+            }
+
+            var userData = new UserResponse()
+            {
+                Name = user.Name,
+                Email = user.Email ?? string.Empty,
+                Street = user.Street,
+                City = user.City,
+                State = user.State,
+                Country = user.Country,
+                PostalCode = user.PostalCode is 0 ? null : user.PostalCode
+            };
+
+            return new Response
+            {
+                IsSuccess = true,
+                Data = userData
+            };
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex.Message);
+
+            return new Response
+            {
+                IsSuccess = false,
+                Message = Messages.UnexpectedError,
+                ErrorType = ErrorType.Internal
+            };
+        }
+    }
 }

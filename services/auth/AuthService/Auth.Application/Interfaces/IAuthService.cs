@@ -71,4 +71,11 @@ public interface IAuthService
     /// <param name="request">The request containing the current and new password.</param>
     /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
     Task<Response> ChangePasswordAsync(ChangePasswordRequest request);
+
+    /// <summary>
+    /// Gets the logged-in user's information.
+    /// </summary>
+    /// <param name="userId">The user ID of the user.</param>
+    /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
+    Task<Response> GetInfoAsync(string? userId);
 }

@@ -20,6 +20,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
         modelBuilder.Entity<User>(entity =>
         {
             entity.Property(u => u.Name);
+            entity.Property(u => u.Street);
+            entity.Property(u => u.City);
+            entity.Property(u => u.State);
+            entity.Property(u => u.Country);
+            entity.Property(u => u.PostalCode);
             entity.Property(u => u.CreatedAt);
         });
 

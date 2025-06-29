@@ -17,8 +17,7 @@ public class JwtTokenService(IConfiguration configuration) : ITokenService
 
         var claims = new List<Claim>
         {
-            new(ClaimTypes.NameIdentifier, user.UserName ?? string.Empty),
-            new(ClaimTypes.Email, user.Email ?? string.Empty),
+            new(ClaimTypes.NameIdentifier, user.Id),
             new(ClaimTypes.Role, role)
         };
 

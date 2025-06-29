@@ -1,16 +1,19 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace Auth.Domain.Entities;
+namespace Auth.Application.DTOs;
 
 /// <summary>
-/// Represents a user in the authentication system.
+/// Represent a get or change user request.
 /// </summary>
-public class User : IdentityUser
+public class UserResponse
 {
     /// <summary>
     /// User display name.
     /// </summary>
     public string Name { get; set; } = string.Empty;
+
+    /// <summary>
+    /// User email.
+    /// </summary>
+    public string Email { get; set; } = string.Empty;
 
     /// <summary>
     /// Street address.
@@ -35,10 +38,5 @@ public class User : IdentityUser
     /// <summary>
     /// Postal code address.
     /// </summary>
-    public short PostalCode { get; set; }
-
-    /// <summary>
-    /// Created date and time of the user.
-    /// </summary>
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public short? PostalCode { get; set; } = null;
 }

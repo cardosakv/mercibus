@@ -1,4 +1,5 @@
-﻿using Auth.Application.DTOs;
+﻿using System.Security.Claims;
+using Auth.Application.DTOs;
 using Auth.Application.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -76,6 +77,15 @@ public class AuthController(IAuthService authService, IConfiguration configurati
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
     {
         var response = await authService.ChangePasswordAsync(request);
+        return HandleResponse(response, HttpContext.Request.Method);
+    }
+
+    [HttpGet("info")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> GetInfo()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var response = await authService.GetInfoAsync(userId);
         return HandleResponse(response, HttpContext.Request.Method);
     }
 }
