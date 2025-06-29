@@ -30,6 +30,7 @@ builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<SendConfirmationEmailRequestValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<ForgotPasswordRequestValidator>();
 builder.Services.AddFluentValidationAutoValidation(config =>
     config.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
 

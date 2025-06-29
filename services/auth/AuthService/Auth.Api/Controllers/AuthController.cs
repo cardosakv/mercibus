@@ -43,14 +43,14 @@ public class AuthController(IAuthService authService, IConfiguration configurati
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> SendConfirmationEmail([FromBody] SendConfirmationEmailRequest request)
     {
-        var response = await authService.SendConfirmationEmail(request);
+        var response = await authService.SendConfirmationEmailAsync(request);
         return HandleResponse(response, HttpContext.Request.Method);
     }
 
     [HttpGet("confirm-email")]
     public async Task<IActionResult> ConfirmEmail(string userId, string token)
     {
-        var response = await authService.ConfirmEmail(userId, token);
+        var response = await authService.ConfirmEmailAsync(userId, token);
 
         return !response.IsSuccess
             ? Redirect(configuration["EmailConfirmRedirect:Fail"] ?? string.Empty)

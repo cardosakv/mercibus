@@ -283,7 +283,7 @@ public class AuthService(
         }
     }
 
-    public async Task<Response> SendConfirmationEmail(SendConfirmationEmailRequest request)
+    public async Task<Response> SendConfirmationEmailAsync(SendConfirmationEmailRequest request)
     {
         try
         {
@@ -353,7 +353,7 @@ public class AuthService(
         }
     }
 
-    public async Task<Response> ConfirmEmail(string userId, string token)
+    public async Task<Response> ConfirmEmailAsync(string userId, string token)
     {
         try
         {

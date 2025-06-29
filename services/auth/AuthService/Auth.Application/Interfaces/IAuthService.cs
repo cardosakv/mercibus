@@ -41,7 +41,7 @@ public interface IAuthService
     /// </summary>
     /// <param name="request">The request containing the user email address.</param>
     /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
-    Task<Response> SendConfirmationEmail(SendConfirmationEmailRequest request);
+    Task<Response> SendConfirmationEmailAsync(SendConfirmationEmailRequest request);
 
     /// <summary>
     /// Verifies the user email based on the token sent to email.
@@ -49,5 +49,5 @@ public interface IAuthService
     /// <param name="userId">User ID.</param>
     /// <param name="token">Verification token.</param>
     /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
-    Task<Response> ConfirmEmail(string userId, string token);
+    Task<Response> ConfirmEmailAsync(string userId, string token);
 }
