@@ -53,9 +53,9 @@ public class AuthController(IAuthService authService, IConfiguration configurati
     {
         var response = await authService.ConfirmEmailAsync(userId, token);
 
-        return !response.IsSuccess
-            ? Redirect(configuration["EmailConfirmRedirect:Fail"] ?? string.Empty)
-            : Redirect(configuration["EmailConfirmRedirect:Success"] ?? string.Empty);
+        return response.IsSuccess
+            ? Redirect(configuration["RedirectUrl:EmailConfirmSuccess"] ?? string.Empty)
+            : Redirect(configuration["RedirectUrl:EmailConfirmFail"] ?? string.Empty);
     }
 
     [HttpPost("forgot-password")]
