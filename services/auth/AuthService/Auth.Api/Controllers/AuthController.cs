@@ -24,6 +24,14 @@ public class AuthController(IAuthService authService, IConfiguration configurati
         return HandleResponse(response, HttpContext.Request.Method);
     }
 
+    [HttpPost("logout")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> Login([FromBody] LogoutRequest request)
+    {
+        var response = await authService.LogoutAsync(request);
+        return HandleResponse(response, HttpContext.Request.Method);
+    }
+
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshRequest request)
     {

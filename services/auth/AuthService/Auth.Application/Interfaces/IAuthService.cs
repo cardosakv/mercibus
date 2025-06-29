@@ -23,6 +23,13 @@ public interface IAuthService
     Task<Response> LoginAsync(LoginRequest request);
 
     /// <summary>
+    /// Logouts a user.
+    /// </summary>
+    /// <param name="request">The logout request containing the refresh token.</param>
+    /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
+    Task<Response> LogoutAsync(LogoutRequest request);
+
+    /// <summary>
     /// Provides new tokens using the refresh token.
     /// </summary>
     /// <param name="request">The refresh request containing refresh token string.</param>

@@ -6,6 +6,7 @@
 public static class Messages
 {
     public const string UserRegistered = "User registered successfully.";
+    public const string UserLoggedOut = "User logged out successfully.";
     public const string EmailConfirmationSent = "Email confirmation sent successfully.";
     public const string EmailVerified = "Email verified successfully.";
     public const string EmailAlreadyVerified = "Email is already verified.";

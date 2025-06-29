@@ -145,6 +145,55 @@ public class AuthService(
         }
     }
 
+    public async Task<Response> LogoutAsync(LogoutRequest request)
+    {
+        try
+        {
+            await transactionService.BeginAsync();
+
+            var persistedToken = await refreshTokenRepository.RetrieveTokenAsync(request.RefreshToken);
+            if (persistedToken is null)
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = Messages.UserForbidden,
+                    ErrorType = ErrorType.Forbidden
+                };
+            }
+
+            var revoked = await refreshTokenRepository.RevokeTokenAsync(persistedToken);
+            if (!revoked)
+            {
+                await transactionService.RollbackAsync();
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = Messages.UnexpectedError,
+                    ErrorType = ErrorType.Internal
+                };
+            }
+
+            await transactionService.CommitAsync();
+
+            return new Response
+            {
+                IsSuccess = true,
+                Message = Messages.UserLoggedOut
+            };
+        }
+        catch (Exception)
+        {
+            await transactionService.RollbackAsync();
+            return new Response
+            {
+                IsSuccess = false,
+                Message = Messages.UnexpectedError,
+                ErrorType = ErrorType.Internal
+            };
+        }
+    }
+
     public async Task<Response> RefreshTokenAsync(RefreshRequest request)
     {
         try
