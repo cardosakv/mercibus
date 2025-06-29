@@ -56,4 +56,11 @@ public class AuthController(IAuthService authService, IConfiguration configurati
             ? Redirect(configuration["EmailConfirmRedirect:Fail"] ?? string.Empty)
             : Redirect(configuration["EmailConfirmRedirect:Success"] ?? string.Empty);
     }
+
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+    {
+        var response = await authService.ForgotPasswordAsync(request);
+        return HandleResponse(response, HttpContext.Request.Method);
+    }
 }

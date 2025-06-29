@@ -50,4 +50,11 @@ public interface IAuthService
     /// <param name="token">Verification token.</param>
     /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
     Task<Response> ConfirmEmailAsync(string userId, string token);
+
+    /// <summary>
+    /// Sends a reset link to the specified user email.
+    /// </summary>
+    /// <param name="request">The request containing the user email address.</param>
+    /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
+    Task<Response> ForgotPasswordAsync(ForgotPasswordRequest request);
 }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Configuration;
 
 namespace Auth.Application.Services;
 
@@ -18,7 +19,8 @@ public class AuthService(
     ITransactionService transactionService,
     IRefreshTokenRepository refreshTokenRepository,
     IHttpContextAccessor httpContextAccessor,
-    LinkGenerator linkGenerator) : IAuthService
+    LinkGenerator linkGenerator,
+    IConfiguration configuration) : IAuthService
 {
     public async Task<Response> RegisterAsync(RegisterRequest request)
     {
@@ -319,13 +321,12 @@ public class AuthService(
             }
 
             var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
-
             var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
             var confirmEndpoint =
                 linkGenerator.GetUriByAction(httpContextAccessor.HttpContext, "ConfirmEmail", "Auth");
             var confirmLink = confirmEndpoint + "?userId=" + user.Id + "&token=" + encodedToken;
 
-            var emailSent = await emailService.SendConfirmationLink(request.Email, confirmLink);
+            var emailSent = await emailService.SendEmailConfirmationLink(request.Email, confirmLink);
             if (!emailSent)
             {
                 return new Response
@@ -385,6 +386,64 @@ public class AuthService(
             {
                 IsSuccess = true,
                 Message = Messages.EmailVerified
+            };
+        }
+        catch (Exception)
+        {
+            return new Response
+            {
+                IsSuccess = false,
+                Message = Messages.UnexpectedError,
+                ErrorType = ErrorType.Internal
+            };
+        }
+    }
+
+    public async Task<Response> ForgotPasswordAsync(ForgotPasswordRequest request)
+    {
+        try
+        {
+            var user = await userManager.FindByEmailAsync(request.Email);
+            if (user is null)
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = Messages.UserNotFound,
+                    ErrorType = ErrorType.NotFound
+                };
+            }
+
+            if (httpContextAccessor.HttpContext is null)
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = Messages.UnexpectedError,
+                    ErrorType = ErrorType.Internal
+                };
+            }
+
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+            var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+            var passwordResetRedirectUrl = configuration["RedirectUrl:PasswordReset"];
+            var resetLink = passwordResetRedirectUrl + "?userId=" + user.Id + "&token=" + encodedToken;
+
+            var emailSent = await emailService.SendPasswordResetLink(request.Email, resetLink);
+            if (!emailSent)
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = Messages.UnexpectedError,
+                    ErrorType = ErrorType.Internal
+                };
+            }
+
+            return new Response
+            {
+                IsSuccess = true,
+                Message = Messages.PasswordResetLinkSent
             };
         }
         catch (Exception)
