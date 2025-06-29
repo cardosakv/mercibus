@@ -597,10 +597,11 @@ public class AuthService(
                 };
             }
 
-            var userData = new UserResponse()
+            var userData = new UserInfoResponse()
             {
                 Name = user.Name,
                 Email = user.Email ?? string.Empty,
+                IsEmailVerified = user.EmailConfirmed,
                 Street = user.Street,
                 City = user.City,
                 State = user.State,

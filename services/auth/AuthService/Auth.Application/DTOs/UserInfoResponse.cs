@@ -1,9 +1,9 @@
 namespace Auth.Application.DTOs;
 
 /// <summary>
-/// Represent a get or change user request.
+/// Represent a get user info request.
 /// </summary>
-public class UserResponse
+public class UserInfoResponse
 {
     /// <summary>
     /// User display name.
@@ -14,6 +14,11 @@ public class UserResponse
     /// User email.
     /// </summary>
     public string Email { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Whether email is verified.
+    /// </summary>
+    public bool IsEmailVerified { get; set; } = false;
 
     /// <summary>
     /// Street address.
