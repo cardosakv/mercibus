@@ -8,7 +8,7 @@ namespace Auth.Api.Controllers;
 
 [Route("api/auth")]
 [ApiController]
-public class AuthController(IAuthService authService) : BaseController
+public class AuthController(IAuthService authService, IConfiguration configuration) : BaseController
 {
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
@@ -43,6 +43,9 @@ public class AuthController(IAuthService authService) : BaseController
     public async Task<IActionResult> ConfirmEmail(string userId, string token)
     {
         var response = await authService.ConfirmEmail(userId, token);
-        return HandleResponse(response, HttpContext.Request.Method);
+
+        return !response.IsSuccess
+            ? Redirect(configuration["EmailConfirmRedirect:Fail"] ?? string.Empty)
+            : Redirect(configuration["EmailConfirmRedirect:Success"] ?? string.Empty);
     }
 }
