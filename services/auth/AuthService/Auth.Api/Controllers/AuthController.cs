@@ -88,4 +88,13 @@ public class AuthController(IAuthService authService, IConfiguration configurati
         var response = await authService.GetInfoAsync(userId);
         return HandleResponse(response, HttpContext.Request.Method);
     }
+
+    [HttpPut("info")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> UpdateInfo([FromBody] UpdateUserInfoRequest request)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var response = await authService.UpdateInfoAsync(userId, request);
+        return HandleResponse(response, HttpContext.Request.Method);
+    }
 }

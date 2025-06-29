@@ -12,6 +12,7 @@ public static class Messages
     public const string PasswordResetSuccess = "Password reset successfully.";
     public const string PasswordChanged = "Password changed successfully.";
     public const string EmailVerified = "Email verified successfully.";
+    public const string UserInfoUpdated = "User info updated successfully.";
     public const string EmailAlreadyVerified = "Email is already verified.";
     public const string UserNotFound = "The specified user was not found.";
     public const string PasswordIncorrect = "The password provided is incorrect.";

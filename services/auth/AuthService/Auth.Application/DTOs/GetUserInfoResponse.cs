@@ -1,9 +1,9 @@
 namespace Auth.Application.DTOs;
 
 /// <summary>
-/// Represent a get user info request.
+/// Represent a get user info response.
 /// </summary>
-public class UserInfoResponse
+public class GetUserInfoResponse
 {
     /// <summary>
     /// User display name.

@@ -597,7 +597,7 @@ public class AuthService(
                 };
             }
 
-            var userData = new UserInfoResponse()
+            var userData = new GetUserInfoResponse
             {
                 Name = user.Name,
                 Email = user.Email ?? string.Empty,
@@ -619,6 +619,74 @@ public class AuthService(
         {
             logger.LogError(ex.Message);
 
+            return new Response
+            {
+                IsSuccess = false,
+                Message = Messages.UnexpectedError,
+                ErrorType = ErrorType.Internal
+            };
+        }
+    }
+
+    public async Task<Response> UpdateInfoAsync(string? userId, UpdateUserInfoRequest request)
+    {
+        try
+        {
+            await transactionService.BeginAsync();
+
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = Messages.UserNotFound,
+                    ErrorType = ErrorType.NotFound
+                };
+            }
+
+            var user = await userManager.FindByIdAsync(userId);
+            if (user is null)
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = Messages.UserNotFound,
+                    ErrorType = ErrorType.NotFound
+                };
+            }
+
+            user.Name = request.Name;
+            user.Street = request.Street;
+            user.City = request.City;
+            user.State = request.State;
+            user.Country = request.Country;
+            user.PostalCode = request.PostalCode;
+
+            var updateResult = await userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                var error = updateResult.Errors.First();
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = error.Description,
+                    ErrorType = IdentityErrorMapper.MapToErrorType(error.Code)
+                };
+            }
+
+            await transactionService.CommitAsync();
+
+            return new Response
+            {
+                IsSuccess = true,
+                Message = Messages.UserInfoUpdated
+            };
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex.Message);
+
+            await transactionService.RollbackAsync();
             return new Response
             {
                 IsSuccess = false,

@@ -37,6 +37,7 @@ try
     builder.Services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
     builder.Services.AddValidatorsFromAssemblyContaining<SendConfirmationEmailRequestValidator>();
     builder.Services.AddValidatorsFromAssemblyContaining<ForgotPasswordRequestValidator>();
+    builder.Services.AddValidatorsFromAssemblyContaining<UpdateUserInfoRequestValidator>();
     builder.Services.AddFluentValidationAutoValidation(config =>
         config.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
 

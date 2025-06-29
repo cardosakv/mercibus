@@ -76,6 +76,14 @@ public interface IAuthService
     /// Gets the logged-in user's information.
     /// </summary>
     /// <param name="userId">The user ID of the user.</param>
-    /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
+    /// <returns><see cref="Response"/> with the user info.</returns>
     Task<Response> GetInfoAsync(string? userId);
+
+    /// <summary>
+    /// Updates the logged-in user's information.
+    /// </summary>
+    /// <param name="userId">User ID.</param>
+    /// <param name="request">The request containing the user info.</param>
+    /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
+    Task<Response> UpdateInfoAsync(string? userId, UpdateUserInfoRequest request);
 }
