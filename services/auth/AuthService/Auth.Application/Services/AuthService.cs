@@ -353,8 +353,10 @@ public class AuthService(
                 Message = Messages.EmailConfirmationSent
             };
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            logger.LogError(ex.Message);
+
             return new Response
             {
                 IsSuccess = false,
@@ -398,8 +400,10 @@ public class AuthService(
                 Message = Messages.EmailVerified
             };
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            logger.LogError(ex.Message);
+
             return new Response
             {
                 IsSuccess = false,
