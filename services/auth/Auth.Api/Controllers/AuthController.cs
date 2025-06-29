@@ -66,7 +66,7 @@ public class AuthController(IAuthService authService, IConfiguration configurati
     }
 
     [HttpGet("confirm-email")]
-    [ProducesResponseType(typeof(StandardResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status302Found)]
     [ProducesResponseType(typeof(BadRequestResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(StandardResponse), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> ConfirmEmail(string userId, string token)
