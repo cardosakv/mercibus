@@ -18,115 +18,122 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add logging.
-builder.Services.AddTransient<LoggingMiddleware>();
-
-// Add services to the container.
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<ITokenService, JwtTokenService>();
-builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<ITransactionService, TransactionService>();
-builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-
-// Add validators.
-builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<SendConfirmationEmailRequestValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<ForgotPasswordRequestValidator>();
-builder.Services.AddFluentValidationAutoValidation(config =>
-    config.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
-
-// Add identity services.
-builder.Services.AddIdentityCore<User>()
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<AppDbContext>()
-    .AddTokenProvider<DataProtectorTokenProvider<User>>("Default")
-    .AddDefaultTokenProviders();
-
-// Add database context.
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// Add email provider.
-builder.Services.AddFluentEmail(builder.Configuration["Email:Sender"])
-    .AddRazorRenderer()
-    .AddSmtpSender(new SmtpClient(builder.Configuration["Email:Server"])
-    {
-        EnableSsl = true,
-        Port = Convert.ToInt32(builder.Configuration["Email:Port"]),
-        Credentials = new NetworkCredential(builder.Configuration["Email:Username"],
-            builder.Configuration["Email:Password"])
-    });
-
-// Add authentication.
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey =
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? string.Empty))
-        };
-    });
-
-// Add swagger.
-builder.Services.AddSwaggerGen(options =>
+try
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Auth API", Version = "v1" });
+    var builder = WebApplication.CreateBuilder(args);
 
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Description = "JWT Authorization header using the Bearer scheme.",
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Reference = new OpenApiReference
-        {
-            Type = ReferenceType.SecurityScheme,
-            Id = "Bearer"
-        }
-    });
+    // Add logging.
+    builder.Services.AddTransient<LoggingMiddleware>();
 
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+    // Add services to the container.
+    builder.Services.AddScoped<IAuthService, AuthService>();
+    builder.Services.AddScoped<ITokenService, JwtTokenService>();
+    builder.Services.AddScoped<IEmailService, EmailService>();
+    builder.Services.AddScoped<ITransactionService, TransactionService>();
+    builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+
+    // Add validators.
+    builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
+    builder.Services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
+    builder.Services.AddValidatorsFromAssemblyContaining<SendConfirmationEmailRequestValidator>();
+    builder.Services.AddValidatorsFromAssemblyContaining<ForgotPasswordRequestValidator>();
+    builder.Services.AddFluentValidationAutoValidation(config =>
+        config.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
+
+    // Add identity services.
+    builder.Services.AddIdentityCore<User>()
+        .AddRoles<IdentityRole>()
+        .AddEntityFrameworkStores<AppDbContext>()
+        .AddTokenProvider<DataProtectorTokenProvider<User>>("Default")
+        .AddDefaultTokenProviders();
+
+    // Add database context.
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+    // Add email provider.
+    builder.Services.AddFluentEmail(builder.Configuration["Email:Sender"])
+        .AddRazorRenderer()
+        .AddSmtpSender(new SmtpClient(builder.Configuration["Email:Server"])
         {
-            new OpenApiSecurityScheme
+            EnableSsl = true,
+            Port = Convert.ToInt32(builder.Configuration["Email:Port"]),
+            Credentials = new NetworkCredential(builder.Configuration["Email:Username"],
+                builder.Configuration["Email:Password"])
+        });
+
+    // Add authentication.
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
             {
-                Reference = new OpenApiReference
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                IssuerSigningKey =
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? string.Empty))
+            };
+        });
+
+    // Add swagger.
+    builder.Services.AddSwaggerGen(options =>
+    {
+        options.SwaggerDoc("v1", new OpenApiInfo { Title = "Auth API", Version = "v1" });
+
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Description = "JWT Authorization header using the Bearer scheme.",
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Reference = new OpenApiReference
+            {
+                Type = ReferenceType.SecurityScheme,
+                Id = "Bearer"
+            }
+        });
+
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new List<string>()
-        }
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                new List<string>()
+            }
+        });
     });
-});
 
-builder.Services.AddAuthorization();
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddHttpContextAccessor();
+    builder.Services.AddAuthorization();
+    builder.Services.AddControllers();
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddHttpContextAccessor();
 
-var app = builder.Build();
+    var app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
-app.UseMiddleware<LoggingMiddleware>();
+    app.UseHttpsRedirection();
+    app.UseAuthentication();
+    app.UseAuthorization();
+    app.MapControllers();
+    app.UseMiddleware<LoggingMiddleware>();
 
-app.Run();
+    app.Run();
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}
