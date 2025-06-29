@@ -89,7 +89,7 @@ public class AuthController(IAuthService authService, IConfiguration configurati
         return HandleResponse(response, HttpContext.Request.Method);
     }
 
-    [HttpPut("info")]
+    [HttpPost("info")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> UpdateInfo([FromBody] UpdateUserInfoRequest request)
     {
