@@ -456,4 +456,53 @@ public class AuthService(
             };
         }
     }
+
+    public async Task<Response> ResetPasswordAsync(ResetPasswordRequest request)
+    {
+        try
+        {
+            await transactionService.BeginAsync();
+
+            var user = await userManager.FindByIdAsync(request.UserId);
+            if (user is null)
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = Messages.UserNotFound,
+                    ErrorType = ErrorType.NotFound
+                };
+            }
+
+            var changeResult = await userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
+            if (!changeResult.Succeeded)
+            {
+                var error = changeResult.Errors.First();
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = error.Description,
+                    ErrorType = IdentityErrorMapper.MapToErrorType(error.Code)
+                };
+            }
+
+            await transactionService.CommitAsync();
+
+            return new Response
+            {
+                IsSuccess = true,
+                Message = Messages.PasswordResetSuccess
+            };
+        }
+        catch (Exception)
+        {
+            await transactionService.RollbackAsync();
+            return new Response
+            {
+                IsSuccess = false,
+                Message = Messages.UnexpectedError,
+                ErrorType = ErrorType.Internal
+            };
+        }
+    }
 }

@@ -57,4 +57,11 @@ public interface IAuthService
     /// <param name="request">The request containing the user email address.</param>
     /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
     Task<Response> ForgotPasswordAsync(ForgotPasswordRequest request);
+
+    /// <summary>
+    /// Resets the user password with a new one.
+    /// </summary>
+    /// <param name="request">The request containing the token and new password.</param>
+    /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
+    Task<Response> ResetPasswordAsync(ResetPasswordRequest request);
 }
