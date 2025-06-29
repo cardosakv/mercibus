@@ -10,6 +10,7 @@ public static class Messages
     public const string EmailConfirmationSent = "Email confirmation sent successfully.";
     public const string PasswordResetLinkSent = "Password reset link sent successfully.";
     public const string PasswordResetSuccess = "Password reset successfully.";
+    public const string PasswordChanged = "Password changed successfully.";
     public const string EmailVerified = "Email verified successfully.";
     public const string EmailAlreadyVerified = "Email is already verified.";
     public const string UserNotFound = "The specified user was not found.";

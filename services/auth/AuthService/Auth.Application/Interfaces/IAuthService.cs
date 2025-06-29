@@ -64,4 +64,11 @@ public interface IAuthService
     /// <param name="request">The request containing the token and new password.</param>
     /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
     Task<Response> ResetPasswordAsync(ResetPasswordRequest request);
+
+    /// <summary>
+    /// Changes the current password of the user with a new one.
+    /// </summary>
+    /// <param name="request">The request containing the current and new password.</param>
+    /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
+    Task<Response> ChangePasswordAsync(ChangePasswordRequest request);
 }

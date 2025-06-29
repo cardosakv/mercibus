@@ -70,4 +70,12 @@ public class AuthController(IAuthService authService, IConfiguration configurati
         var response = await authService.ResetPasswordAsync(request);
         return HandleResponse(response, HttpContext.Request.Method);
     }
+
+    [HttpPost("change-password")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+    {
+        var response = await authService.ChangePasswordAsync(request);
+        return HandleResponse(response, HttpContext.Request.Method);
+    }
 }
