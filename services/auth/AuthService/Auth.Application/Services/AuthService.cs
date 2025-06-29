@@ -152,7 +152,7 @@ public class AuthService(
             await transactionService.BeginAsync();
 
             var persistedToken = await refreshTokenRepository.RetrieveTokenAsync(request.RefreshToken);
-            if (persistedToken is null)
+            if (persistedToken is null || persistedToken.IsRevoked)
             {
                 return new Response
                 {
@@ -201,7 +201,7 @@ public class AuthService(
             await transactionService.BeginAsync();
 
             var persistedToken = await refreshTokenRepository.RetrieveTokenAsync(request.RefreshToken);
-            if (persistedToken is null)
+            if (persistedToken is null || persistedToken.IsRevoked)
             {
                 return new Response
                 {
