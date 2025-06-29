@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Auth.Application.Services;
 
@@ -20,7 +21,8 @@ public class AuthService(
     IRefreshTokenRepository refreshTokenRepository,
     IHttpContextAccessor httpContextAccessor,
     LinkGenerator linkGenerator,
-    IConfiguration configuration) : IAuthService
+    IConfiguration configuration,
+    ILogger<IAuthService> logger) : IAuthService
 {
     public async Task<Response> RegisterAsync(RegisterRequest request)
     {
@@ -68,8 +70,10 @@ public class AuthService(
                 Message = Messages.UserRegistered
             };
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            logger.LogError(ex.Message);
+
             await transactionService.RollbackAsync();
             return new Response
             {
@@ -135,8 +139,10 @@ public class AuthService(
                 }
             };
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            logger.LogError(ex.Message);
+
             await transactionService.RollbackAsync();
             return new Response
             {
@@ -184,8 +190,10 @@ public class AuthService(
                 Message = Messages.UserLoggedOut
             };
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            logger.LogError(ex.Message);
+
             await transactionService.RollbackAsync();
             return new Response
             {
@@ -273,8 +281,10 @@ public class AuthService(
                 }
             };
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            logger.LogError(ex.Message);
+
             await transactionService.RollbackAsync();
             return new Response
             {
@@ -446,8 +456,10 @@ public class AuthService(
                 Message = Messages.PasswordResetLinkSent
             };
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            logger.LogError(ex.Message);
+
             return new Response
             {
                 IsSuccess = false,
@@ -494,8 +506,10 @@ public class AuthService(
                 Message = Messages.PasswordResetSuccess
             };
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            logger.LogError(ex.Message);
+
             await transactionService.RollbackAsync();
             return new Response
             {
@@ -544,8 +558,10 @@ public class AuthService(
                 Message = Messages.PasswordChanged
             };
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            logger.LogError(ex.Message);
+
             await transactionService.RollbackAsync();
             return new Response
             {

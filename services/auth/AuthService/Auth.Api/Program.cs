@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Text;
 using Auth.Api.Filters;
+using Auth.Api.Middlewares;
 using Auth.Application.Interfaces;
 using Auth.Application.Services;
 using Auth.Application.Validators;
@@ -18,6 +19,9 @@ using Microsoft.OpenApi.Models;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add logging.
+builder.Services.AddTransient<LoggingMiddleware>();
 
 // Add services to the container.
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -123,5 +127,6 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.UseMiddleware<LoggingMiddleware>();
 
 app.Run();
