@@ -249,6 +249,16 @@ public class AuthService(
                 };
             }
 
+            if (user.EmailConfirmed)
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = Messages.EmailAlreadyVerified,
+                    ErrorType = ErrorType.Conflict
+                };
+            }
+
             if (httpContextAccessor.HttpContext is null)
             {
                 return new Response
