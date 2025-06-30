@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <PreserveCompilationContext>true</PreserveCompilationContext>
+        <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="FluentEmail.Razor" Version="3.0.2"/>
+        <PackageReference Include="FluentEmail.Smtp" Version="3.0.2"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.17"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.17"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Auth.Application\Auth.Application.csproj"/>
+        <ProjectReference Include="..\Auth.Domain\Auth.Domain.csproj"/>
+    </ItemGroup>
+
+</Project>
