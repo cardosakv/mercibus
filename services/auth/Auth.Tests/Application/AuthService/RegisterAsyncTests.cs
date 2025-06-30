@@ -21,7 +21,7 @@ public class RegisterAsyncTests : BaseTests
     };
 
     [Fact]
-    public async Task ReturnsSuccess_WhenUserCreatedAndRoleAdded()
+    public async Task Success_WhenUserCreatedAndRoleAdded()
     {
         // Arrange
         UserManagerMock
@@ -43,7 +43,7 @@ public class RegisterAsyncTests : BaseTests
     }
 
     [Fact]
-    public async Task ReturnsFail_WhenUserCreatedAndNoRoleAdded()
+    public async Task Fail_WhenUserCreatedAndNoRoleAdded()
     {
         // Arrange
         UserManagerMock
@@ -65,7 +65,7 @@ public class RegisterAsyncTests : BaseTests
     }
 
     [Fact]
-    public async Task ReturnsFail_WhenUserNotCreated()
+    public async Task Fail_WhenUserNotCreated()
     {
         // Arrange
         UserManagerMock
@@ -84,7 +84,7 @@ public class RegisterAsyncTests : BaseTests
     }
 
     [Fact]
-    public async Task ReturnsFail_WhenExceptionOccurs()
+    public async Task Fail_WhenExceptionOccurs()
     {
         // Arrange
         const string exceptionMessage = "Create user exception.";
