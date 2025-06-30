@@ -21,12 +21,14 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="Content\EmailTemplate.cshtml"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <Content Include="..\.dockerignore">
             <Link>.dockerignore</Link>
+        </Content>
+        <Content Update="Content\ConfirmEmailTemplate.cshtml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Update="Content\PasswordResetTemplate.cshtml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
 
