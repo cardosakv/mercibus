@@ -1,4 +1,4 @@
-name: Auth Service Build
+name: Auth Service Test
 
 on:
   push:
@@ -8,31 +8,31 @@ on:
     paths:
       - 'services/auth/**'
   pull_request:
-    branches: 
+    branches:
       - main
       - develop
     paths:
       - 'services/auth/**'
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     
-    defaults: 
+    defaults:
       run:
         working-directory: ./services/auth/
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
-          
+
       - name: Restore dependencies
         run: dotnet restore
-        
+
       - name: Build
-        run: dotnet build --no-restore
+        run: dotnet test --no-restore --verbosity normal

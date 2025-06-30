@@ -37,7 +37,7 @@ public class AuthController(IAuthService authService, IConfiguration configurati
     [ProducesResponseType(typeof(StandardResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(StandardResponse), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(StandardResponse), StatusCodes.Status403Forbidden)]
-    public async Task<IActionResult> Login([FromBody] LogoutRequest request)
+    public async Task<IActionResult> Logout([FromBody] LogoutRequest request)
     {
         var response = await authService.LogoutAsync(request);
         return HandleResponse(response, HttpContext.Request.Method);
