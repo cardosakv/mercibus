@@ -7,7 +7,7 @@ public class EmailService(IFluentEmail fluentEmail) : IEmailService
 {
     public async Task<bool> SendEmailConfirmationLink(string email, string confirmationLink)
     {
-        var template = Directory.GetCurrentDirectory() + @"\Content\ConfirmEmailTemplate.cshtml";
+        var template = Path.Combine(Directory.GetCurrentDirectory(), "Content", "ConfirmEmailTemplate.cshtml");
         var response = await fluentEmail
             .To(email)
             .Subject("Mercibus Email Confirmation")
@@ -19,7 +19,7 @@ public class EmailService(IFluentEmail fluentEmail) : IEmailService
 
     public async Task<bool> SendPasswordResetLink(string email, string passwordResetLink)
     {
-        var template = Directory.GetCurrentDirectory() + @"\Content\PasswordResetTemplate.cshtml";
+        var template = Path.Combine(Directory.GetCurrentDirectory(), "Content", "PasswordResetTemplate.cshtml");
         var response = await fluentEmail
             .To(email)
             .Subject("Mercibus Password Reset")
