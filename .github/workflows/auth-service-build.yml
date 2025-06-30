@@ -3,8 +3,12 @@ name: Auth Service Build
 on:
   push:
     branches: [ "main", "develop" ]
+    paths:
+      - 'services/auth/**'
   pull_request:
     branches: [ "main", "develop" ]
+    paths:
+      - 'services/auth/**'
 
 jobs:
   build:
