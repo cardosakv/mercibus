@@ -24,9 +24,11 @@ public class RegisterAsyncTests : BaseTests
     public async Task ReturnsSuccess_WhenUserCreatedAndRoleAdded()
     {
         // Arrange
-        UserManagerMock.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
+        UserManagerMock
+            .Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
-        UserManagerMock.Setup(x => x.AddToRoleAsync(It.IsAny<User>(), It.IsAny<string>()))
+        UserManagerMock
+            .Setup(x => x.AddToRoleAsync(It.IsAny<User>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
 
         // Act
@@ -44,9 +46,11 @@ public class RegisterAsyncTests : BaseTests
     public async Task ReturnsFail_WhenUserCreatedAndNoRoleAdded()
     {
         // Arrange
-        UserManagerMock.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
+        UserManagerMock
+            .Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
-        UserManagerMock.Setup(x => x.AddToRoleAsync(It.IsAny<User>(), It.IsAny<string>()))
+        UserManagerMock
+            .Setup(x => x.AddToRoleAsync(It.IsAny<User>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Failed());
 
         // Act
@@ -64,7 +68,8 @@ public class RegisterAsyncTests : BaseTests
     public async Task ReturnsFail_WhenUserNotCreated()
     {
         // Arrange
-        UserManagerMock.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
+        UserManagerMock
+            .Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Failed());
 
         // Act
@@ -83,7 +88,8 @@ public class RegisterAsyncTests : BaseTests
     {
         // Arrange
         const string exceptionMessage = "Create user exception.";
-        UserManagerMock.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
+        UserManagerMock
+            .Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
             .ThrowsAsync(new Exception(exceptionMessage));
 
         // Act
