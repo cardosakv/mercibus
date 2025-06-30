@@ -24,12 +24,17 @@
         <Content Include="..\.dockerignore">
             <Link>.dockerignore</Link>
         </Content>
-        <Content Update="Content\ConfirmEmailTemplate.cshtml">
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Remove="Content\ConfirmEmailTemplate.cshtml"/>
+        <None Include="Content\ConfirmEmailTemplate.cshtml">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <Content Update="Content\PasswordResetTemplate.cshtml">
+        </None>
+        <Content Remove="Content\PasswordResetTemplate.cshtml"/>
+        <None Include="Content\PasswordResetTemplate.cshtml">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
+        </None>
     </ItemGroup>
 
 </Project>
