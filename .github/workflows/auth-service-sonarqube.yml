@@ -3,11 +3,18 @@ name: Auth Service SonarQube
 on:
   push:
     branches:
-      ["main", "develop"]
+      - main
+      - develop
     paths:
       - 'services/auth/**'
   pull_request:
-    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - develop
+    types:
+      - opened
+      - synchronize
+      - reopened
     paths:
       - 'services/auth/**'
     

@@ -2,11 +2,15 @@ name: Auth Service Test
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches:
+      - main
+      - develop
     paths:
       - 'services/auth/**'
   pull_request:
-    branches: [ "main", "develop" ]
+    branches:
+      - main
+      - develop
     paths:
       - 'services/auth/**'
 
