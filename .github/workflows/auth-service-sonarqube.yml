@@ -33,50 +33,38 @@ jobs:
           java-version: 17
           distribution: 'zulu' 
       
-      - name: Checkout code 
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 
-          
-      - name: Cache SonarQube Cloud packages
-        uses: actions/cache@v4
-        with:
-          path: ~\sonar\cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-          
-      - name: Cache SonarQube Cloud scanner
-        id: cache-sonar-scanner
-        uses: actions/cache@v4
-        with:
-          path: .\.sonar\scanner
-          key: ${{ runner.os }}-sonar-scanner
-          restore-keys: ${{ runner.os }}-sonar-scanner
-          
-      - name: Install SonarQube Cloud scanner
-        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
-        shell: powershell
-        run: |
-          New-Item -Path .\.sonar\scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-          
-      - name: Build and analyze with coverage
+      - name: Install Coverlet globally
+        run: dotnet tool install -g coverlet.console
+
+      - name: Add tools to PATH
+        run: echo "$HOME/.dotnet/tools" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+
+      - name: Install SonarScanner CLI
+        run: dotnet tool install dotnet-sonarscanner --tool-path .sonar
+
+      - name: SonarScanner Begin
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin `
+          .sonar/dotnet-sonarscanner begin `
             /k:"cardosakv_mercibus" `
             /o:"cardosakv" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.host.url="https://sonarcloud.io" `
-            /d:sonar.cs.opencover.reportsPaths="coverage.opencover.xml"
+            /d:sonar.cs.opencover.reportsPaths="coverage.xml"
 
-          dotnet build Auth.Api/Auth.Api.csproj
+      - name: Build
+        run: dotnet build Auth.Api/Auth.Api.csproj --no-incremental
 
-          dotnet test Auth.Tests/Auth.Tests.csproj `
-            /p:CollectCoverage=true `
-            /p:CoverletOutputFormat=opencover `
-            /p:CoverletOutput=../coverage.opencover.xml
+      - name: Run Coverlet Console
+        run: |
+          coverlet Auth.Tests\bin\Debug\net8.0\Auth.Tests.dll `
+            --target "dotnet" `
+            --targetargs "test Auth.Tests\Auth.Tests.csproj --no-build" `
+            -f opencover `
+            -o "coverage.xml"
 
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+      - name: SonarScanner End
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: .sonar/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
