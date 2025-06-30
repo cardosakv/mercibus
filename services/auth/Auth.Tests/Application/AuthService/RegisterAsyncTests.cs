@@ -1,3 +1,4 @@
+using Auth.Application.Common;
 using Auth.Application.DTOs;
 using Auth.Domain.Common;
 using Auth.Domain.Entities;
@@ -40,6 +41,7 @@ public class RegisterAsyncTests : BaseTests
         UserManagerMock.Verify(x => x.AddToRoleAsync(It.IsAny<User>(), Roles.Customer), Times.Once);
         TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Once);
         response.IsSuccess.Should().BeTrue();
+        response.Data.Should().BeNull();
     }
 
     [Fact]
@@ -62,6 +64,7 @@ public class RegisterAsyncTests : BaseTests
         UserManagerMock.Verify(x => x.AddToRoleAsync(It.IsAny<User>(), Roles.Customer), Times.Once);
         TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Never);
         response.IsSuccess.Should().BeFalse();
+        response.Data.Should().BeNull();
     }
 
     [Fact]
@@ -81,6 +84,7 @@ public class RegisterAsyncTests : BaseTests
         UserManagerMock.Verify(x => x.AddToRoleAsync(It.IsAny<User>(), Roles.Customer), Times.Never);
         TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Never);
         response.IsSuccess.Should().BeFalse();
+        response.Data.Should().BeNull();
     }
 
     [Fact]
@@ -107,5 +111,7 @@ public class RegisterAsyncTests : BaseTests
                 It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
             Times.Once);
         response.IsSuccess.Should().BeFalse();
+        response.Data.Should().BeNull();
+        response.ErrorType.Should().Be(ErrorType.Internal);
     }
 }

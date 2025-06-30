@@ -32,14 +32,19 @@ public abstract class BaseTests
         UserManagerMock = new Mock<UserManager<User>>(userStoreMock.Object, null, null, null, null, null, null, null, null);
 
         TransactionServiceMock = new Mock<ITransactionService>();
-        TransactionServiceMock.Setup(x => x.BeginAsync()).Returns(Task.CompletedTask);
-        TransactionServiceMock.Setup(x => x.CommitAsync()).Returns(Task.CompletedTask);
-        TransactionServiceMock.Setup(x => x.RollbackAsync()).Returns(Task.CompletedTask);
+        TransactionServiceMock
+            .Setup(x => x.BeginAsync())
+            .Returns(Task.CompletedTask);
+        TransactionServiceMock
+            .Setup(x => x.CommitAsync())
+            .Returns(Task.CompletedTask);
+        TransactionServiceMock
+            .Setup(x => x.RollbackAsync())
+            .Returns(Task.CompletedTask);
 
         TokenServiceMock = new Mock<ITokenService>();
-
-        EmailServiceMock = new Mock<IEmailService>();
         RefreshTokenRepositoryMock = new Mock<IRefreshTokenRepository>();
+        EmailServiceMock = new Mock<IEmailService>();
         HttpContextAccessorMock = new Mock<IHttpContextAccessor>();
         LinkGeneratorMock = new Mock<LinkGenerator>();
         ConfigurationMock = new Mock<IConfiguration>();
