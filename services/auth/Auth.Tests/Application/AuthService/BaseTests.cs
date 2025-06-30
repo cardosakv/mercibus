@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 
 namespace Auth.Tests.Application.AuthService;
@@ -29,7 +30,17 @@ public abstract class BaseTests
     protected BaseTests()
     {
         var userStoreMock = new Mock<IUserStore<User>>();
-        UserManagerMock = new Mock<UserManager<User>>(userStoreMock.Object, null, null, null, null, null, null, null, null);
+        UserManagerMock = new Mock<UserManager<User>>(
+            userStoreMock.Object,
+            new Mock<IOptions<IdentityOptions>>().Object,
+            new Mock<IPasswordHasher<User>>().Object,
+            Array.Empty<IUserValidator<User>>(),
+            Array.Empty<IPasswordValidator<User>>(),
+            new Mock<ILookupNormalizer>().Object,
+            new Mock<IdentityErrorDescriber>().Object,
+            new Mock<IServiceProvider>().Object,
+            new Mock<ILogger<UserManager<User>>>().Object
+        );
 
         TransactionServiceMock = new Mock<ITransactionService>();
         TransactionServiceMock
