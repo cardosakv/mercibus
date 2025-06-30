@@ -67,6 +67,9 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
+      - name: Build test project
+        run: dotnet build ./Auth.Tests/Auth.Tests.csproj --configuration Debug
+
       - name: Run tests with coverage
         run: |
           coverlet ./Auth.Tests/bin/Debug/net8.0/Auth.Tests.dll `
