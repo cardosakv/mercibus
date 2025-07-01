@@ -1,7 +1,7 @@
 namespace Auth.Api.Middlewares;
 
 /// <summary>
-/// Logging middleware for requests and responses.
+/// Logging middleware for request and response.
 /// </summary>
 public class LoggingMiddleware(ILogger<LoggingMiddleware> logger) : IMiddleware
 {

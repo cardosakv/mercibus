@@ -84,10 +84,19 @@ jobs:
             --collect:"XPlat Code Coverage" `
             --results-directory ./TestResults
 
-      - name: Display test result files (debug)
+      - name: Move coverage report to root
         shell: powershell
         run: |
-          Get-ChildItem -Recurse ./TestResults
+          $coverage = Get-ChildItem -Recurse -Filter "coverage.opencover.xml"
+          if ($coverage) {
+            Copy-Item $coverage.FullName "./coverage.opencover.xml"
+          } else {
+            Write-Error "coverage.opencover.xml not found!"
+          }
+
+      - name: List coverage files (debug)
+        shell: powershell
+        run: Get-ChildItem -Recurse -Filter "coverage.opencover.xml"
 
       - name: End SonarCloud analysis
         env:
