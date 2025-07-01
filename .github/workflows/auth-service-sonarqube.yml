@@ -1,0 +1,99 @@
+name: Auth Service SonarQube
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'services/auth/**'
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'services/auth/**'
+
+jobs:
+  analyze:
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        working-directory: ./services/auth/
+
+    steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'zulu'
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Cache SonarCloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v4
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+
+      - name: Install SonarCloud scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+
+      - name: Begin SonarCloud analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: powershell
+        run: |
+          .\.sonar\scanner\dotnet-sonarscanner begin `
+            /k:"cardosakv_mercibus" `
+            /o:"cardosakv" `
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+            /d:sonar.host.url="https://sonarcloud.io" `
+            /d:"sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml" `
+            /d:"sonar.coverage.exclusions=**/Auth.Infrastructure/**/*.cs,**/Auth.Domain/**/*.cs,**/Auth.Api/Program.cs,**/Auth.Api/Middlewares/**/*.cs,**/Auth.Application/Common/**/*.cs,**/Auth.Validators/**/*.cs"
+
+      - name: Restore and build
+        shell: powershell
+        run: |
+          dotnet restore
+          dotnet build --no-restore --configuration Release
+
+      - name: Install Coverlet CLI
+        shell: powershell
+        run: dotnet tool install --global coverlet.console
+
+      - name: Run tests with OpenCover coverage
+        shell: powershell
+        run: |
+          coverlet ./Auth.Tests/bin/Release/net8.0/Auth.Tests.dll `
+            --target "dotnet" `
+            --targetargs "test ./Auth.Tests/Auth.Tests.csproj --no-build --configuration Release" `
+            --format opencover `
+            --output "./TestResults/coverage.opencover.xml"
+
+      - name: List coverage files (debug)
+        shell: powershell
+        run: Get-ChildItem -Recurse -Filter "coverage.opencover.xml"
+
+      - name: End SonarCloud analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: powershell
+        run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
