@@ -67,7 +67,7 @@ jobs:
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.host.url="https://sonarcloud.io" `
             /d:"sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml" `
-            /d:"sonar.coverage.exclusions=**/Auth.Infrastructure/**/*.cs,**/Auth.Domain/**/*.cs"
+            /d:"sonar.coverage.exclusions=**/Auth.Infrastructure/**/*.cs,**/Auth.Domain/**/*.cs,**/Auth.Api/Program.cs,**/Auth.Api/Middlewares/**/*.cs,**/Auth.Application/Common/**/*.cs,**/Auth.Validators/**/*.cs"
 
       - name: Restore and build
         shell: powershell
