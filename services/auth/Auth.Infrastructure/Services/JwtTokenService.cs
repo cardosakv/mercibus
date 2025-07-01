@@ -13,16 +13,21 @@ public class JwtTokenService(IConfiguration configuration) : ITokenService
     public (string, long) CreateAccessToken(User user, string role)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes(configuration["Jwt:Key"] ?? string.Empty);
+        var jwtKey = configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT secret key is not configured.");
+        var key = Encoding.UTF8.GetBytes(jwtKey);
 
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.Id),
-            new(ClaimTypes.Role, role)
+            new(ClaimTypes.Role, role),
+            new(JwtRegisteredClaimNames.Sub, user.Id),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
+
         };
 
         var expireMillis = Convert.ToInt64(configuration["Jwt:ExpireMillis"]);
-        var expireTime = DateTime.Now.AddMilliseconds(expireMillis);
+        var expireTime = DateTime.UtcNow.AddMilliseconds(expireMillis);
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {

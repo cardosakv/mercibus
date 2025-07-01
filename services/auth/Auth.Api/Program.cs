@@ -131,7 +131,7 @@ try
     app.MapControllers();
     app.UseMiddleware<LoggingMiddleware>();
 
-    app.Run();
+    await app.RunAsync();
 }
 catch (Exception ex)
 {

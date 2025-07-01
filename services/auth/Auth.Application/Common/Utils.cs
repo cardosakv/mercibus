@@ -15,9 +15,8 @@ public static class Utils
     /// <returns>Hashed value of the string.</returns>
     public static string HashString(string value)
     {
-        using var sha = SHA256.Create();
         var bytes = Encoding.UTF8.GetBytes(value);
-        var hash = sha.ComputeHash(bytes);
+        var hash = SHA256.HashData(bytes);
         return Convert.ToBase64String(hash);
     }
 

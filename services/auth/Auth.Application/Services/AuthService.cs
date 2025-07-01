@@ -72,7 +72,7 @@ public class AuthService(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex.Message);
+            logger.LogError(ex, Messages.ExceptionOccured);
 
             await transactionService.RollbackAsync();
             return new Response
@@ -123,7 +123,7 @@ public class AuthService(
                 };
             }
 
-            var (accessToken, expiresIn) = tokenService.CreateAccessToken(user, role.First());
+            var (accessToken, expiresIn) = tokenService.CreateAccessToken(user, role[0]);
             var refreshToken = await refreshTokenRepository.CreateTokenAsync(user.Id);
 
             await transactionService.CommitAsync();
@@ -141,7 +141,7 @@ public class AuthService(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex.Message);
+            logger.LogError(ex, Messages.ExceptionOccured);
 
             await transactionService.RollbackAsync();
             return new Response
@@ -192,7 +192,7 @@ public class AuthService(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex.Message);
+            logger.LogError(ex, Messages.ExceptionOccured);
 
             await transactionService.RollbackAsync();
             return new Response
@@ -265,7 +265,7 @@ public class AuthService(
                 };
             }
 
-            var (newAccessToken, expiresIn) = tokenService.CreateAccessToken(user, role.First());
+            var (newAccessToken, expiresIn) = tokenService.CreateAccessToken(user, role[0]);
             var newRefreshToken = await refreshTokenRepository.RotateTokenAsync(persistedToken);
 
             await transactionService.CommitAsync();
@@ -283,7 +283,7 @@ public class AuthService(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex.Message);
+            logger.LogError(ex, Messages.ExceptionOccured);
 
             await transactionService.RollbackAsync();
             return new Response
@@ -355,7 +355,7 @@ public class AuthService(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex.Message);
+            logger.LogError(ex, Messages.ExceptionOccured);
 
             return new Response
             {
@@ -402,7 +402,7 @@ public class AuthService(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex.Message);
+            logger.LogError(ex, Messages.ExceptionOccured);
 
             return new Response
             {
@@ -462,7 +462,7 @@ public class AuthService(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex.Message);
+            logger.LogError(ex, Messages.ExceptionOccured);
 
             return new Response
             {
@@ -512,7 +512,7 @@ public class AuthService(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex.Message);
+            logger.LogError(ex, Messages.ExceptionOccured);
 
             await transactionService.RollbackAsync();
             return new Response
@@ -564,7 +564,7 @@ public class AuthService(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex.Message);
+            logger.LogError(ex, Messages.ExceptionOccured);
 
             await transactionService.RollbackAsync();
             return new Response
@@ -621,7 +621,7 @@ public class AuthService(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex.Message);
+            logger.LogError(ex, Messages.ExceptionOccured);
 
             return new Response
             {
@@ -688,7 +688,7 @@ public class AuthService(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex.Message);
+            logger.LogError(ex, Messages.ExceptionOccured);
 
             await transactionService.RollbackAsync();
             return new Response

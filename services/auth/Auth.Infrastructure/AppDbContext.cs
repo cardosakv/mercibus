@@ -12,12 +12,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
 {
     public DbSet<RefreshToken> RefreshTokens { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        base.OnModelCreating(modelBuilder);
+        base.OnModelCreating(builder);
 
         // Configure User entity properties 
-        modelBuilder.Entity<User>(entity =>
+        builder.Entity<User>(entity =>
         {
             entity.Property(u => u.Name);
             entity.Property(u => u.Street);
@@ -29,13 +29,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
         });
 
         // Rename default identity tables
-        modelBuilder.Entity<User>().ToTable("Users");
-        modelBuilder.Entity<IdentityRole>().ToTable("Roles");
-        modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
-        modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
-        modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
-        modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
-        modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
+        builder.Entity<User>().ToTable("Users");
+        builder.Entity<IdentityRole>().ToTable("Roles");
+        builder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
+        builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
+        builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
+        builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
+        builder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
 
         // Seed roles
         var roles = new List<IdentityRole>
@@ -60,10 +60,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
             }
         };
 
-        modelBuilder.Entity<IdentityRole>().HasData(roles);
+        builder.Entity<IdentityRole>().HasData(roles);
 
         // Configure Refresh Token entity properties
-        modelBuilder.Entity<RefreshToken>(entity =>
+        builder.Entity<RefreshToken>(entity =>
         {
             entity.Property(r => r.Id).ValueGeneratedOnAdd();
             entity.Property(r => r.TokenHash);
