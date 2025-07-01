@@ -75,24 +75,18 @@ jobs:
           dotnet restore
           dotnet build --no-restore --configuration Release
 
-      - name: Test with coverage
+      - name: Install Coverlet CLI
         shell: powershell
-        run: |
-          dotnet test ./Auth.Tests/Auth.Tests.csproj `
-            --no-build `
-            --configuration Release `
-            --collect:"XPlat Code Coverage" `
-            --results-directory ./TestResults
+        run: dotnet tool install --global coverlet.console
 
-      - name: Move coverage report to root
+      - name: Run tests with OpenCover coverage
         shell: powershell
         run: |
-          $coverage = Get-ChildItem -Recurse -Filter "coverage.opencover.xml"
-          if ($coverage) {
-            Copy-Item $coverage.FullName "./coverage.opencover.xml"
-          } else {
-            Write-Error "coverage.opencover.xml not found!"
-          }
+          coverlet ./Auth.Tests/bin/Release/net8.0/Auth.Tests.dll `
+            --target "dotnet" `
+            --targetargs "test ./Auth.Tests/Auth.Tests.csproj --no-build --configuration Release" `
+            --format opencover `
+            --output "./TestResults/coverage.opencover.xml"
 
       - name: List coverage files (debug)
         shell: powershell
