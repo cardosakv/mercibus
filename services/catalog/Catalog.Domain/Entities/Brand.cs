@@ -44,7 +44,7 @@ public class Brand
     /// Date and time created.
     /// </summary>
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        
+
     /// <summary>
     /// List of products under this brand.
     /// </summary>

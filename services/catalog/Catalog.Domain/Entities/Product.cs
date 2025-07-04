@@ -21,7 +21,7 @@ public class Product
     /// Description of the product.
     /// </summary>
     public string? Description { get; set; }
-    
+
     /// <summary>
     /// Product SKU.
     /// </summary>
@@ -61,7 +61,7 @@ public class Product
     /// Brand associated with the product.
     /// </summary>
     public Brand Brand { get; set; } = null!;
-    
+
     /// <summary>
     /// Date and time when the product was created.
     /// </summary>
