@@ -75,5 +75,5 @@ public class Product
     /// <summary>
     /// Collection of attributes describing the product.
     /// </summary>
-    public ICollection<Attribute> Attributes { get; set; } = new List<Attribute>();
+    public ICollection<ProductAttribute> Attributes { get; set; } = new List<ProductAttribute>();
 }

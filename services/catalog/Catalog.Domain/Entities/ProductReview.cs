@@ -3,7 +3,7 @@ namespace Catalog.Domain.Entities;
 /// <summary>
 /// Represents a customer review for a product.
 /// </summary>
-public class Review
+public class ProductReview
 {
     /// <summary>
     /// Unique identifier for the review.
@@ -26,7 +26,7 @@ public class Review
     public long UserId { get; set; }
 
     /// <summary>
-    /// Rating given to the product (e.g., from 1 to 5).
+    /// Rating given to the product.
     /// </summary>
     public int Rating { get; set; }
 

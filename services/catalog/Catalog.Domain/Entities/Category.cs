@@ -39,4 +39,9 @@ public class Category
     /// List of child categories under this category.
     /// </summary>
     public ICollection<Category> Subcategories { get; set; } = new List<Category>();
+
+    /// <summary>
+    /// List of products under this category.
+    /// </summary>
+    public ICollection<Product> Products { get; set; } = new List<Product>();
 }
