@@ -12,7 +12,7 @@ public record ProductResponse(
     string Status,
     int StockQuantity,
     BrandResponse Brand,
-    List<CategoryResponse> Categories,
+    CategoryResponse Category,
     List<ProductImageResponse> Images,
     List<ProductAttributeResponse> Attributes,
     DateTime CreatedAt

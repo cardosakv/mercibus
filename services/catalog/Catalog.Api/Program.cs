@@ -1,11 +1,23 @@
+using Catalog.Application.Interfaces.Repositories;
+using Catalog.Application.Interfaces.Services;
+using Catalog.Application.Mappers;
+using Catalog.Application.Services;
 using Catalog.Infrastructure;
+using Catalog.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    // Add services to the container.
+    // Add services.
+    builder.Services.AddScoped<IProductService, ProductService>();
+    
+    // Add repositories.
+    builder.Services.AddScoped<IProductRepository, ProductRepository>();
+    
+    // Add auto mapper.
+    builder.Services.AddAutoMapper(config => config.AddProfile<MappingProfile>());
     
     // Add database context.
     builder.Services.AddDbContext<AppDbContext>(options =>
