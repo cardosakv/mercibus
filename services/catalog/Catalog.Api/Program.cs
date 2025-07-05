@@ -12,13 +12,13 @@ try
 
     // Add services.
     builder.Services.AddScoped<IProductService, ProductService>();
-    
+
     // Add repositories.
     builder.Services.AddScoped<IProductRepository, ProductRepository>();
-    
+
     // Add auto mapper.
     builder.Services.AddAutoMapper(config => config.AddProfile<MappingProfile>());
-    
+
     // Add database context.
     builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));

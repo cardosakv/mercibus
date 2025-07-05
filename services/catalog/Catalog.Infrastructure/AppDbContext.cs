@@ -20,9 +20,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        
-        builder.ApplyConfiguration(new  BrandConfiguration());
-        builder.ApplyConfiguration(new  CategoryConfiguration());
+
+        builder.ApplyConfiguration(new BrandConfiguration());
+        builder.ApplyConfiguration(new CategoryConfiguration());
         builder.ApplyConfiguration(new ProductConfiguration());
         builder.ApplyConfiguration(new ProductAttributeConfiguration());
         builder.ApplyConfiguration(new ProductImageConfiguration());

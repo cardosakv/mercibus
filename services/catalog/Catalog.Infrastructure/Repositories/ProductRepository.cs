@@ -11,7 +11,7 @@ public class ProductRepository(AppDbContext dbContext) : IProductRepository
     public Task<List<Product>> GetProductsAsync(GetProductsQuery query, CancellationToken cancellationToken = default)
     {
         var products = dbContext.Products.AsQueryable();
-        
+
         if (query.CategoryId.HasValue)
         {
             products = products.Where(p => p.CategoryId == query.CategoryId.Value);
@@ -21,22 +21,22 @@ public class ProductRepository(AppDbContext dbContext) : IProductRepository
         {
             products = products.Where(p => p.BrandId == query.BrandId.Value);
         }
-        
+
         if (query.MinPrice.HasValue)
         {
             products = products.Where(p => p.Price >= query.MinPrice.Value);
         }
-        
+
         if (query.MaxPrice.HasValue)
         {
             products = products.Where(p => p.Price <= query.MaxPrice.Value);
         }
-        
+
         if (!string.IsNullOrEmpty(query.Status) && Enum.TryParse<ProductStatus>(query.Status, true, out var status))
         {
             products = products.Where(p => p.Status == status);
         }
-        
+
         products = query.SortBy switch
         {
             "price" => query.SortDirection == "asc"
@@ -51,7 +51,7 @@ public class ProductRepository(AppDbContext dbContext) : IProductRepository
                 ? products.OrderBy(p => p.CreatedAt)
                 : products.OrderByDescending(p => p.CreatedAt)
         };
-        
+
         return products
             .Skip((query.Page - 1) * query.PageSize)
             .Take(query.PageSize)
