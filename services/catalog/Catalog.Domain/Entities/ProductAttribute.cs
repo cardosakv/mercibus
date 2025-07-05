@@ -11,7 +11,7 @@ public class ProductAttribute
     /// Unique identifier for the attribute.
     /// </summary>
     public long Id { get; set; }
-    
+
     /// <summary>
     /// Foreign key for the related attribute.
     /// </summary>
