@@ -5,14 +5,14 @@ on:
     branches:
       - main
       - develop
-    paths:
-      - 'services/auth/**'
+  #    paths:
+  #      - 'services/auth/**'
   pull_request:
     branches:
       - main
       - develop
-    paths:
-      - 'services/auth/**'
+#    paths:
+#      - 'services/auth/**'
 
 jobs:
   build:
