@@ -13,6 +13,10 @@ on:
       - develop
     paths:
       - 'services/auth/**'
+        
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   build:
