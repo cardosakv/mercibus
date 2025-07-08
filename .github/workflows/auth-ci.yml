@@ -5,14 +5,14 @@ on:
     branches:
       - main
       - develop
-  #    paths:
-  #      - 'services/auth/**'
+    paths:
+      - 'services/auth/**'
   pull_request:
     branches:
       - main
       - develop
-#    paths:
-#      - 'services/auth/**'
+    paths:
+      - 'services/auth/**'
 
 jobs:
   build:
@@ -31,6 +31,7 @@ jobs:
       service: auth
       project_key: mercibus_auth
       project_dll: Auth
+    secrets:
       sonar_token: ${{ secrets.SONAR_TOKEN_AUTH }}
   
   dockerize:

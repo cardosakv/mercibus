@@ -12,9 +12,9 @@ on:
       project_dll:
         required: true
         type: string
+    secrets:
       sonar_token:
         required: true
-        type: string
 
 jobs:
   analyze:
@@ -60,13 +60,13 @@ jobs:
 
       - name: Begin SonarCloud analysis
         env:
-          SONAR_TOKEN: ${{ inputs.sonar_token }}
+          SONAR_TOKEN: ${{ secrets.sonar_token }}
         shell: powershell
         run: |
           .\.sonar\scanner\dotnet-sonarscanner begin `
             /k:"${{ inputs.project_key }}" `
             /o:"cardosakv" `
-            /d:sonar.token="${{ inputs.sonar_token }}" `
+            /d:sonar.token="${{ secrets.sonar_token }}" `
             /d:sonar.host.url="https://sonarcloud.io" `
             /d:"sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml" `
             /d:"sonar.coverage.exclusions=**/${{ inputs.project_dll }}.Infrastructure/**/*.cs,**/${{ inputs.project_dll }}.Domain/**/*.cs,**/${{ inputs.project_dll }}.Api/Program.cs,**/${{ inputs.project_dll }}.Api/Middlewares/**/*.cs,**/${{ inputs.project_dll }}.Application/Common/**/*.cs,**/${{ inputs.project_dll }}.Validators/**/*.cs"
@@ -96,6 +96,6 @@ jobs:
 
       - name: End SonarCloud analysis
         env:
-          SONAR_TOKEN: ${{ inputs.sonar_token }}
+          SONAR_TOKEN: ${{ secrets.sonar_token }}
         shell: powershell
-        run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ inputs.sonar_token }}"
+        run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.sonar_token }}"
