@@ -40,3 +40,6 @@ jobs:
       service: auth
       project_dll: Auth
       image_name: mercibus-auth
+    secrets:
+      docker_username: ${{ secrets.DOCKER_USERNAME }}
+      docker_password: ${{ secrets.DOCKER_PASSWORD }}
