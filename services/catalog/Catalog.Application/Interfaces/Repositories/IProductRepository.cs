@@ -15,4 +15,12 @@ public interface IProductRepository
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>A list of matching <see cref="Product"/> entities.</returns>
     Task<List<Product>> GetProductsAsync(GetProductsQuery query, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Adds a new <see cref="Product"/> entity to the repository.
+    /// </summary>
+    /// <param name="product">The <see cref="Product"/> entity to add.</param>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
+    /// <returns>A task that represents the asynchronous add operation.</returns>
+    Task AddProductAsync(Product product, CancellationToken cancellationToken = default);
 }
