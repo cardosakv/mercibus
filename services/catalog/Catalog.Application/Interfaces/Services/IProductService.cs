@@ -1,3 +1,4 @@
+using Catalog.Application.Common;
 using Catalog.Application.DTOs;
 
 namespace Catalog.Application.Interfaces.Services;
@@ -12,6 +13,6 @@ public interface IProductService
     /// </summary>
     /// <param name="query">The query parameters for retrieving products.</param>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
-    /// <returns>A list of <see cref="ProductResponse"/> objects.</returns>
-    Task<List<ProductResponse>> GetProductsAsync(GetProductsQuery query, CancellationToken cancellationToken = default);
+    /// <returns>Result with a list of <see cref="ProductResponse"/> objects.</returns>
+    Task<Result> GetProductsAsync(GetProductsQuery query, CancellationToken cancellationToken = default);
 }

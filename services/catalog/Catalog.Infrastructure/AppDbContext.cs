@@ -1,3 +1,4 @@
+using Catalog.Application.Interfaces;
 using Catalog.Domain.Entities;
 using Catalog.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,7 @@ namespace Catalog.Infrastructure;
 /// <summary>
 /// Represents the application database context for catalog management.
 /// </summary>
-public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options), IAppDbContext
 {
     public DbSet<Brand> Brands { get; set; }
     public DbSet<Category> Categories { get; set; }

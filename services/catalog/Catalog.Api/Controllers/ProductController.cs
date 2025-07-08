@@ -7,12 +7,12 @@ namespace Catalog.Api.Controllers;
 
 [Route("api/products")]
 [ApiController]
-public class ProductController(IProductService productService) : ControllerBase
+public class ProductController(IProductService productService) : BaseController
 {
     [HttpGet]
     public async Task<IActionResult> GetProductsAsync([FromQuery] GetProductsQuery query, CancellationToken cancellationToken)
     {
         var response = await productService.GetProductsAsync(query, cancellationToken);
-        return Ok(response);
+        return HandleGet(response);
     }
 }

@@ -1,24 +1,25 @@
 using AutoMapper;
+using Catalog.Application.Common;
 using Catalog.Application.DTOs;
 using Catalog.Application.Interfaces.Repositories;
 using Catalog.Application.Interfaces.Services;
-using Catalog.Domain.Entities;
 
 namespace Catalog.Application.Services;
 
-public class ProductService(IProductRepository productRepository, IMapper mapper) : IProductService
+public class ProductService(IProductRepository productRepository, IMapper mapper) : BaseService, IProductService
 {
-    public async Task<List<ProductResponse>> GetProductsAsync(GetProductsQuery query, CancellationToken cancellationToken = default)
+    public async Task<Result> GetProductsAsync(GetProductsQuery query, CancellationToken cancellationToken = default)
     {
         try
         {
             var entityList = await productRepository.GetProductsAsync(query, cancellationToken);
             var response = mapper.Map<List<ProductResponse>>(entityList);
-            return response;
+
+            return Success(response);
         }
-        catch (Exception e)
+        catch (Exception)
         {
-            return [];
+            return Error(ErrorType.Internal, Messages.UnexpectedError);
         }
     }
 }
