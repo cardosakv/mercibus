@@ -83,7 +83,7 @@ try
     // Add swagger.
     builder.Services.AddSwaggerGen(options =>
     {
-        options.SwaggerDoc("v1", new OpenApiInfo { Title = "Auth API", Version = "v1" });
+        options.SwaggerDoc(name: "Auth API", new OpenApiInfo { Title = "Auth API", Version = "v1" });
 
         options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
