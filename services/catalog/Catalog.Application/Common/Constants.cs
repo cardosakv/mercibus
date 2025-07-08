@@ -1,0 +1,20 @@
+namespace Catalog.Application.Common;
+
+/// <summary>
+/// Contains constants used across the application.
+/// </summary>
+public static class Constants
+{
+    public static class ProductStatus
+    {
+        public const string Listed = "listed";
+        public const string Unlisted = "unlisted";
+    }
+    
+    public static class ProductValidation
+    {
+        public const int MaxNameLength = 100;
+        public const int MaxDescriptionLength = 300;
+        public const int MaxSkuLength = 100;
+    }
+}

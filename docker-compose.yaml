@@ -1,0 +1,46 @@
+name: mercibus-backend
+
+services:
+  auth-service:
+    container_name: auth-service-container
+    build:
+      context: ./services/auth/
+      dockerfile: Auth.Api/Dockerfile
+    ports:
+      - '5000:8080'
+    environment:
+      ConnectionStrings__DefaultConnection: ''
+      Jwt__Key: ''
+      Email__Server: ''
+      Email__Port: ''
+      Email__Sender: ''
+      Email__Username: ''
+      Email__Password: ''
+      RedirectUrl__EmailConfirmSuccess: ''
+      RedirectUrl__EmailConfirmFail: ''
+      RedirectUrl__PasswordReset: ''
+    depends_on:
+      - auth-postgres
+    restart: always
+    networks:
+      - backend-network
+    
+  auth-postgres:
+    container_name: auth-postgres-container
+    image: postgres
+    ports:
+      - '5001:5432'
+    environment:
+      POSTGRES_USER: ''
+      POSTGRES_PASSWORD: ''
+      POSTGRES_DB: ''
+    volumes:
+      - auth_postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend-network
+
+volumes:
+  auth_postgres_data:
+    
+networks:
+  backend-network:
