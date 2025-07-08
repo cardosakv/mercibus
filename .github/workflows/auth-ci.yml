@@ -16,17 +16,17 @@ on:
 
 jobs:
   build:
-    uses: cardosakv/mercibus/.github/workflows/base-build.yml@develop
+    uses: ./.github/workflows/base-build.yml
     with:
       service: auth
   
   test:
-    uses: cardosakv/mercibus/.github/workflows/base-test.yml@develop
+    uses: ./.github/workflows/base-test.yml
     with:
       service: auth
   
   analyze:
-    uses: cardosakv/mercibus/.github/workflows/base-sonarqube.yml@develop
+    uses: ./.github/workflows/base-sonarqube.yml
     with:
       service: auth
       project_key: mercibus_auth
@@ -34,7 +34,7 @@ jobs:
       sonar_token: ${{ secrets.SONAR_TOKEN_AUTH }}
   
   dockerize:
-    uses: cardosakv/mercibus/.github/workflows/base-dockerize.yml@develop
+    uses: ./.github/workflows/base-dockerize.yml
     with:
       service: auth
       image_name: mercibus_auth
