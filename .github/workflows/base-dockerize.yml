@@ -1,0 +1,49 @@
+name: Base Docker Build & Push
+
+on:
+  workflow_call:
+    inputs:
+      service:
+        required: true
+        type: string
+      image_name:
+        required: true
+        type: string
+
+jobs:
+  dockerize:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./services/${{ inputs.service }}/
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Docker Login
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: GHCR Login
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Tag Docker Image
+        run: |
+          TAG=${GITHUB_SHA::7}
+          docker build -t ${{ inputs.image_name }}:$TAG -f ./${{ inputs.service }}.Api/Dockerfile .
+          docker tag ${{ inputs.image_name }}:$TAG ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:latest
+          docker tag ${{ inputs.image_name }}:$TAG ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:latest
+
+      - name: Push Images
+        if: github.event_name == 'push'
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:latest
+          docker push ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:latest
