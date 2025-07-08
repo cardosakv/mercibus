@@ -56,7 +56,7 @@ namespace Catalog.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands");
+                    b.ToTable("Brands", (string)null);
                 });
 
             modelBuilder.Entity("Catalog.Domain.Entities.Category", b =>
@@ -86,7 +86,7 @@ namespace Catalog.Infrastructure.Migrations
 
                     b.HasIndex("ParentCategoryId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("Catalog.Domain.Entities.Product", b =>
@@ -135,7 +135,7 @@ namespace Catalog.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("Catalog.Domain.Entities.ProductAttribute", b =>
@@ -171,7 +171,7 @@ namespace Catalog.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Attributes");
+                    b.ToTable("Attributes", (string)null);
                 });
 
             modelBuilder.Entity("Catalog.Domain.Entities.ProductImage", b =>
@@ -199,7 +199,7 @@ namespace Catalog.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages");
+                    b.ToTable("ProductImages", (string)null);
                 });
 
             modelBuilder.Entity("Catalog.Domain.Entities.ProductReview", b =>
@@ -229,7 +229,7 @@ namespace Catalog.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("Catalog.Domain.Entities.Category", b =>
@@ -275,7 +275,7 @@ namespace Catalog.Infrastructure.Migrations
             modelBuilder.Entity("Catalog.Domain.Entities.ProductImage", b =>
                 {
                     b.HasOne("Catalog.Domain.Entities.Product", "Product")
-                        .WithMany("Images")
+                        .WithMany("ProductImages")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -310,7 +310,7 @@ namespace Catalog.Infrastructure.Migrations
                 {
                     b.Navigation("Attributes");
 
-                    b.Navigation("Images");
+                    b.Navigation("ProductImages");
                 });
 #pragma warning restore 612, 618
         }
