@@ -1,0 +1,45 @@
+name: Auth Service CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'services/auth/**'
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'services/auth/**'
+
+jobs:
+  build:
+    uses: ./.github/workflows/base-build.yml
+    with:
+      service: auth
+  
+  test:
+    uses: ./.github/workflows/base-test.yml
+    with:
+      service: auth
+  
+  analyze:
+    uses: ./.github/workflows/base-sonarqube.yml
+    with:
+      service: auth
+      project_key: mercibus_auth
+      project_dll: Auth
+    secrets:
+      sonar_token: ${{ secrets.SONAR_TOKEN_AUTH }}
+  
+  dockerize:
+    uses: ./.github/workflows/base-dockerize.yml
+    with:
+      service: auth
+      project_dll: Auth
+      image_name: mercibus-auth
+    secrets:
+      docker_username: ${{ secrets.DOCKER_USERNAME }}
+      docker_password: ${{ secrets.DOCKER_PASSWORD }}
