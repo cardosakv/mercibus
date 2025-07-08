@@ -23,7 +23,6 @@ public class JwtTokenService(IConfiguration configuration) : ITokenService
             new(JwtRegisteredClaimNames.Sub, user.Id),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
-
         };
 
         var expireMillis = Convert.ToInt64(configuration["Jwt:ExpireMillis"]);
