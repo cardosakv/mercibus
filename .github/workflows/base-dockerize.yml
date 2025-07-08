@@ -6,6 +6,9 @@ on:
       service:
         required: true
         type: string
+      project_dll:
+        required: true
+        type: string
       image_name:
         required: true
         type: string
@@ -38,7 +41,7 @@ jobs:
       - name: Build and Tag Docker Image
         run: |
           TAG=${GITHUB_SHA::7}
-          docker build -t ${{ inputs.image_name }}:$TAG -f ./${{ inputs.service }}.Api/Dockerfile .
+          docker build -t ${{ inputs.image_name }}:$TAG -f ./${{ inputs.project_dll }}.Api/Dockerfile .
           docker tag ${{ inputs.image_name }}:$TAG ${{ secrets.DOCKER_USERNAME }}/${{ inputs.image_name }}:latest
           docker tag ${{ inputs.image_name }}:$TAG ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:latest
 
