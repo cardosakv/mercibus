@@ -5,7 +5,7 @@ namespace Catalog.Application.DTOs;
 /// </summary>
 public record ProductImageResponse(
     long Id,
-    long ImageUrl,
+    string ImageUrl,
     bool IsPrimary,
     string? AltText
 );
