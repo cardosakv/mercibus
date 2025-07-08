@@ -1,3 +1,4 @@
+using Catalog.Api.Middlewares;
 using Catalog.Application.Interfaces;
 using Catalog.Application.Interfaces.Repositories;
 using Catalog.Application.Interfaces.Services;
@@ -25,6 +26,9 @@ try
         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
     builder.Services.AddScoped<IAppDbContext>(provider => 
         provider.GetRequiredService<AppDbContext>());
+    
+    // Add custom middlewares.
+    builder.Services.AddTransient<ExceptionMiddleware>();
 
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
@@ -35,6 +39,7 @@ try
     app.UseSwagger();
     app.UseSwaggerUI();
 
+    app.UseMiddleware<ExceptionMiddleware>();
     app.UseAuthorization();
     app.MapControllers();
 
