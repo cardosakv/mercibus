@@ -57,4 +57,9 @@ public class ProductRepository(AppDbContext dbContext) : IProductRepository
             .Take(query.PageSize)
             .ToListAsync(cancellationToken);
     }
+
+    public async Task AddProductAsync(Product product, CancellationToken cancellationToken = default)
+    {
+        await dbContext.Products.AddAsync(product, cancellationToken);
+    }
 }

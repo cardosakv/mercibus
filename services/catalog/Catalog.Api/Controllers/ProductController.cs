@@ -15,4 +15,11 @@ public class ProductController(IProductService productService) : BaseController
         var response = await productService.GetProductsAsync(query, cancellationToken);
         return HandleGet(response);
     }
+    
+    [HttpPost]
+    public async Task<IActionResult> AddProductAsync([FromBody] AddProductRequest request, CancellationToken cancellationToken)
+    {
+        var response = await productService.AddProductAsync(request, cancellationToken);
+        return HandlePost(response);
+    }
 }
