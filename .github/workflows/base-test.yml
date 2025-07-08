@@ -1,26 +1,18 @@
-name: Auth Service Test
+name: Base Test
 
 on:
-  push:
-    branches:
-      - main
-      - develop
-    paths:
-      - 'services/auth/**'
-  pull_request:
-    branches:
-      - main
-      - develop
-    paths:
-      - 'services/auth/**'
+  workflow_call:
+    inputs:
+      service:
+        required: true
+        type: string
 
 jobs:
-  test:
+  build-test:
     runs-on: ubuntu-latest
-    
     defaults:
       run:
-        working-directory: ./services/auth/
+        working-directory: ./services/${{ inputs.service }}/
 
     steps:
       - name: Checkout code
