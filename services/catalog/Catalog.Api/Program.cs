@@ -23,7 +23,8 @@ try
     // Add database context.
     builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-    builder.Services.AddScoped<IAppDbContext, AppDbContext>();
+    builder.Services.AddScoped<IAppDbContext>(provider => 
+        provider.GetRequiredService<AppDbContext>());
 
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();

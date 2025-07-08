@@ -21,6 +21,6 @@ public interface IProductRepository
     /// </summary>
     /// <param name="product">The <see cref="Product"/> entity to add.</param>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
-    /// <returns>A task that represents the asynchronous add operation.</returns>
-    Task AddProductAsync(Product product, CancellationToken cancellationToken = default);
+    /// <returns>The created <see cref="Product"/> entity.</returns>
+    Task<Product> AddProductAsync(Product product, CancellationToken cancellationToken = default);
 }

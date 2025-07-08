@@ -58,8 +58,9 @@ public class ProductRepository(AppDbContext dbContext) : IProductRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task AddProductAsync(Product product, CancellationToken cancellationToken = default)
+    public async Task<Product> AddProductAsync(Product product, CancellationToken cancellationToken = default)
     {
-        await dbContext.Products.AddAsync(product, cancellationToken);
+        var entry = await dbContext.Products.AddAsync(product, cancellationToken);
+        return entry.Entity;
     }
 }

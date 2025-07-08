@@ -24,4 +24,9 @@ public class Result
     /// Contains the data returned by the service.
     /// </summary>
     public object? Data { get; set; }
+
+    /// <summary>
+    /// Represents the identifier of the entity involved in the operation, if applicable.
+    /// </summary>
+    public long? ResourceId { get; set; }
 }

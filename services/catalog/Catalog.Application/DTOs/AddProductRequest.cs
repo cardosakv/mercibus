@@ -11,7 +11,5 @@ public record AddProductRequest(
     int StockQuantity,
     string Status,
     long CategoryId,
-    long BrandId,
-    List<AddProductImageRequest> Images,
-    List<AddProductAttributeRequest> Attributes
+    long BrandId
 );

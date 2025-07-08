@@ -10,12 +10,13 @@ public abstract class BaseService
     /// <summary>
     /// Creates a successful result with optional data and message.
     /// </summary>
-    protected static Result Success(object? data = null, string message = "")
+    protected static Result Success(long? resourceId = null, object? data = null, string message = "")
     {
         return new Result
         {
             IsSuccess = true,
             Data = data,
+            ResourceId = resourceId,
             Message = message
         };
     }

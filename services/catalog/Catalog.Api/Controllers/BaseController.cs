@@ -14,11 +14,14 @@ public abstract class BaseController : ControllerBase
 
     protected IActionResult HandlePost(Result result)
     {
-        if (result.IsSuccess)
+        if (result is { IsSuccess: true, Data: not null })
         {
-            return result.Data is not null
-                ? Ok(result.Data)
-                : Ok(new StandardResponse { Message = result.Message });
+            return Ok(result.Data);
+        }
+
+        if (result is { IsSuccess: true, ResourceId: not null })
+        {
+            return Created(result.ResourceId.ToString(), new StandardResponse { Message = result.Message });
         }
 
         return HandleErrorResponse(result);
