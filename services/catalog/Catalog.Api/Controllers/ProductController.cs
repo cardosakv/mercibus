@@ -16,6 +16,13 @@ public class ProductController(IProductService productService) : BaseController
         return HandleGet(response);
     }
     
+    [HttpGet("{id:long}")]
+    public async Task<IActionResult> GetProductByIdAsync(long id, CancellationToken cancellationToken)
+    {
+        var response = await productService.GetProductByIdAsync(id, cancellationToken);
+        return HandleGet(response);
+    }
+    
     [HttpPost]
     public async Task<IActionResult> AddProductAsync([FromBody] AddProductRequest request, CancellationToken cancellationToken)
     {

@@ -63,4 +63,11 @@ public class ProductRepository(AppDbContext dbContext) : IProductRepository
         var entry = await dbContext.Products.AddAsync(product, cancellationToken);
         return entry.Entity;
     }
+
+    public Task<Product?> GetProductByIdAsync(long id, CancellationToken cancellationToken = default)
+    {
+        return dbContext.Products
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+    }
 }

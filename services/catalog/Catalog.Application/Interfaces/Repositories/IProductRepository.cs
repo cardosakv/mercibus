@@ -23,4 +23,12 @@ public interface IProductRepository
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>The created <see cref="Product"/> entity.</returns>
     Task<Product> AddProductAsync(Product product, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Retrieves a <see cref="Product"/> entity by its unique identifier.
+    /// </summary>
+    /// <param name="id">The unique identifier of the product.</param>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
+    /// <returns>The matching <see cref="Product"/> entity, or null if not found.</returns>
+    Task<Product?> GetProductByIdAsync(long id, CancellationToken cancellationToken = default);
 }

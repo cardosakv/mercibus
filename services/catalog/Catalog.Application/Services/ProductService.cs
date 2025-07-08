@@ -26,4 +26,16 @@ public class ProductService(IProductRepository productRepository, IMapper mapper
 
         return Success(resourceId: entity.Id);
     }
+
+    public async Task<Result> GetProductByIdAsync(long productId, CancellationToken cancellationToken = default)
+    {
+        var product = await productRepository.GetProductByIdAsync(productId, cancellationToken);
+        if (product is null)
+        {
+            return Error(ErrorType.NotFound, Messages.ProductNotFound);
+        }
+        
+        var response = mapper.Map<ProductResponse>(product);
+        return Success(data: response);
+    }
 }
