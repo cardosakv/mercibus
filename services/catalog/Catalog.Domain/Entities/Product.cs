@@ -70,7 +70,7 @@ public class Product
     /// <summary>
     /// Collection of images associated with the product.
     /// </summary>
-    public ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
+    public ICollection<ProductImage> Images { get; set; } = new List<ProductImage>();
 
     /// <summary>
     /// Collection of attributes describing the product.
