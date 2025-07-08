@@ -1,12 +1,16 @@
+using Catalog.Api.Filters;
 using Catalog.Api.Middlewares;
 using Catalog.Application.Interfaces;
 using Catalog.Application.Interfaces.Repositories;
 using Catalog.Application.Interfaces.Services;
 using Catalog.Application.Mappers;
 using Catalog.Application.Services;
+using Catalog.Application.Validations;
 using Catalog.Infrastructure;
 using Catalog.Infrastructure.Repositories;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 try
 {
@@ -17,6 +21,12 @@ try
 
     // Add repositories.
     builder.Services.AddScoped<IProductRepository, ProductRepository>();
+    
+    // Add validators.
+    builder.Services.AddFluentValidationAutoValidation(options => 
+        options.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
+    builder.Services.AddValidatorsFromAssemblyContaining<AddProductRequestValidator>();
+    builder.Services.AddValidatorsFromAssemblyContaining<UpdateProductRequestValidator>();
 
     // Add auto mapper.
     builder.Services.AddAutoMapper(config => config.AddProfile<MappingProfile>());

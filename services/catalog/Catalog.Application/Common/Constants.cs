@@ -10,4 +10,11 @@ public static class Constants
         public const string Listed = "listed";
         public const string Unlisted = "unlisted";
     }
+    
+    public static class ProductValidation
+    {
+        public const int MaxNameLength = 100;
+        public const int MaxDescriptionLength = 300;
+        public const int MaxSkuLength = 100;
+    }
 }

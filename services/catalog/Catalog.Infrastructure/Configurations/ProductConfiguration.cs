@@ -1,3 +1,4 @@
+using Catalog.Application.Common;
 using Catalog.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -15,15 +16,15 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
 
         builder.Property(x => x.Name)
             .IsRequired()
-            .HasMaxLength(50);
+            .HasMaxLength(Constants.ProductValidation.MaxNameLength);
 
         builder.Property(x => x.Description)
             .IsRequired(false)
-            .HasMaxLength(200);
+            .HasMaxLength(Constants.ProductValidation.MaxDescriptionLength);
 
         builder.Property(x => x.Sku)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(Constants.ProductValidation.MaxSkuLength);
 
         builder.Property(x => x.Price)
             .IsRequired()
