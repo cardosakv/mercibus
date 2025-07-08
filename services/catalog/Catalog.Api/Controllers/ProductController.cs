@@ -35,4 +35,11 @@ public class ProductController(IProductService productService) : BaseController
         var response = await productService.UpdateProductAsync(id, request, cancellationToken);
         return HandlePutOrDelete(response);
     }
+    
+    [HttpDelete("{id:long}")]
+    public async Task<IActionResult> DeleteProductAsync(long id, CancellationToken cancellationToken)
+    {
+        var response = await productService.DeleteProductAsync(id, cancellationToken);
+        return HandlePutOrDelete(response);
+    }
 }

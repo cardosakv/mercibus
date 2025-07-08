@@ -54,4 +54,18 @@ public class ProductService(IProductRepository productRepository, IMapper mapper
         
         return Success();
     }
+
+    public async Task<Result> DeleteProductAsync(long productId, CancellationToken cancellationToken = default)
+    {
+        var product = await productRepository.GetProductByIdAsync(productId, cancellationToken);
+        if (product is null)
+        {
+            return Error(ErrorType.NotFound, Messages.ProductNotFound);
+        }
+        
+        await productRepository.DeleteProductAsync(product, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
+        
+        return Success();
+    }
 }

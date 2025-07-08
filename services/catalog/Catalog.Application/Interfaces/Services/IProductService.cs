@@ -40,4 +40,12 @@ public interface IProductService
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>Result indicating the outcome of the update operation.</returns>
     Task<Result> UpdateProductAsync(long productId, UpdateProductRequest request, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Asynchronously deletes an existing product.
+    /// </summary>
+    /// <param name="productId">The unique identifier of the product to update.</param>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
+    /// <returns>Result indicating the outcome of the delete operation.</returns>
+    Task<Result> DeleteProductAsync(long productId, CancellationToken cancellationToken = default);
 }

@@ -71,9 +71,15 @@ public class ProductRepository(AppDbContext dbContext) : IProductRepository
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
 
-    public Task<Product> UpdateProductAsync(Product product, CancellationToken cancellationToken = default)
+    public Task UpdateProductAsync(Product product, CancellationToken cancellationToken = default)
     {
         dbContext.Products.Update(product);
-        return Task.FromResult(product);
+        return Task.CompletedTask;
+    }
+
+    public Task DeleteProductAsync(Product product, CancellationToken cancellationToken = default)
+    {
+        dbContext.Products.Remove(product);
+        return Task.CompletedTask;
     }
 }

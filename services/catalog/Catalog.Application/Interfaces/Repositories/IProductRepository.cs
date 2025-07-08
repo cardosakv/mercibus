@@ -36,7 +36,15 @@ public interface IProductRepository
     /// Updates an existing <see cref="Product"/> entity in the repository.
     /// </summary>
     /// <param name="product">The <see cref="Product"/> entity to update.</param>
-    /// <param name="cancellationToken">A token to cancel the operation.</param>
-    /// <returns>The updated <see cref="Product"/> entity.</returns>
-    Task<Product> UpdateProductAsync(Product product, CancellationToken cancellationToken = default);
+    /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+    /// <returns>A task that represents the asynchronous update operation.</returns>
+    Task UpdateProductAsync(Product product, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Deletes a <see cref="Product"/> entity from the repository.
+    /// </summary>
+    /// <param name="product">The <see cref="Product"/> entity to delete.</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+    /// <returns>A task that represents the asynchronous delete operation.</returns>
+    Task DeleteProductAsync(Product product, CancellationToken cancellationToken = default);
 }
