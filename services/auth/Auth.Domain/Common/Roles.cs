@@ -1,7 +1,7 @@
 ﻿namespace Auth.Domain.Common;
 
 /// <summary>
-/// User roles.
+/// Defines the roles used in the application.
 /// </summary>
 public static class Roles
 {
