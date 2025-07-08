@@ -21,6 +21,9 @@ on:
 jobs:
   dockerize:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     defaults:
       run:
         working-directory: ./services/${{ inputs.service }}/

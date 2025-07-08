@@ -9,8 +9,7 @@ is responsible for a distinct domain and communicates via asynchronous messaging
 
 ### 🔐 Auth Service
 
-[![Build](https://github.com/cardosakv/mercibus/actions/workflows/auth-service-build.yml/badge.svg)](https://github.com/cardosakv/mercibus/actions/workflows/auth-service-build.yml)
-[![Auth Service Test](https://github.com/cardosakv/mercibus/actions/workflows/auth-service.test.yml/badge.svg)](https://github.com/cardosakv/mercibus/actions/workflows/auth-service.test.yml)
+[![Auth Service CI](https://github.com/cardosakv/mercibus/actions/workflows/auth-ci.yml/badge.svg)](https://github.com/cardosakv/mercibus/actions/workflows/auth-ci.yml)
 
 Handles user registration, login, roles, and JWT-based authentication.
 
