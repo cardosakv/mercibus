@@ -8,7 +8,7 @@ namespace Auth.Tests.Api.AuthController;
 
 /// <summary>
 /// Base test class for auth controller.
-/// </summary>`
+/// </summary>
 public abstract class BaseTests
 {
     protected readonly Auth.Api.Controllers.AuthController Controller;
