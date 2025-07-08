@@ -4,7 +4,6 @@ namespace Catalog.Application.DTOs;
 /// Represents a request to update an existing product.
 /// </summary>
 public record UpdateProductRequest(
-    long Id,
     string Name,
     string? Description,
     string Sku,

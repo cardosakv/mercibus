@@ -34,6 +34,16 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.StockQuantity, opt => opt.MapFrom(src => src.StockQuantity))
             .ForMember(dest => dest.BrandId, opt => opt.MapFrom(src => src.BrandId))
             .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId));
+        
+        CreateMap<UpdateProductRequest, Product>()
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+            .ForMember(dest => dest.Sku, opt => opt.MapFrom(src => src.Sku))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<ProductStatus>(src.Status)))
+            .ForMember(dest => dest.StockQuantity, opt => opt.MapFrom(src => src.StockQuantity))
+            .ForMember(dest => dest.BrandId, opt => opt.MapFrom(src => src.BrandId))
+            .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId));
 
         CreateMap<AddProductImageRequest, ProductImage>()
             .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))

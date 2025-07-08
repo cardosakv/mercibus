@@ -20,11 +20,11 @@ public class ProductService(IProductRepository productRepository, IMapper mapper
 
     public async Task<Result> AddProductAsync(AddProductRequest request, CancellationToken cancellationToken = default)
     {
-        var product = mapper.Map<Product>(request);
-        var entity = await productRepository.AddProductAsync(product, cancellationToken);
+        var entity = mapper.Map<Product>(request);
+        var product = await productRepository.AddProductAsync(entity, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return Success(resourceId: entity.Id);
+        return Success(resourceId: product.Id);
     }
 
     public async Task<Result> GetProductByIdAsync(long productId, CancellationToken cancellationToken = default)
@@ -37,5 +37,21 @@ public class ProductService(IProductRepository productRepository, IMapper mapper
         
         var response = mapper.Map<ProductResponse>(product);
         return Success(data: response);
+    }
+
+    public async Task<Result> UpdateProductAsync(long productId, UpdateProductRequest request, CancellationToken cancellationToken = default)
+    {
+        var product = await productRepository.GetProductByIdAsync(productId, cancellationToken);
+        if (product is null)
+        {
+            return Error(ErrorType.NotFound, Messages.ProductNotFound);
+        }
+        
+        mapper.Map(request, product);
+        
+        await productRepository.UpdateProductAsync(product, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
+        
+        return Success();
     }
 }

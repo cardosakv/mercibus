@@ -70,4 +70,10 @@ public class ProductRepository(AppDbContext dbContext) : IProductRepository
             .AsNoTracking()
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
+
+    public Task<Product> UpdateProductAsync(Product product, CancellationToken cancellationToken = default)
+    {
+        dbContext.Products.Update(product);
+        return Task.FromResult(product);
+    }
 }

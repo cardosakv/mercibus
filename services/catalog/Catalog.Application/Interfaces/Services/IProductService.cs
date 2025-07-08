@@ -31,4 +31,13 @@ public interface IProductService
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>Result with a <see cref="ProductResponse"/> object if found.</returns>
     Task<Result> GetProductByIdAsync(long productId, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Asynchronously updates an existing product.
+    /// </summary>
+    /// <param name="productId">The unique identifier of the product to update.</param>
+    /// <param name="request">The updated product data.</param>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
+    /// <returns>Result indicating the outcome of the update operation.</returns>
+    Task<Result> UpdateProductAsync(long productId, UpdateProductRequest request, CancellationToken cancellationToken = default);
 }
