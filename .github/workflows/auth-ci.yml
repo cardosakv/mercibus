@@ -39,4 +39,4 @@ jobs:
     with:
       service: auth
       project_dll: Auth
-      image_name: mercibus_auth
+      image_name: mercibus-auth
