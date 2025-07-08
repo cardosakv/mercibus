@@ -38,4 +38,5 @@ jobs:
     uses: ./.github/workflows/base-dockerize.yml
     with:
       service: auth
+      project_dll: Auth
       image_name: mercibus_auth
