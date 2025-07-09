@@ -10,6 +10,7 @@ using Catalog.Infrastructure;
 using Catalog.Infrastructure.Repositories;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Converters;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 try
@@ -21,9 +22,9 @@ try
 
     // Add repositories.
     builder.Services.AddScoped<IProductRepository, ProductRepository>();
-    
+
     // Add validators.
-    builder.Services.AddFluentValidationAutoValidation(options => 
+    builder.Services.AddFluentValidationAutoValidation(options =>
         options.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
     builder.Services.AddValidatorsFromAssemblyContaining<AddProductRequestValidator>();
     builder.Services.AddValidatorsFromAssemblyContaining<UpdateProductRequestValidator>();
@@ -34,13 +35,13 @@ try
     // Add database context.
     builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-    builder.Services.AddScoped<IAppDbContext>(provider => 
+    builder.Services.AddScoped<IAppDbContext>(provider =>
         provider.GetRequiredService<AppDbContext>());
-    
+
     // Add custom middlewares.
     builder.Services.AddTransient<ExceptionMiddleware>();
 
-    builder.Services.AddControllers();
+    builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.Converters.Add(new StringEnumConverter()));
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 

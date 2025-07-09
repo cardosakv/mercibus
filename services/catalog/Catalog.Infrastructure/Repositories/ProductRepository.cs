@@ -32,9 +32,9 @@ public class ProductRepository(AppDbContext dbContext) : IProductRepository
             products = products.Where(p => p.Price <= query.MaxPrice.Value);
         }
 
-        if (!string.IsNullOrEmpty(query.Status) && Enum.TryParse<ProductStatus>(query.Status, true, out var status))
+        if (query.Status.HasValue)
         {
-            products = products.Where(p => p.Status == status);
+            products = products.Where(p => p.Status == query.Status);
         }
 
         products = query.SortBy switch
