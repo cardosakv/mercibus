@@ -24,7 +24,7 @@ public class ProductService(IProductRepository productRepository, IMapper mapper
         var product = await productRepository.AddProductAsync(entity, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        return Success(resourceId: product.Id);
+        return Success(resourceId: product.Id, message: Messages.ProductAdded);
     }
 
     public async Task<Result> GetProductByIdAsync(long productId, CancellationToken cancellationToken = default)
@@ -36,6 +36,7 @@ public class ProductService(IProductRepository productRepository, IMapper mapper
         }
         
         var response = mapper.Map<ProductResponse>(product);
+        
         return Success(data: response);
     }
 
