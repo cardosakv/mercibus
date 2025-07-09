@@ -5,12 +5,6 @@ namespace Catalog.Application.Common;
 /// </summary>
 public static class Constants
 {
-    public static class ProductStatus
-    {
-        public const string Listed = "listed";
-        public const string Unlisted = "unlisted";
-    }
-    
     public static class ProductValidation
     {
         public const int MaxNameLength = 100;
