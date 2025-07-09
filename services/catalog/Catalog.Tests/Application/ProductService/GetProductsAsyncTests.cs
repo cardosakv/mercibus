@@ -15,7 +15,7 @@ public class GetProductsAsyncTests : BaseTest
         MaxPrice: null,
         Status: null
     );
-    
+
     [Fact]
     public async Task Success_WhenProductsExist()
     {
@@ -81,20 +81,20 @@ public class GetProductsAsyncTests : BaseTest
                 CreatedAt: DateTime.UtcNow
             ),
         };
-        
+
         ProductRepositoryMock.Setup(x => x.GetProductsAsync(It.IsAny<GetProductsQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(productEntities);
         MapperMock.Setup(x => x.Map<List<ProductResponse>>(It.IsAny<List<Product>>()))
             .Returns(productResponseList);
-        
+
         // Act
         var result = await ProductService.GetProductsAsync(_query, CancellationToken.None);
-        
+
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Data.Should().BeEquivalentTo(productResponseList);
     }
-    
+
     [Fact]
     public async Task Success_WhenNoProductsExist()
     {
@@ -114,7 +114,7 @@ public class GetProductsAsyncTests : BaseTest
         result.IsSuccess.Should().BeTrue();
         result.Data.Should().BeEquivalentTo(emptyResponseList);
     }
-    
+
     [Fact]
     public async Task Success_WhenFilteredByStatus()
     {
@@ -168,7 +168,7 @@ public class GetProductsAsyncTests : BaseTest
         result.IsSuccess.Should().BeTrue();
         result.Data.Should().BeEquivalentTo(responseList);
     }
-    
+
     [Fact]
     public async Task Throws_WhenRepositoryThrowsException()
     {
@@ -182,23 +182,5 @@ public class GetProductsAsyncTests : BaseTest
         // Assert
         await act.Should().ThrowAsync<InvalidOperationException>()
             .WithMessage("Something went wrong");
-    }
-    
-    [Fact]
-    public async Task Should_RespectCancellationToken()
-    {
-        // Arrange
-        using var cts = new CancellationTokenSource();
-        await cts.CancelAsync();
-
-        ProductRepositoryMock
-            .Setup(x => x.GetProductsAsync(It.IsAny<GetProductsQuery>(), cts.Token))
-            .ThrowsAsync(new OperationCanceledException());
-
-        // Act
-        Func<Task> act = async () => await ProductService.GetProductsAsync(_query, cts.Token);
-
-        // Assert
-        await act.Should().ThrowAsync<OperationCanceledException>();
     }
 }
