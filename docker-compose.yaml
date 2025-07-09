@@ -1,8 +1,3 @@
-  <<<<<<< HEAD
-name: mercibus-backend
-    
-    =======
-    >>>>>>> 82e22c0f8976fe6cc42f389e3d0ca114c3616481
 services:
   auth-service:
     container_name: auth-service-container
@@ -27,11 +22,7 @@ services:
     restart: always
     networks:
       - backend-network
-    <<<<<<< HEAD
-    
-    =======
-    
-    >>>>>>> 82e22c0f8976fe6cc42f389e3d0ca114c3616481
+
   auth-postgres:
     container_name: auth-postgres-container
     image: postgres
@@ -48,10 +39,6 @@ services:
 
 volumes:
   auth_postgres_data:
-    <<<<<<< HEAD
     
-    =======
-    
-    >>>>>>> 82e22c0f8976fe6cc42f389e3d0ca114c3616481
 networks:
   backend-network:
