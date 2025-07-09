@@ -1,3 +1,5 @@
+using Catalog.Domain.Enums;
+
 namespace Catalog.Application.DTOs;
 
 /// <summary>
@@ -9,7 +11,7 @@ public record AddProductRequest(
     string Sku,
     decimal Price,
     int StockQuantity,
-    string Status,
+    ProductStatus Status,
     long CategoryId,
     long BrandId
 );

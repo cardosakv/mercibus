@@ -19,7 +19,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
             .ForMember(dest => dest.Sku, opt => opt.MapFrom(src => src.Sku))
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Utils.GetEnumMemberValue(src.Status)))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
             .ForMember(dest => dest.StockQuantity, opt => opt.MapFrom(src => src.StockQuantity))
             .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand))
             .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category))
@@ -31,7 +31,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
             .ForMember(dest => dest.Sku, opt => opt.MapFrom(src => src.Sku))
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Utils.ParseEnumMemberValue<ProductStatus>(src.Status)))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
             .ForMember(dest => dest.StockQuantity, opt => opt.MapFrom(src => src.StockQuantity))
             .ForMember(dest => dest.BrandId, opt => opt.MapFrom(src => src.BrandId))
             .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId));
@@ -41,7 +41,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
             .ForMember(dest => dest.Sku, opt => opt.MapFrom(src => src.Sku))
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<ProductStatus>(src.Status)))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
             .ForMember(dest => dest.StockQuantity, opt => opt.MapFrom(src => src.StockQuantity))
             .ForMember(dest => dest.BrandId, opt => opt.MapFrom(src => src.BrandId))
             .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId));
