@@ -11,7 +11,7 @@ public record AddProductRequest(
     string Sku,
     decimal Price,
     int StockQuantity,
-    ProductStatus Status,
+    string Status,
     long CategoryId,
     long BrandId
 );

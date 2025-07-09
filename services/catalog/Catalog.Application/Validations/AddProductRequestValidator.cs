@@ -24,11 +24,8 @@ public class AddProductRequestValidator : AbstractValidator<AddProductRequest>
             .WithMessage($"Product SKU must not exceed {Constants.ProductValidation.MaxSkuLength} characters.");
 
         RuleFor(x => x.Status)
-            .IsInEnum()
+            .Must(value => Enum.TryParse<ProductStatus>(value, ignoreCase: true, out _))
             .WithMessage("Status must be one of the defined values: " +
-                         string.Join(", ",
-                             Enum.GetNames(typeof(ProductStatus))
-                                 .Select(name => name.ToLower())
-                         ));
+                         string.Join(", ", Enum.GetNames(typeof(ProductStatus)).Select(n => n.ToLower())));
     }
 }

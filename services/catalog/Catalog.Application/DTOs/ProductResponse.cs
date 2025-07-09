@@ -6,7 +6,7 @@ namespace Catalog.Application.DTOs;
 /// Represents a product response in the catalog system.
 /// </summary>
 public record ProductResponse(
-    int Id,
+    long Id,
     string Name,
     string Description,
     decimal Price,
