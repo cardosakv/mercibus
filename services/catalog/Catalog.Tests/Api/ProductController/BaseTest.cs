@@ -1,4 +1,5 @@
-﻿using Catalog.Application.Services;
+﻿using Catalog.Application.Interfaces.Services;
+using Catalog.Application.Services;
 using Moq;
 
 namespace Catalog.Tests.Api.ProductController;
@@ -9,11 +10,11 @@ namespace Catalog.Tests.Api.ProductController;
 public abstract class BaseTest
 {
     protected readonly Catalog.Api.Controllers.ProductController ProductController;
-    protected readonly Mock<ProductService> ProductServiceMock;
+    protected readonly Mock<IProductService> ProductServiceMock;
 
     protected BaseTest()
     {
-        ProductServiceMock = new Mock<ProductService>();
+        ProductServiceMock = new Mock<IProductService>();
         ProductController = new Catalog.Api.Controllers.ProductController(ProductServiceMock.Object);
     }
 }
