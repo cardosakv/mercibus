@@ -1,7 +1,7 @@
 ﻿using Auth.Application.Common;
 using Auth.Application.DTOs;
 
-namespace Auth.Application.Interfaces;
+namespace Auth.Application.Interfaces.Services;
 
 /// <summary>
 /// Interface for authentication services.

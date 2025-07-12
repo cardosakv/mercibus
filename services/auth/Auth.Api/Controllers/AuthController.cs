@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using Auth.Application.DTOs;
-using Auth.Application.Interfaces;
+using Auth.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

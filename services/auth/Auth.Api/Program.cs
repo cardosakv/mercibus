@@ -3,7 +3,8 @@ using System.Net.Mail;
 using System.Text;
 using Auth.Api.Filters;
 using Auth.Api.Middlewares;
-using Auth.Application.Interfaces;
+using Auth.Application.Interfaces.Repositories;
+using Auth.Application.Interfaces.Services;
 using Auth.Application.Services;
 using Auth.Application.Validators;
 using Auth.Domain.Entities;
@@ -15,7 +16,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 try

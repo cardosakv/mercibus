@@ -1,7 +1,8 @@
 using System.Text;
 using Auth.Application.Common;
 using Auth.Application.DTOs;
-using Auth.Application.Interfaces;
+using Auth.Application.Interfaces.Repositories;
+using Auth.Application.Interfaces.Services;
 using Auth.Domain.Common;
 using Auth.Domain.Entities;
 using Microsoft.AspNetCore.Http;
