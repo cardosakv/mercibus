@@ -11,7 +11,7 @@ public class ConfirmEmailQuery
     public required string UserId { get; set; }
 
     /// <summary>
-    /// Password reset token.
+    /// Email confirmation token.
     /// </summary>
     public required string Token { get; set; }
 }
