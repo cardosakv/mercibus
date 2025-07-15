@@ -1,3 +1,4 @@
+using Auth.Application.Common;
 using Auth.Application.DTOs;
 using FluentValidation;
 
@@ -11,23 +12,7 @@ public class UpdateUserInfoRequestValidator : AbstractValidator<UpdateUserInfoRe
     public UpdateUserInfoRequestValidator()
     {
         RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Name is required.")
-            .MaximumLength(50).WithMessage("Name must not exceed 50 characters.")
-            .MinimumLength(1).WithMessage("Name must be minimum 1 character.");
-
-        RuleFor(x => x.Street)
-            .NotEmpty().WithMessage("Street is required.");
-
-        RuleFor(x => x.City)
-            .NotEmpty().WithMessage("City is required.");
-
-        RuleFor(x => x.State)
-            .NotEmpty().WithMessage("State is required.");
-
-        RuleFor(x => x.Country)
-            .NotEmpty().WithMessage("Country is required.");
-
-        RuleFor(x => x.PostalCode)
-            .NotEmpty().WithMessage("Postal code is required.");
+            .MinimumLength(Constants.UserValidation.NameMinLength).WithMessage(ErrorCode.NameTooShort.GetEnumMemberValue())
+            .MaximumLength(Constants.UserValidation.NameMaxLength).WithMessage(ErrorCode.NameTooLong.GetEnumMemberValue());
     }
 }

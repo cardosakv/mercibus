@@ -31,6 +31,10 @@ public enum ErrorCode
     [EnumMember(Value = "username_already_exists")]
     UsernameAlreadyExists,
 
+    [EnumMember(Value = "name_too_short")] NameTooShort,
+
+    [EnumMember(Value = "name_too_long")] NameTooLong,
+
     [EnumMember(Value = "email_required")] EmailRequired,
 
     [EnumMember(Value = "email_invalid")] EmailInvalid,

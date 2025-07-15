@@ -10,5 +10,8 @@ public static class Constants
 
         public const int PasswordMinLength = 8;
         public const string PasswordPattern = @"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).+$";
+
+        public const int NameMinLength = 2;
+        public const int NameMaxLength = 50;
     }
 }

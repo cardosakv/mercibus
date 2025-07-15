@@ -1,3 +1,4 @@
+using Auth.Application.Common;
 using Auth.Application.DTOs;
 using FluentValidation;
 
@@ -11,7 +12,8 @@ public class SendConfirmationEmailRequestValidator : AbstractValidator<SendConfi
     public SendConfirmationEmailRequestValidator()
     {
         RuleFor(x => x.Email)
-            .NotEmpty().WithMessage("Email is required.")
-            .EmailAddress().WithMessage("Email is invalid.");
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty().WithMessage(ErrorCode.EmailRequired.GetEnumMemberValue())
+            .EmailAddress().WithMessage(ErrorCode.EmailInvalid.GetEnumMemberValue());
     }
 }
