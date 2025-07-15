@@ -79,7 +79,7 @@ public class AuthService(
 
         await transactionService.CommitAsync();
 
-        var authToken = new AuthToken
+        var authToken = new AuthTokenResponse
         {
             AccessToken = accessToken,
             ExpiresIn = expiresIn,
@@ -148,7 +148,7 @@ public class AuthService(
 
         await transactionService.CommitAsync();
 
-        var authToken = new AuthToken
+        var authToken = new AuthTokenResponse
         {
             AccessToken = newAccessToken,
             ExpiresIn = expiresIn,
