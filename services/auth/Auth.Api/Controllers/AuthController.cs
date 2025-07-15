@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace Auth.Api.Controllers;
 
 [Route("api/auth")]
-[ApiController]
 public class AuthController(IAuthService authService, IConfiguration configuration) : BaseController
 {
     [HttpPost("register")]
