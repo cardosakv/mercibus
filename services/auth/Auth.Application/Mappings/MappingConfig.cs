@@ -24,9 +24,18 @@ public static class MappingConfig
             .Map(dest => dest.Country, src => src.Country)
             .Map(dest => dest.PostalCode, src => src.PostalCode);
 
-        TypeAdapterConfig<User, RegisterRequest>
+        TypeAdapterConfig<UpdateUserInfoRequest, User>
             .NewConfig()
-            .Map(dest => dest.Username, src => src.UserName)
+            .Map(dest => dest.Name, src => src.Name)
+            .Map(dest => dest.Street, src => src.Street)
+            .Map(dest => dest.City, src => src.City)
+            .Map(dest => dest.State, src => src.State)
+            .Map(dest => dest.Country, src => src.Country)
+            .Map(dest => dest.PostalCode, src => src.PostalCode);
+
+        TypeAdapterConfig<RegisterRequest, User>
+            .NewConfig()
+            .Map(dest => dest.UserName, src => src.Username)
             .Map(dest => dest.Email, src => src.Email);
     }
 }
