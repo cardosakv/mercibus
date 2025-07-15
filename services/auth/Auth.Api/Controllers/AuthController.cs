@@ -49,9 +49,9 @@ public class AuthController(IAuthService authService, IConfiguration configurati
     }
 
     [HttpGet("confirm-email")]
-    public async Task<IActionResult> ConfirmEmail(string userId, string token)
+    public async Task<IActionResult> ConfirmEmail([FromQuery] ConfirmEmailQuery query)
     {
-        var response = await authService.ConfirmEmailAsync(userId, token);
+        var response = await authService.ConfirmEmailAsync(query);
 
         return response.IsSuccess
             ? Redirect(configuration["RedirectUrl:EmailConfirmSuccess"] ?? string.Empty)

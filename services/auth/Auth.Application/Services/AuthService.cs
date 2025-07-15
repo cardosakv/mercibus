@@ -193,15 +193,15 @@ public class AuthService(
         return Success();
     }
 
-    public async Task<ServiceResult> ConfirmEmailAsync(string userId, string token)
+    public async Task<ServiceResult> ConfirmEmailAsync(ConfirmEmailQuery query)
     {
-        var user = await userManager.FindByIdAsync(userId);
+        var user = await userManager.FindByIdAsync(query.UserId);
         if (user is null)
         {
             return Error(ErrorType.InvalidRequestError, ErrorCode.UserNotFound);
         }
 
-        var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+        var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(query.Token));
         var verifyResult = await userManager.ConfirmEmailAsync(user, decodedToken);
         if (!verifyResult.Succeeded)
         {

@@ -46,10 +46,9 @@ public interface IAuthService
     /// <summary>
     /// Verifies the user email based on the token sent to email.
     /// </summary>
-    /// <param name="userId">User ID.</param>
-    /// <param name="token">Verification token.</param>
+    /// <param name="query">Query containing user ID and token.</param>
     /// <returns><see cref="ServiceResult"/> with a boolean value indicating whether the process was successful.</returns>
-    Task<ServiceResult> ConfirmEmailAsync(string userId, string token);
+    Task<ServiceResult> ConfirmEmailAsync(ConfirmEmailQuery query);
 
     /// <summary>
     /// Sends a reset link to the specified user email.
