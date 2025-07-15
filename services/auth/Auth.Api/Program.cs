@@ -34,11 +34,7 @@ try
     builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
     // Add validators.
-    builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
-    builder.Services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
-    builder.Services.AddValidatorsFromAssemblyContaining<SendConfirmationEmailRequestValidator>();
-    builder.Services.AddValidatorsFromAssemblyContaining<ForgotPasswordRequestValidator>();
-    builder.Services.AddValidatorsFromAssemblyContaining<UpdateUserInfoRequestValidator>();
+    builder.Services.AddValidatorsFromAssembly(typeof(RegisterRequestValidator).Assembly);
     builder.Services.AddFluentValidationAutoValidation(config =>
         config.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
 

@@ -5,8 +5,7 @@ namespace Auth.Application.Common;
 /// </summary>
 public static class ErrorCode
 {
-    public const string ValidationFailed = "validation_failed";
-
+    public const string UserIdRequired = "user_id_required";
     public const string UsernameRequired = "username_required";
     public const string UsernameInvalid = "username_invalid";
     public const string UsernameTooShort = "username_too_short";
@@ -35,6 +34,7 @@ public static class ErrorCode
     public const string UserAlreadyInRole = "user_already_in_role";
 
     public const string LoginAlreadyAssociated = "login_already_associated";
+    public const string TokenRequired = "token_required";
     public const string TokenInvalid = "token_invalid";
     public const string RefreshTokenExpired = "refresh_token_expired";
     public const string UserLocked = "user_locked";
