@@ -16,10 +16,8 @@ using FluentValidation;
 using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Converters;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 try
@@ -82,11 +80,10 @@ try
         });
 
     builder.Services.AddAuthorization();
-    builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.Converters.Add(new StringEnumConverter()));
+    builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddSwaggerGen();
-    builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
 
     var app = builder.Build();
 
