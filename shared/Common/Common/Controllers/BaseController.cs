@@ -1,9 +1,10 @@
-﻿using System.Net;
-using Auth.Application.Common;
-using Auth.Application.Responses;
+﻿using Common.Constants;
+using Common.Models;
+using Common.Responses;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
-namespace Auth.Api.Controllers;
+namespace Common.Controllers;
 
 /// <summary>
 /// Base controller for handling API responses.

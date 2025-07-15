@@ -1,6 +1,4 @@
-using Auth.Application.Common;
-
-namespace Auth.Application.Responses;
+namespace Common.Responses;
 
 /// <summary>
 /// Represents an error response from the API.
@@ -10,12 +8,12 @@ public class ApiError
     /// <summary>
     /// Type of error.
     /// </summary>
-    public required ErrorType Type { get; set; }
+    public required string Type { get; set; }
 
     /// <summary>
     /// Error code.
     /// </summary>
-    public required ErrorCode Code { get; set; }
+    public required string Code { get; set; }
 
     /// <summary>
     /// Additional parameters related to the error, if any.

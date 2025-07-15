@@ -1,9 +1,12 @@
-using Auth.Application.Common;
-using Auth.Application.Responses;
+using Common.Constants;
+using Common.Responses;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Auth.Api.Middlewares;
+namespace Common.Middlewares;
 
 /// <summary>
 /// Middleware to handle exceptions globally.

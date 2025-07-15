@@ -1,11 +1,11 @@
-﻿using System.Text.Json;
-using Auth.Application.Common;
-using Auth.Application.Responses;
+﻿using Common.Constants;
+using Common.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Results;
+using System.Text.Json;
 
-namespace Auth.Api.Filters;
+namespace Common.Validations;
 
 /// <summary>
 /// Custom validation result factory.
@@ -32,7 +32,7 @@ public class ValidationResultFactory : IFluentValidationAutoValidationResultFact
                 .Select(error => new BadRequestParams
                 {
                     Field = JsonNamingPolicy.CamelCase.ConvertName(error.Key),
-                    Code = error.Value.LastOrDefault() ?? ErrorCode.ValidationFailed.GetEnumMemberValue(),
+                    Code = error.Value.LastOrDefault() ?? ErrorCode.ValidationFailed,
                 });
 
             return new BadRequestObjectResult(new ApiErrorResponse

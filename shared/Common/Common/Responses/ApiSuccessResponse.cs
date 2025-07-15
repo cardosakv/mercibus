@@ -1,4 +1,4 @@
-namespace Auth.Application.Responses;
+namespace Common.Responses;
 
 /// <summary>
 /// Represents a successful API response containing data of type T.

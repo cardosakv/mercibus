@@ -1,4 +1,4 @@
-namespace Auth.Application.Responses;
+namespace Common.Responses;
 
 /// <summary>
 /// Represents an error response from the API.

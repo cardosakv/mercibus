@@ -1,4 +1,4 @@
-namespace Auth.Application.Responses;
+namespace Common.Responses;
 
 /// <summary>
 /// Represents parameters for a bad request error.

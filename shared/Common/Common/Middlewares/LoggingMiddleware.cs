@@ -1,4 +1,8 @@
-namespace Auth.Api.Middlewares;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+
+namespace Common.Middlewares;
 
 /// <summary>
 /// Logging middleware for request and response.

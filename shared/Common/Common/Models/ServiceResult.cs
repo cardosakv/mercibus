@@ -1,4 +1,4 @@
-﻿namespace Auth.Application.Common;
+﻿namespace Common.Models;
 
 /// <summary>
 /// Represents a standard service returned result.
@@ -21,12 +21,12 @@ public class ServiceResult
     public object? Data { get; init; }
 
     /// <summary>
-    /// Error type for the result, see <see cref="ErrorType"/> for details.
+    /// Error type for the result.
     /// </summary>
-    public ErrorType? ErrorType { get; init; }
+    public string? ErrorType { get; init; }
 
     /// <summary>
-    /// Error code for the result, see <see cref="ErrorCode"/> for details.
+    /// Error code for the result.
     /// </summary>
-    public ErrorCode? ErrorCode { get; init; }
+    public string? ErrorCode { get; init; }
 }
