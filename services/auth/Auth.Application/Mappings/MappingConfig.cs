@@ -1,0 +1,32 @@
+using Auth.Application.DTOs;
+using Auth.Domain.Entities;
+using Mapster;
+
+namespace Auth.Application.Mappings;
+
+/// <summary>
+/// Configuration class for mapping between domain entities and DTOs.
+/// </summary>
+public static class MappingConfig
+{
+    public static void Configure()
+    {
+        TypeAdapterConfig<User, GetUserInfoResponse>
+            .NewConfig()
+            .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.Username, src => src.UserName)
+            .Map(dest => dest.Name, src => src.Name)
+            .Map(dest => dest.Email, src => src.Email)
+            .Map(dest => dest.IsEmailVerified, src => src.EmailConfirmed)
+            .Map(dest => dest.Street, src => src.Street)
+            .Map(dest => dest.City, src => src.City)
+            .Map(dest => dest.State, src => src.State)
+            .Map(dest => dest.Country, src => src.Country)
+            .Map(dest => dest.PostalCode, src => src.PostalCode);
+
+        TypeAdapterConfig<User, RegisterRequest>
+            .NewConfig()
+            .Map(dest => dest.Username, src => src.UserName)
+            .Map(dest => dest.Email, src => src.Email);
+    }
+}

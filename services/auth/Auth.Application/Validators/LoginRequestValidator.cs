@@ -1,3 +1,4 @@
+using Auth.Application.Common;
 using Auth.Application.DTOs;
 using FluentValidation;
 
@@ -11,18 +12,16 @@ public class LoginRequestValidator : AbstractValidator<LoginRequest>
     public LoginRequestValidator()
     {
         RuleFor(x => x.Username)
-            .NotEmpty().WithMessage("Username is required.")
-            .MinimumLength(3).WithMessage("Username must be at least 3 characters long.")
-            .MaximumLength(20).WithMessage("Username must not exceed 20 characters.")
-            .Matches(@"^[a-zA-Z0-9_]+$")
-            .WithMessage("Username can only contain letters, numbers, and underscores.");
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty().WithMessage(ErrorCode.UsernameRequired.GetEnumMemberValue())
+            .MinimumLength(Constants.UserValidation.UsernameMinLength).WithMessage(ErrorCode.UsernameTooShort.GetEnumMemberValue())
+            .MaximumLength(Constants.UserValidation.UsernameMaxLength).WithMessage(ErrorCode.UsernameTooLong.GetEnumMemberValue())
+            .Matches(Constants.UserValidation.UsernamePattern).WithMessage(ErrorCode.UsernameInvalid.GetEnumMemberValue());
 
         RuleFor(x => x.Password)
-            .NotEmpty().WithMessage("Password is required.")
-            .MinimumLength(6).WithMessage("Password must be at least 6 characters long.")
-            .Matches(@"[A-Z]").WithMessage("Password must contain at least one uppercase letter.")
-            .Matches(@"[a-z]").WithMessage("Password must contain at least one lowercase letter.")
-            .Matches(@"[0-9]").WithMessage("Password must contain at least one number.")
-            .Matches(@"[\W_]").WithMessage("Password must contain at least one special character.");
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty().WithMessage(ErrorCode.PasswordRequired.GetEnumMemberValue())
+            .MinimumLength(Constants.UserValidation.PasswordMinLength).WithMessage(ErrorCode.PasswordTooShort.GetEnumMemberValue())
+            .Matches(Constants.UserValidation.PasswordPattern).WithMessage(ErrorCode.PasswordInvalid.GetEnumMemberValue());
     }
 }

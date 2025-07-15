@@ -1,5 +1,5 @@
 using Auth.Application.Common;
-using Auth.Application.Interfaces;
+using Auth.Application.Interfaces.Repositories;
 using Auth.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 

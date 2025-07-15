@@ -1,15 +1,16 @@
 using System.Text;
 using Auth.Application.Common;
 using Auth.Application.DTOs;
-using Auth.Application.Interfaces;
+using Auth.Application.Interfaces.Repositories;
+using Auth.Application.Interfaces.Services;
 using Auth.Domain.Common;
 using Auth.Domain.Entities;
+using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace Auth.Application.Services;
 
@@ -22,681 +23,309 @@ public class AuthService(
     IHttpContextAccessor httpContextAccessor,
     LinkGenerator linkGenerator,
     IConfiguration configuration,
-    ILogger<IAuthService> logger) : IAuthService
+    IMapper mapper) : BaseService, IAuthService
 {
-    public async Task<Response> RegisterAsync(RegisterRequest request)
+    public async Task<ServiceResult> RegisterAsync(RegisterRequest request)
     {
-        try
+        await transactionService.BeginAsync();
+        var user = mapper.Map<User>(request);
+
+        var createResult = await userManager.CreateAsync(user, request.Password);
+        if (!createResult.Succeeded)
         {
-            await transactionService.BeginAsync();
-
-            var user = new User
-            {
-                UserName = request.Username,
-                Email = request.Email
-            };
-
-            var createResult = await userManager.CreateAsync(user, request.Password);
-            if (!createResult.Succeeded)
-            {
-                var error = createResult.Errors.First();
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = error.Description,
-                    ErrorType = IdentityErrorMapper.MapToErrorType(error.Code)
-                };
-            }
-
-            var roleResult = await userManager.AddToRoleAsync(user, Roles.Customer);
-            if (!roleResult.Succeeded)
-            {
-                await transactionService.RollbackAsync();
-
-                var error = roleResult.Errors.First();
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = error.Description,
-                    ErrorType = IdentityErrorMapper.MapToErrorType(error.Code)
-                };
-            }
-
-            await transactionService.CommitAsync();
-
-            return new Response
-            {
-                IsSuccess = true,
-                Message = Messages.UserRegistered
-            };
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, Messages.ExceptionOccured);
-
             await transactionService.RollbackAsync();
-            return new Response
-            {
-                IsSuccess = false,
-                Message = Messages.UnexpectedError,
-                ErrorType = ErrorType.Internal
-            };
+            var error = createResult.Errors.First();
+            return Error(Utils.IdentityErrorToType(error.Code), Utils.IdentityErrorToCode(error.Code));
         }
+
+        var roleResult = await userManager.AddToRoleAsync(user, Roles.Customer);
+        if (!roleResult.Succeeded)
+        {
+            await transactionService.RollbackAsync();
+            var error = roleResult.Errors.First();
+            return Error(Utils.IdentityErrorToType(error.Code), Utils.IdentityErrorToCode(error.Code));
+        }
+
+        await transactionService.CommitAsync();
+        var userResponse = mapper.Map<GetUserInfoResponse>(user);
+
+        return Success(userResponse);
     }
 
-    public async Task<Response> LoginAsync(LoginRequest request)
+    public async Task<ServiceResult> LoginAsync(LoginRequest request)
     {
-        try
+        await transactionService.BeginAsync();
+
+        var user = await userManager.FindByNameAsync(request.Username);
+        if (user is null)
         {
-            await transactionService.BeginAsync();
-
-            var user = await userManager.FindByNameAsync(request.Username);
-            if (user is null)
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.UserNotFound,
-                    ErrorType = ErrorType.NotFound
-                };
-            }
-
-            var passwordValid = await userManager.CheckPasswordAsync(user, request.Password);
-            if (!passwordValid)
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.PasswordIncorrect,
-                    ErrorType = ErrorType.Validation
-                };
-            }
-
-            var role = await userManager.GetRolesAsync(user);
-            if (role.Count == 0)
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.UserForbidden,
-                    ErrorType = ErrorType.Forbidden
-                };
-            }
-
-            var (accessToken, expiresIn) = tokenService.CreateAccessToken(user, role[0]);
-            var refreshToken = await refreshTokenRepository.CreateTokenAsync(user.Id);
-
-            await transactionService.CommitAsync();
-
-            return new Response
-            {
-                IsSuccess = true,
-                Data = new AuthToken
-                {
-                    AccessToken = accessToken,
-                    ExpiresIn = expiresIn,
-                    RefreshToken = refreshToken
-                }
-            };
+            return Error(ErrorType.InvalidRequestError, ErrorCode.UserNotFound);
         }
-        catch (Exception ex)
+
+        var passwordMatch = await userManager.CheckPasswordAsync(user, request.Password);
+        if (!passwordMatch)
         {
-            logger.LogError(ex, Messages.ExceptionOccured);
-
-            await transactionService.RollbackAsync();
-            return new Response
-            {
-                IsSuccess = false,
-                Message = Messages.UnexpectedError,
-                ErrorType = ErrorType.Internal
-            };
+            return Error(ErrorType.InvalidRequestError, ErrorCode.PasswordMismatch);
         }
+
+        var role = await userManager.GetRolesAsync(user);
+        if (role.Count == 0)
+        {
+            return Error(ErrorType.PermissionError, ErrorCode.UserNoRoleAssigned);
+        }
+
+        var (accessToken, expiresIn) = tokenService.CreateAccessToken(user, role[0]);
+        var refreshToken = await refreshTokenRepository.CreateTokenAsync(user.Id);
+
+        await transactionService.CommitAsync();
+
+        var authToken = new AuthToken
+        {
+            AccessToken = accessToken,
+            ExpiresIn = expiresIn,
+            RefreshToken = refreshToken
+        };
+
+        return Success(authToken);
     }
 
-    public async Task<Response> LogoutAsync(LogoutRequest request)
+    public async Task<ServiceResult> LogoutAsync(LogoutRequest request)
     {
-        try
+        await transactionService.BeginAsync();
+
+        var persistedToken = await refreshTokenRepository.RetrieveTokenAsync(request.RefreshToken);
+        if (persistedToken is null || persistedToken.IsRevoked)
         {
-            await transactionService.BeginAsync();
+            return Error(ErrorType.InvalidRequestError, ErrorCode.TokenInvalid);
+        }
 
-            var persistedToken = await refreshTokenRepository.RetrieveTokenAsync(request.RefreshToken);
-            if (persistedToken is null || persistedToken.IsRevoked)
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.UserForbidden,
-                    ErrorType = ErrorType.Forbidden
-                };
-            }
+        var revoked = await refreshTokenRepository.RevokeTokenAsync(persistedToken);
+        if (!revoked)
+        {
+            return Error(ErrorType.ApiError, ErrorCode.Internal);
+        }
 
+        await transactionService.CommitAsync();
+
+        return Success();
+    }
+
+    public async Task<ServiceResult> RefreshTokenAsync(RefreshRequest request)
+    {
+        await transactionService.BeginAsync();
+
+        var persistedToken = await refreshTokenRepository.RetrieveTokenAsync(request.RefreshToken);
+        if (persistedToken is null || persistedToken.IsRevoked)
+        {
+            return Error(ErrorType.InvalidRequestError, ErrorCode.TokenInvalid);
+        }
+
+        if (persistedToken.ExpiresAt < DateTime.UtcNow)
+        {
             var revoked = await refreshTokenRepository.RevokeTokenAsync(persistedToken);
             if (!revoked)
             {
-                await transactionService.RollbackAsync();
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.UnexpectedError,
-                    ErrorType = ErrorType.Internal
-                };
+                return Error(ErrorType.ApiError, ErrorCode.Internal);
             }
 
-            await transactionService.CommitAsync();
-
-            return new Response
-            {
-                IsSuccess = true,
-                Message = Messages.UserLoggedOut
-            };
+            return Error(ErrorType.AuthenticationError, ErrorCode.RefreshTokenExpired);
         }
-        catch (Exception ex)
+
+        var user = await userManager.FindByIdAsync(persistedToken.UserId);
+        if (user is null)
         {
-            logger.LogError(ex, Messages.ExceptionOccured);
-
-            await transactionService.RollbackAsync();
-            return new Response
-            {
-                IsSuccess = false,
-                Message = Messages.UnexpectedError,
-                ErrorType = ErrorType.Internal
-            };
+            return Error(ErrorType.InvalidRequestError, ErrorCode.UserNotFound);
         }
+
+        var role = await userManager.GetRolesAsync(user);
+        if (role.Count == 0)
+        {
+            return Error(ErrorType.PermissionError, ErrorCode.UserNoRoleAssigned);
+        }
+
+        var (newAccessToken, expiresIn) = tokenService.CreateAccessToken(user, role[0]);
+        var newRefreshToken = await refreshTokenRepository.RotateTokenAsync(persistedToken);
+
+        await transactionService.CommitAsync();
+
+        var authToken = new AuthToken
+        {
+            AccessToken = newAccessToken,
+            ExpiresIn = expiresIn,
+            RefreshToken = newRefreshToken
+        };
+
+        return Success(authToken);
     }
 
-    public async Task<Response> RefreshTokenAsync(RefreshRequest request)
+    public async Task<ServiceResult> SendConfirmationEmailAsync(SendConfirmationEmailRequest request)
     {
-        try
+        var user = await userManager.FindByEmailAsync(request.Email);
+        if (user is null)
         {
-            await transactionService.BeginAsync();
-
-            var persistedToken = await refreshTokenRepository.RetrieveTokenAsync(request.RefreshToken);
-            if (persistedToken is null || persistedToken.IsRevoked)
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.UserForbidden,
-                    ErrorType = ErrorType.Forbidden
-                };
-            }
-
-            if (persistedToken.ExpiresAt < DateTime.UtcNow)
-            {
-                var revoked = await refreshTokenRepository.RevokeTokenAsync(persistedToken);
-                if (!revoked)
-                {
-                    await transactionService.RollbackAsync();
-                    return new Response
-                    {
-                        IsSuccess = false,
-                        Message = Messages.UnexpectedError,
-                        ErrorType = ErrorType.Internal
-                    };
-                }
-
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.RefreshTokenExpired,
-                    ErrorType = ErrorType.Unauthorized
-                };
-            }
-
-            var user = await userManager.FindByIdAsync(persistedToken.UserId);
-            if (user is null)
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.UserNotFound,
-                    ErrorType = ErrorType.NotFound
-                };
-            }
-
-            var role = await userManager.GetRolesAsync(user);
-            if (role.Count == 0)
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.UserForbidden,
-                    ErrorType = ErrorType.Forbidden
-                };
-            }
-
-            var (newAccessToken, expiresIn) = tokenService.CreateAccessToken(user, role[0]);
-            var newRefreshToken = await refreshTokenRepository.RotateTokenAsync(persistedToken);
-
-            await transactionService.CommitAsync();
-
-            return new Response
-            {
-                IsSuccess = true,
-                Data = new AuthToken
-                {
-                    AccessToken = newAccessToken,
-                    ExpiresIn = expiresIn,
-                    RefreshToken = newRefreshToken
-                }
-            };
+            return Error(ErrorType.InvalidRequestError, ErrorCode.UserNotFound);
         }
-        catch (Exception ex)
+
+        if (user.EmailConfirmed)
         {
-            logger.LogError(ex, Messages.ExceptionOccured);
-
-            await transactionService.RollbackAsync();
-            return new Response
-            {
-                IsSuccess = false,
-                Message = Messages.UnexpectedError,
-                ErrorType = ErrorType.Internal
-            };
+            return Error(ErrorType.ConflictError, ErrorCode.EmailAlreadyVerified);
         }
+
+        if (httpContextAccessor.HttpContext is null)
+        {
+            return Error(ErrorType.ApiError, ErrorCode.Internal);
+        }
+
+        var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+        var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+        var confirmEndpoint = linkGenerator.GetUriByAction(httpContextAccessor.HttpContext, "ConfirmEmail", "Auth");
+        var confirmLink = confirmEndpoint + "?userId=" + user.Id + "&token=" + encodedToken;
+
+        var emailSent = await emailService.SendEmailConfirmationLink(request.Email, confirmLink);
+        if (!emailSent)
+        {
+            return Error(ErrorType.ApiError, ErrorCode.Internal);
+        }
+
+        return Success();
     }
 
-    public async Task<Response> SendConfirmationEmailAsync(SendConfirmationEmailRequest request)
+    public async Task<ServiceResult> ConfirmEmailAsync(string userId, string token)
     {
-        try
+        var user = await userManager.FindByIdAsync(userId);
+        if (user is null)
         {
-            var user = await userManager.FindByEmailAsync(request.Email);
-            if (user is null)
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.UserNotFound,
-                    ErrorType = ErrorType.NotFound
-                };
-            }
-
-            if (user.EmailConfirmed)
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.EmailAlreadyVerified,
-                    ErrorType = ErrorType.Conflict
-                };
-            }
-
-            if (httpContextAccessor.HttpContext is null)
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.UnexpectedError,
-                    ErrorType = ErrorType.Internal
-                };
-            }
-
-            var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
-            var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-            var confirmEndpoint =
-                linkGenerator.GetUriByAction(httpContextAccessor.HttpContext, "ConfirmEmail", "Auth");
-            var confirmLink = confirmEndpoint + "?userId=" + user.Id + "&token=" + encodedToken;
-
-            var emailSent = await emailService.SendEmailConfirmationLink(request.Email, confirmLink);
-            if (!emailSent)
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.UnexpectedError,
-                    ErrorType = ErrorType.Internal
-                };
-            }
-
-            return new Response
-            {
-                IsSuccess = true,
-                Message = Messages.EmailConfirmationSent
-            };
+            return Error(ErrorType.InvalidRequestError, ErrorCode.UserNotFound);
         }
-        catch (Exception ex)
+
+        var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+        var verifyResult = await userManager.ConfirmEmailAsync(user, decodedToken);
+        if (!verifyResult.Succeeded)
         {
-            logger.LogError(ex, Messages.ExceptionOccured);
-
-            return new Response
-            {
-                IsSuccess = false,
-                Message = Messages.UnexpectedError,
-                ErrorType = ErrorType.Internal
-            };
+            var error = verifyResult.Errors.First();
+            return Error(Utils.IdentityErrorToType(error.Code), Utils.IdentityErrorToCode(error.Code));
         }
+
+        return Success();
     }
 
-    public async Task<Response> ConfirmEmailAsync(string userId, string token)
+    public async Task<ServiceResult> ForgotPasswordAsync(ForgotPasswordRequest request)
     {
-        try
+        var user = await userManager.FindByEmailAsync(request.Email);
+        if (user is null)
         {
-            var user = await userManager.FindByIdAsync(userId);
-            if (user is null)
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.UserNotFound,
-                    ErrorType = ErrorType.NotFound
-                };
-            }
-
-            var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
-            var verifyResult = await userManager.ConfirmEmailAsync(user, decodedToken);
-            if (!verifyResult.Succeeded)
-            {
-                var error = verifyResult.Errors.First();
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = error.Description,
-                    ErrorType = IdentityErrorMapper.MapToErrorType(error.Code)
-                };
-            }
-
-            return new Response
-            {
-                IsSuccess = true,
-                Message = Messages.EmailVerified
-            };
+            return Error(ErrorType.InvalidRequestError, ErrorCode.UserNotFound);
         }
-        catch (Exception ex)
+
+        if (httpContextAccessor.HttpContext is null)
         {
-            logger.LogError(ex, Messages.ExceptionOccured);
-
-            return new Response
-            {
-                IsSuccess = false,
-                Message = Messages.UnexpectedError,
-                ErrorType = ErrorType.Internal
-            };
+            return Error(ErrorType.ApiError, ErrorCode.Internal);
         }
+
+        var token = await userManager.GeneratePasswordResetTokenAsync(user);
+        var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+        var passwordResetRedirectUrl = configuration["RedirectUrl:PasswordReset"];
+        var resetLink = passwordResetRedirectUrl + "?userId=" + user.Id + "&token=" + encodedToken;
+
+        var emailSent = await emailService.SendPasswordResetLink(request.Email, resetLink);
+        if (!emailSent)
+        {
+            return Error(ErrorType.ApiError, ErrorCode.Internal);
+        }
+
+        return Success();
     }
 
-    public async Task<Response> ForgotPasswordAsync(ForgotPasswordRequest request)
+    public async Task<ServiceResult> ResetPasswordAsync(ResetPasswordRequest request)
     {
-        try
+        await transactionService.BeginAsync();
+
+        var user = await userManager.FindByIdAsync(request.UserId);
+        if (user is null)
         {
-            var user = await userManager.FindByEmailAsync(request.Email);
-            if (user is null)
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.UserNotFound,
-                    ErrorType = ErrorType.NotFound
-                };
-            }
-
-            if (httpContextAccessor.HttpContext is null)
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.UnexpectedError,
-                    ErrorType = ErrorType.Internal
-                };
-            }
-
-            var token = await userManager.GeneratePasswordResetTokenAsync(user);
-            var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-            var passwordResetRedirectUrl = configuration["RedirectUrl:PasswordReset"];
-            var resetLink = passwordResetRedirectUrl + "?userId=" + user.Id + "&token=" + encodedToken;
-
-            var emailSent = await emailService.SendPasswordResetLink(request.Email, resetLink);
-            if (!emailSent)
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.UnexpectedError,
-                    ErrorType = ErrorType.Internal
-                };
-            }
-
-            return new Response
-            {
-                IsSuccess = true,
-                Message = Messages.PasswordResetLinkSent
-            };
+            return Error(ErrorType.InvalidRequestError, ErrorCode.UserNotFound);
         }
-        catch (Exception ex)
+
+        var resetResult = await userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
+        if (!resetResult.Succeeded)
         {
-            logger.LogError(ex, Messages.ExceptionOccured);
-
-            return new Response
-            {
-                IsSuccess = false,
-                Message = Messages.UnexpectedError,
-                ErrorType = ErrorType.Internal
-            };
+            var error = resetResult.Errors.First();
+            return Error(Utils.IdentityErrorToType(error.Code), Utils.IdentityErrorToCode(error.Code));
         }
+
+        await transactionService.CommitAsync();
+
+        return Success();
     }
 
-    public async Task<Response> ResetPasswordAsync(ResetPasswordRequest request)
+    public async Task<ServiceResult> ChangePasswordAsync(ChangePasswordRequest request)
     {
-        try
+        await transactionService.BeginAsync();
+
+        var user = await userManager.FindByIdAsync(request.UserId);
+        if (user is null)
         {
-            await transactionService.BeginAsync();
-
-            var user = await userManager.FindByIdAsync(request.UserId);
-            if (user is null)
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.UserNotFound,
-                    ErrorType = ErrorType.NotFound
-                };
-            }
-
-            var resetResult = await userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
-            if (!resetResult.Succeeded)
-            {
-                var error = resetResult.Errors.First();
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = error.Description,
-                    ErrorType = IdentityErrorMapper.MapToErrorType(error.Code)
-                };
-            }
-
-            await transactionService.CommitAsync();
-
-            return new Response
-            {
-                IsSuccess = true,
-                Message = Messages.PasswordResetSuccess
-            };
+            return Error(ErrorType.InvalidRequestError, ErrorCode.UserNotFound);
         }
-        catch (Exception ex)
+
+        var changeResult = await userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
+        if (!changeResult.Succeeded)
         {
-            logger.LogError(ex, Messages.ExceptionOccured);
-
-            await transactionService.RollbackAsync();
-            return new Response
-            {
-                IsSuccess = false,
-                Message = Messages.UnexpectedError,
-                ErrorType = ErrorType.Internal
-            };
+            var error = changeResult.Errors.First();
+            return Error(Utils.IdentityErrorToType(error.Code), Utils.IdentityErrorToCode(error.Code));
         }
+
+        await transactionService.CommitAsync();
+
+        return Success();
     }
 
-    public async Task<Response> ChangePasswordAsync(ChangePasswordRequest request)
+    public async Task<ServiceResult> GetInfoAsync(string? userId)
     {
-        try
+        if (string.IsNullOrWhiteSpace(userId))
         {
-            await transactionService.BeginAsync();
-
-            var user = await userManager.FindByIdAsync(request.UserId);
-            if (user is null)
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.UserNotFound,
-                    ErrorType = ErrorType.NotFound
-                };
-            }
-
-            var changeResult =
-                await userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
-            if (!changeResult.Succeeded)
-            {
-                var error = changeResult.Errors.First();
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = error.Description,
-                    ErrorType = IdentityErrorMapper.MapToErrorType(error.Code)
-                };
-            }
-
-            await transactionService.CommitAsync();
-
-            return new Response
-            {
-                IsSuccess = true,
-                Message = Messages.PasswordChanged
-            };
+            return Error(ErrorType.InvalidRequestError, ErrorCode.UserNotFound);
         }
-        catch (Exception ex)
+
+        var user = await userManager.FindByIdAsync(userId);
+        if (user is null)
         {
-            logger.LogError(ex, Messages.ExceptionOccured);
-
-            await transactionService.RollbackAsync();
-            return new Response
-            {
-                IsSuccess = false,
-                Message = Messages.UnexpectedError,
-                ErrorType = ErrorType.Internal
-            };
+            return Error(ErrorType.InvalidRequestError, ErrorCode.UserNotFound);
         }
+
+        var userResponse = mapper.Map<GetUserInfoResponse>(user);
+
+        return Success(userResponse);
     }
 
-    public async Task<Response> GetInfoAsync(string? userId)
+    public async Task<ServiceResult> UpdateInfoAsync(string? userId, UpdateUserInfoRequest request)
     {
-        try
+        await transactionService.BeginAsync();
+
+        if (string.IsNullOrWhiteSpace(userId))
         {
-            if (string.IsNullOrWhiteSpace(userId))
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.UserNotFound,
-                    ErrorType = ErrorType.NotFound
-                };
-            }
-
-            var user = await userManager.FindByIdAsync(userId);
-            if (user is null)
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.UserNotFound,
-                    ErrorType = ErrorType.NotFound
-                };
-            }
-
-            var userData = new GetUserInfoResponse
-            {
-                Name = user.Name,
-                Email = user.Email ?? string.Empty,
-                IsEmailVerified = user.EmailConfirmed,
-                Street = user.Street,
-                City = user.City,
-                State = user.State,
-                Country = user.Country,
-                PostalCode = user.PostalCode is 0 ? null : user.PostalCode
-            };
-
-            return new Response
-            {
-                IsSuccess = true,
-                Data = userData
-            };
+            return Error(ErrorType.InvalidRequestError, ErrorCode.UserNotFound);
         }
-        catch (Exception ex)
+
+        var user = await userManager.FindByIdAsync(userId);
+        if (user is null)
         {
-            logger.LogError(ex, Messages.ExceptionOccured);
-
-            return new Response
-            {
-                IsSuccess = false,
-                Message = Messages.UnexpectedError,
-                ErrorType = ErrorType.Internal
-            };
+            return Error(ErrorType.InvalidRequestError, ErrorCode.UserNotFound);
         }
-    }
 
-    public async Task<Response> UpdateInfoAsync(string? userId, UpdateUserInfoRequest request)
-    {
-        try
+        mapper.Map(request, user);
+
+        var updateResult = await userManager.UpdateAsync(user);
+        if (!updateResult.Succeeded)
         {
-            await transactionService.BeginAsync();
-
-            if (string.IsNullOrWhiteSpace(userId))
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.UserNotFound,
-                    ErrorType = ErrorType.NotFound
-                };
-            }
-
-            var user = await userManager.FindByIdAsync(userId);
-            if (user is null)
-            {
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = Messages.UserNotFound,
-                    ErrorType = ErrorType.NotFound
-                };
-            }
-
-            user.Name = request.Name;
-            user.Street = request.Street;
-            user.City = request.City;
-            user.State = request.State;
-            user.Country = request.Country;
-            user.PostalCode = request.PostalCode;
-
-            var updateResult = await userManager.UpdateAsync(user);
-            if (!updateResult.Succeeded)
-            {
-                var error = updateResult.Errors.First();
-                return new Response
-                {
-                    IsSuccess = false,
-                    Message = error.Description,
-                    ErrorType = IdentityErrorMapper.MapToErrorType(error.Code)
-                };
-            }
-
-            await transactionService.CommitAsync();
-
-            return new Response
-            {
-                IsSuccess = true,
-                Message = Messages.UserInfoUpdated
-            };
+            var error = updateResult.Errors.First();
+            return Error(Utils.IdentityErrorToType(error.Code), Utils.IdentityErrorToCode(error.Code));
         }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, Messages.ExceptionOccured);
 
-            await transactionService.RollbackAsync();
-            return new Response
-            {
-                IsSuccess = false,
-                Message = Messages.UnexpectedError,
-                ErrorType = ErrorType.Internal
-            };
-        }
+        await transactionService.CommitAsync();
+
+        var userResponse = mapper.Map<GetUserInfoResponse>(user);
+
+        return Success(userResponse);
     }
 }

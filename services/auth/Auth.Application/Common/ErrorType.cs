@@ -1,47 +1,27 @@
-﻿namespace Auth.Application.Common;
+﻿using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+namespace Auth.Application.Common;
 
 /// <summary>
-/// Error types for service responses.
+/// Error types for API responses.
 /// </summary>
+[JsonConverter(typeof(StringEnumConverter))]
 public enum ErrorType
 {
-    /// <summary>
-    /// Request is invalid or malformed.
-    /// </summary>
-    BadRequest,
+    [EnumMember(Value = "invalid_request_error")]
+    InvalidRequestError,
 
-    /// <summary>
-    /// Validation errors occurred.
-    /// </summary>
-    Validation,
+    [EnumMember(Value = "conflict_error")] ConflictError,
 
-    /// <summary>
-    /// Resource is not found.
-    /// </summary>
-    NotFound,
+    [EnumMember(Value = "authentication_error")]
+    AuthenticationError,
 
-    /// <summary>
-    /// Resource already exists or conflict occurs.
-    /// </summary>
-    Conflict,
+    [EnumMember(Value = "locked_error")] LockedError,
 
-    /// <summary>
-    /// Unauthorized access or authentication failure.
-    /// </summary>
-    Unauthorized,
+    [EnumMember(Value = "permission_error")]
+    PermissionError,
 
-    /// <summary>
-    /// Resource access is forbidden.
-    /// </summary>
-    Forbidden,
-
-    /// <summary>
-    /// Resource is locked or temporarily unavailable.
-    /// </summary>
-    Locked,
-
-    /// <summary>
-    /// Internal server error or unexpected condition.
-    /// </summary>
-    Internal
+    [EnumMember(Value = "api_error")] ApiError
 }

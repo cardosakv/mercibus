@@ -1,4 +1,5 @@
-﻿using Auth.Application.DTOs;
+﻿using Auth.Application.Common;
+using Auth.Application.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Results;
@@ -13,10 +14,27 @@ public class ValidationResultFactory : IFluentValidationAutoValidationResultFact
     public IActionResult CreateActionResult(ActionExecutingContext context,
         ValidationProblemDetails? validationProblemDetails)
     {
+        var badRequestParams = new List<BadRequestParams>();
+
+        if (validationProblemDetails is not null && validationProblemDetails.Errors.Any())
+        {
+            badRequestParams.AddRange(validationProblemDetails.Errors
+                .Select(error => new BadRequestParams
+                {
+                    Field = error.Key,
+                    Code = error.Value[0]
+                }));
+        }
+
         return new BadRequestObjectResult(
-            new BadRequestResponse
+            new ApiErrorResponse
             {
-                Errors = validationProblemDetails?.Errors.SelectMany(x => x.Value).ToList() ?? []
+                Error = new ApiError
+                {
+                    Type = ErrorType.InvalidRequestError,
+                    Code = ErrorCode.ValidationFailed,
+                    Params = badRequestParams
+                }
             }
         );
     }

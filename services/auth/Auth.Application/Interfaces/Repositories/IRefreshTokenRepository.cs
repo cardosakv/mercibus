@@ -1,6 +1,6 @@
 using Auth.Domain.Entities;
 
-namespace Auth.Application.Interfaces;
+namespace Auth.Application.Interfaces.Repositories;
 
 /// <summary>
 /// Interface for refresh token repository.

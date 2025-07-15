@@ -6,6 +6,16 @@ namespace Auth.Application.DTOs;
 public class GetUserInfoResponse
 {
     /// <summary>
+    /// User unique identifier.
+    /// </summary>
+    public required string Id { get; set; }
+
+    /// <summary>
+    /// User username.
+    /// </summary>
+    public required string Username { get; set; }
+
+    /// <summary>
     /// User display name.
     /// </summary>
     public string Name { get; set; } = string.Empty;
@@ -18,7 +28,7 @@ public class GetUserInfoResponse
     /// <summary>
     /// Whether email is verified.
     /// </summary>
-    public bool IsEmailVerified { get; set; } = false;
+    public bool IsEmailVerified { get; set; }
 
     /// <summary>
     /// Street address.
@@ -43,5 +53,5 @@ public class GetUserInfoResponse
     /// <summary>
     /// Postal code address.
     /// </summary>
-    public short? PostalCode { get; set; } = null;
+    public short? PostalCode { get; set; }
 }

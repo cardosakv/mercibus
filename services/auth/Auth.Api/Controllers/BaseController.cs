@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using Auth.Application.Common;
-using Auth.Application.DTOs;
+using Auth.Application.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Auth.Api.Controllers;
@@ -11,38 +11,89 @@ namespace Auth.Api.Controllers;
 [ApiController]
 public abstract class BaseController : ControllerBase
 {
-    protected IActionResult HandleResponse(Response response, string httpMethod)
+    protected IActionResult Ok(ServiceResult result)
     {
-        if (response.IsSuccess)
+        if (!result.IsSuccess)
         {
-            return httpMethod switch
-            {
-                "GET" => Ok(response.Data),
-                "POST" => response.Data is not null
-                    ? Ok(response.Data)
-                    : Ok(new StandardResponse { Message = response.Message }),
-                "PUT" or "DELETE" => NoContent(),
-                _ => Ok(response.Data)
-            };
+            return Error(result);
         }
 
-        return HandleErrorResponse(response);
+        return Ok(new ApiSuccessResponse { Data = result.Data });
     }
 
-    private IActionResult HandleErrorResponse(Response response)
+    protected IActionResult NoContent(ServiceResult result)
     {
-        return response.ErrorType switch
+        if (!result.IsSuccess)
         {
-            ErrorType.BadRequest => BadRequest(new BadRequestResponse { Errors = [response.Message] }),
-            ErrorType.Validation => BadRequest(new BadRequestResponse { Errors = [response.Message] }),
-            ErrorType.NotFound => NotFound(new StandardResponse { Message = response.Message }),
-            ErrorType.Conflict => Conflict(new StandardResponse { Message = response.Message }),
-            ErrorType.Unauthorized => Unauthorized(new StandardResponse { Message = response.Message }),
-            ErrorType.Forbidden => Forbid(),
-            ErrorType.Locked => StatusCode((int)HttpStatusCode.Locked,
-                new StandardResponse { Message = response.Message }),
-            _ => StatusCode((int)HttpStatusCode.InternalServerError,
-                new StandardResponse { Message = response.Message })
+            return Error(result);
+        }
+
+        return NoContent();
+    }
+
+    private ObjectResult Error(ServiceResult result)
+    {
+        return result.ErrorType switch
+        {
+            ErrorType.InvalidRequestError =>
+                StatusCode((int)HttpStatusCode.BadRequest, new ApiErrorResponse
+                {
+                    Error = new ApiError
+                    {
+                        Type = result.ErrorType ?? ErrorType.InvalidRequestError,
+                        Code = result.ErrorCode ?? ErrorCode.ValidationFailed
+                    }
+                }),
+
+            ErrorType.ConflictError =>
+                StatusCode((int)HttpStatusCode.Conflict, new ApiErrorResponse
+                {
+                    Error = new ApiError
+                    {
+                        Type = result.ErrorType ?? ErrorType.ConflictError,
+                        Code = result.ErrorCode ?? ErrorCode.Internal
+                    }
+                }),
+
+            ErrorType.AuthenticationError =>
+                StatusCode((int)HttpStatusCode.Unauthorized, new ApiErrorResponse
+                {
+                    Error = new ApiError
+                    {
+                        Type = result.ErrorType ?? ErrorType.AuthenticationError,
+                        Code = result.ErrorCode ?? ErrorCode.Internal
+                    }
+                }),
+
+            ErrorType.PermissionError =>
+                StatusCode((int)HttpStatusCode.Forbidden, new ApiErrorResponse
+                {
+                    Error = new ApiError
+                    {
+                        Type = result.ErrorType ?? ErrorType.PermissionError,
+                        Code = result.ErrorCode ?? ErrorCode.Internal
+                    }
+                }),
+
+            ErrorType.LockedError =>
+                StatusCode((int)HttpStatusCode.Locked, new ApiErrorResponse
+                {
+                    Error = new ApiError
+                    {
+                        Type = result.ErrorType ?? ErrorType.LockedError,
+                        Code = result.ErrorCode ?? ErrorCode.Internal
+                    }
+                }),
+
+            _ =>
+                StatusCode((int)HttpStatusCode.InternalServerError, new ApiErrorResponse
+                {
+                    Error = new ApiError
+                    {
+                        Type = result.ErrorType ?? ErrorType.ApiError,
+                        Code = result.ErrorCode ?? ErrorCode.Internal
+                    }
+                })
         };
     }
 }

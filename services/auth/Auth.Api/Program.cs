@@ -3,7 +3,9 @@ using System.Net.Mail;
 using System.Text;
 using Auth.Api.Filters;
 using Auth.Api.Middlewares;
-using Auth.Application.Interfaces;
+using Auth.Application.Interfaces.Repositories;
+using Auth.Application.Interfaces.Services;
+using Auth.Application.Mappings;
 using Auth.Application.Services;
 using Auth.Application.Validators;
 using Auth.Domain.Entities;
@@ -11,19 +13,18 @@ using Auth.Infrastructure;
 using Auth.Infrastructure.Repositories;
 using Auth.Infrastructure.Services;
 using FluentValidation;
+using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Converters;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-
-    // Add logging.
-    builder.Services.AddTransient<LoggingMiddleware>();
 
     // Add services to the container.
     builder.Services.AddScoped<IAuthService, AuthService>();
@@ -40,6 +41,10 @@ try
     builder.Services.AddValidatorsFromAssemblyContaining<UpdateUserInfoRequestValidator>();
     builder.Services.AddFluentValidationAutoValidation(config =>
         config.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
+
+    // Add mapping.
+    builder.Services.AddMapster();
+    MappingConfig.Configure();
 
     // Add identity services.
     builder.Services.AddIdentityCore<User>()
@@ -80,56 +85,26 @@ try
             };
         });
 
-    // Add swagger.
-    builder.Services.AddSwaggerGen(options =>
-    {
-        options.SwaggerDoc("v1", new OpenApiInfo { Title = "Auth API", Version = "v1" });
-
-        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-        {
-            Name = "Authorization",
-            Description = "JWT Authorization header using the Bearer scheme.",
-            Type = SecuritySchemeType.Http,
-            Scheme = "bearer",
-            BearerFormat = "JWT",
-            In = ParameterLocation.Header,
-            Reference = new OpenApiReference
-            {
-                Type = ReferenceType.SecurityScheme,
-                Id = "Bearer"
-            }
-        });
-
-        options.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
-            {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                    }
-                },
-                new List<string>()
-            }
-        });
-    });
-
     builder.Services.AddAuthorization();
-    builder.Services.AddControllers();
+    builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.Converters.Add(new StringEnumConverter()));
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddHttpContextAccessor();
+    builder.Services.AddSwaggerGen();
+    builder.Services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
 
     var app = builder.Build();
 
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
 
+    app.UseExceptionMiddleware();
+    app.UseLoggingMiddleware();
     app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();
-    app.UseMiddleware<LoggingMiddleware>();
 
     await app.RunAsync();
 }

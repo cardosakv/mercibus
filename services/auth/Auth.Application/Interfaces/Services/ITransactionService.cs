@@ -1,4 +1,4 @@
-namespace Auth.Application.Interfaces;
+namespace Auth.Application.Interfaces.Services;
 
 /// <summary>
 /// Interface for transactions in the data access layer.
