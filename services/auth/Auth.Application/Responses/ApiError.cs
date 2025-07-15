@@ -20,5 +20,5 @@ public class ApiError
     /// <summary>
     /// Additional parameters related to the error, if any.
     /// </summary>
-    public List<BadRequestParams>? Params { get; set; } = null;
+    public List<BadRequestParams>? Params { get; set; }
 }
