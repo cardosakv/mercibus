@@ -13,6 +13,9 @@ public enum ErrorCode
     [EnumMember(Value = "validation_failed")]
     ValidationFailed,
 
+    [EnumMember(Value = "request_body_empty")]
+    RequestBodyEmpty,
+
     [EnumMember(Value = "username_required")]
     UsernameRequired,
 
@@ -27,6 +30,8 @@ public enum ErrorCode
 
     [EnumMember(Value = "username_already_exists")]
     UsernameAlreadyExists,
+
+    [EnumMember(Value = "email_required")] EmailRequired,
 
     [EnumMember(Value = "email_invalid")] EmailInvalid,
 
