@@ -1,6 +1,6 @@
 using Common.Models;
 
-namespace Auth.Application.Services;
+namespace Common.Services;
 
 /// <summary>
 /// Base service class providing common functionality for services.
