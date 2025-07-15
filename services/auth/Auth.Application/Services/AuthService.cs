@@ -7,6 +7,7 @@ using Auth.Domain.Common;
 using Auth.Domain.Entities;
 using Common.Constants;
 using Common.Models;
+using Common.Services;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
