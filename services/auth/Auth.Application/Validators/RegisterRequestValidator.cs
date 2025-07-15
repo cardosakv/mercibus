@@ -13,20 +13,20 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
     {
         RuleFor(x => x.Username)
             .Cascade(CascadeMode.Stop)
-            .NotEmpty().WithMessage(ErrorCode.UsernameRequired.GetEnumMemberValue())
-            .MinimumLength(Constants.UserValidation.UsernameMinLength).WithMessage(ErrorCode.UsernameTooShort.GetEnumMemberValue())
-            .MaximumLength(Constants.UserValidation.UsernameMaxLength).WithMessage(ErrorCode.UsernameTooLong.GetEnumMemberValue())
-            .Matches(Constants.UserValidation.UsernamePattern).WithMessage(ErrorCode.UsernameInvalid.GetEnumMemberValue());
+            .NotEmpty().WithMessage(ErrorCode.UsernameRequired)
+            .MinimumLength(Constants.UserValidation.UsernameMinLength).WithMessage(ErrorCode.UsernameTooShort)
+            .MaximumLength(Constants.UserValidation.UsernameMaxLength).WithMessage(ErrorCode.UsernameTooLong)
+            .Matches(Constants.UserValidation.UsernamePattern).WithMessage(ErrorCode.UsernameInvalid);
 
         RuleFor(x => x.Email)
             .Cascade(CascadeMode.Stop)
-            .NotEmpty().WithMessage(ErrorCode.EmailRequired.GetEnumMemberValue())
-            .EmailAddress().WithMessage(ErrorCode.EmailInvalid.GetEnumMemberValue());
+            .NotEmpty().WithMessage(ErrorCode.EmailRequired)
+            .EmailAddress().WithMessage(ErrorCode.EmailInvalid);
 
         RuleFor(x => x.Password)
             .Cascade(CascadeMode.Stop)
-            .NotEmpty().WithMessage(ErrorCode.PasswordRequired.GetEnumMemberValue())
-            .MinimumLength(Constants.UserValidation.PasswordMinLength).WithMessage(ErrorCode.PasswordTooShort.GetEnumMemberValue())
-            .Matches(Constants.UserValidation.PasswordPattern).WithMessage(ErrorCode.PasswordInvalid.GetEnumMemberValue());
+            .NotEmpty().WithMessage(ErrorCode.PasswordRequired)
+            .MinimumLength(Constants.UserValidation.PasswordMinLength).WithMessage(ErrorCode.PasswordTooShort)
+            .Matches(Constants.UserValidation.PasswordPattern).WithMessage(ErrorCode.PasswordInvalid);
     }
 }

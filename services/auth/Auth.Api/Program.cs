@@ -1,8 +1,6 @@
 using System.Net;
 using System.Net.Mail;
 using System.Text;
-using Auth.Api.Filters;
-using Auth.Api.Middlewares;
 using Auth.Application.Interfaces.Repositories;
 using Auth.Application.Interfaces.Services;
 using Auth.Application.Mappings;
@@ -12,6 +10,8 @@ using Auth.Domain.Entities;
 using Auth.Infrastructure;
 using Auth.Infrastructure.Repositories;
 using Auth.Infrastructure.Services;
+using Common.Middlewares;
+using Common.Validations;
 using FluentValidation;
 using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -102,6 +102,7 @@ try
 
     app.UseExceptionMiddleware();
     app.UseLoggingMiddleware();
+    app.UseCustomAuthMiddleware();
     app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();

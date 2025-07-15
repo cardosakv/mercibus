@@ -12,7 +12,7 @@ public class UpdateUserInfoRequestValidator : AbstractValidator<UpdateUserInfoRe
     public UpdateUserInfoRequestValidator()
     {
         RuleFor(x => x.Name)
-            .MinimumLength(Constants.UserValidation.NameMinLength).WithMessage(ErrorCode.NameTooShort.GetEnumMemberValue())
-            .MaximumLength(Constants.UserValidation.NameMaxLength).WithMessage(ErrorCode.NameTooLong.GetEnumMemberValue());
+            .MinimumLength(Constants.UserValidation.NameMinLength).WithMessage(ErrorCode.NameTooShort)
+            .MaximumLength(Constants.UserValidation.NameMaxLength).WithMessage(ErrorCode.NameTooLong);
     }
 }

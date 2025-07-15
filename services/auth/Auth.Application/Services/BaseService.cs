@@ -1,4 +1,4 @@
-using Auth.Application.Common;
+using Common.Models;
 
 namespace Auth.Application.Services;
 
@@ -22,7 +22,7 @@ public abstract class BaseService
     /// <summary>
     ///  Creates an error result with specified error type, code, and optional message.
     /// </summary>
-    protected static ServiceResult Error(ErrorType type, ErrorCode code, string? message = null)
+    protected static ServiceResult Error(string type, string code, string? message = null)
     {
         return new ServiceResult
         {

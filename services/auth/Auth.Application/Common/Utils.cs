@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
+using Common.Constants;
 
 namespace Auth.Application.Common;
 
@@ -56,7 +57,7 @@ public static class Utils
     /// <summary>
     /// Maps an ASP.Net Core Identity error code to a standardized ErrorType.
     /// </summary>
-    public static ErrorType IdentityErrorToType(string code)
+    public static string IdentityErrorToType(string code)
     {
         return code switch
         {
@@ -100,7 +101,7 @@ public static class Utils
     /// <summary>
     /// Maps an ASP.Net Core Identity error code to a standardized ErrorCode.
     /// </summary>
-    public static ErrorCode IdentityErrorToCode(string code)
+    public static string IdentityErrorToCode(string code)
     {
         return code switch
         {
@@ -126,9 +127,9 @@ public static class Utils
             "PasswordMismatch" => ErrorCode.PasswordMismatch,
 
             // Unauthorized (401)
-            "UserLockoutNotEnabled" => ErrorCode.UnauthorizedRequest,
-            "InvalidPasswordHasherCompatibilityMode" => ErrorCode.UnauthorizedRequest,
-            "InvalidPasswordHasherIterationCount" => ErrorCode.UnauthorizedRequest,
+            "UserLockoutNotEnabled" => ErrorCode.Unauthorized,
+            "InvalidPasswordHasherCompatibilityMode" => ErrorCode.Unauthorized,
+            "InvalidPasswordHasherIterationCount" => ErrorCode.Unauthorized,
 
             // Locked (423)
             "UserLockedOut" => ErrorCode.UserLocked,

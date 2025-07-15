@@ -13,7 +13,7 @@ public class SendConfirmationEmailRequestValidator : AbstractValidator<SendConfi
     {
         RuleFor(x => x.Email)
             .Cascade(CascadeMode.Stop)
-            .NotEmpty().WithMessage(ErrorCode.EmailRequired.GetEnumMemberValue())
-            .EmailAddress().WithMessage(ErrorCode.EmailInvalid.GetEnumMemberValue());
+            .NotEmpty().WithMessage(ErrorCode.EmailRequired)
+            .EmailAddress().WithMessage(ErrorCode.EmailInvalid);
     }
 }

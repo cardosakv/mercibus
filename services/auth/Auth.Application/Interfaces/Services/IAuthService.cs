@@ -1,5 +1,5 @@
-﻿using Auth.Application.Common;
-using Auth.Application.DTOs;
+﻿using Auth.Application.DTOs;
+using Common.Models;
 
 namespace Auth.Application.Interfaces.Services;
 

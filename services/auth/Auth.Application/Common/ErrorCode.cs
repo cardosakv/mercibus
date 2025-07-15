@@ -1,90 +1,44 @@
-using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-
 namespace Auth.Application.Common;
 
 /// <summary>
 /// Error codes for API responses.
 /// </summary>
-[JsonConverter(typeof(StringEnumConverter))]
-public enum ErrorCode
+public static class ErrorCode
 {
-    [EnumMember(Value = "validation_failed")]
-    ValidationFailed,
+    public const string ValidationFailed = "validation_failed";
 
-    [EnumMember(Value = "request_body_empty")]
-    RequestBodyEmpty,
+    public const string UsernameRequired = "username_required";
+    public const string UsernameInvalid = "username_invalid";
+    public const string UsernameTooShort = "username_too_short";
+    public const string UsernameTooLong = "username_too_long";
+    public const string UsernameAlreadyExists = "username_already_exists";
 
-    [EnumMember(Value = "username_required")]
-    UsernameRequired,
+    public const string NameTooShort = "name_too_short";
+    public const string NameTooLong = "name_too_long";
 
-    [EnumMember(Value = "username_invalid")]
-    UsernameInvalid,
+    public const string EmailRequired = "email_required";
+    public const string EmailInvalid = "email_invalid";
+    public const string EmailAlreadyExists = "email_already_exists";
+    public const string EmailAlreadyVerified = "email_already_verified";
 
-    [EnumMember(Value = "username_too_short")]
-    UsernameTooShort,
+    public const string PasswordRequired = "password_required";
+    public const string PasswordTooShort = "password_too_short";
+    public const string PasswordInvalid = "password_invalid";
+    public const string PasswordMismatch = "password_mismatch";
+    public const string PasswordAlreadySet = "password_already_set";
 
-    [EnumMember(Value = "username_too_long")]
-    UsernameTooLong,
+    public const string RoleInvalid = "role_invalid";
+    public const string RoleAlreadyExists = "role_already_exists";
 
-    [EnumMember(Value = "username_already_exists")]
-    UsernameAlreadyExists,
+    public const string UserNotFound = "user_not_found";
+    public const string UserNoRoleAssigned = "user_no_role_assigned";
+    public const string UserAlreadyInRole = "user_already_in_role";
 
-    [EnumMember(Value = "name_too_short")] NameTooShort,
+    public const string LoginAlreadyAssociated = "login_already_associated";
+    public const string TokenInvalid = "token_invalid";
+    public const string RefreshTokenExpired = "refresh_token_expired";
+    public const string UserLocked = "user_locked";
 
-    [EnumMember(Value = "name_too_long")] NameTooLong,
-
-    [EnumMember(Value = "email_required")] EmailRequired,
-
-    [EnumMember(Value = "email_invalid")] EmailInvalid,
-
-    [EnumMember(Value = "email_already_exists")]
-    EmailAlreadyExists,
-
-    [EnumMember(Value = "email_already_verified")]
-    EmailAlreadyVerified,
-
-    [EnumMember(Value = "password_required")]
-    PasswordRequired,
-
-    [EnumMember(Value = "password_too_short")]
-    PasswordTooShort,
-
-    [EnumMember(Value = "password_invalid")]
-    PasswordInvalid,
-
-    [EnumMember(Value = "password_mismatch")]
-    PasswordMismatch,
-
-    [EnumMember(Value = "password_already_set")]
-    PasswordAlreadySet,
-
-    [EnumMember(Value = "role_invalid")] RoleInvalid,
-
-    [EnumMember(Value = "role_already_exists")]
-    RoleAlreadyExists,
-
-    [EnumMember(Value = "user_not_found")] UserNotFound,
-
-    [EnumMember(Value = "user_no_role_assigned")]
-    UserNoRoleAssigned,
-
-    [EnumMember(Value = "user_already_in_role")]
-    UserAlreadyInRole,
-
-    [EnumMember(Value = "login_already_associated")]
-    LoginAlreadyAssociated,
-
-    [EnumMember(Value = "token_invalid")] TokenInvalid,
-
-    [EnumMember(Value = "refresh_token_expired")]
-    RefreshTokenExpired,
-
-    [EnumMember(Value = "user_locked")] UserLocked,
-
-    [EnumMember(Value = "unauthorized_request")]
-    UnauthorizedRequest,
-
-    [EnumMember(Value = "internal")] Internal
+    public const string Unauthorized = "unauthorized";
+    public const string Internal = "internal";
 }

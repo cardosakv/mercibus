@@ -5,12 +5,15 @@ using Auth.Application.Interfaces.Repositories;
 using Auth.Application.Interfaces.Services;
 using Auth.Domain.Common;
 using Auth.Domain.Entities;
+using Common.Constants;
+using Common.Models;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
+using ErrorCode = Auth.Application.Common.ErrorCode;
 
 namespace Auth.Application.Services;
 
