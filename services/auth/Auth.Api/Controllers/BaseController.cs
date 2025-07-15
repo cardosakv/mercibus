@@ -21,16 +21,6 @@ public abstract class BaseController : ControllerBase
         return Ok(new ApiSuccessResponse { Data = result.Data });
     }
 
-    protected IActionResult NoContent(ServiceResult result)
-    {
-        if (!result.IsSuccess)
-        {
-            return Error(result);
-        }
-
-        return NoContent();
-    }
-
     private ObjectResult Error(ServiceResult result)
     {
         return result.ErrorType switch
