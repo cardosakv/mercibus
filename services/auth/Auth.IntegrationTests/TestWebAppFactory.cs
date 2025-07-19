@@ -14,7 +14,6 @@ public class TestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()
         .WithImage("postgres:latest")
-        .WithDatabase("auth_test")
         .WithUsername("test_user")
         .WithPassword("test_password")
         .Build();
