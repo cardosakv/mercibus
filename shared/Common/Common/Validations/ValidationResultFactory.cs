@@ -1,4 +1,4 @@
-﻿using Common.Responses;
+﻿using Mercibus.Common.Responses;
 using Mercibus.Common.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

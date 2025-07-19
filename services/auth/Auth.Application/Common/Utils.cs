@@ -2,7 +2,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
-using Common.Constants;
+using Mercibus.Common.Constants;
 
 namespace Auth.Application.Common;
 

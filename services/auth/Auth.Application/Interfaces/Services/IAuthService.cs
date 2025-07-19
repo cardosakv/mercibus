@@ -1,5 +1,5 @@
 ﻿using Auth.Application.DTOs;
-using Common.Models;
+using Mercibus.Common.Models;
 
 namespace Auth.Application.Interfaces.Services;
 

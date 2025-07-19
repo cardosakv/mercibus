@@ -1,4 +1,4 @@
-using Common.Responses;
+using Mercibus.Common.Responses;
 using Mercibus.Common.Constants;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
