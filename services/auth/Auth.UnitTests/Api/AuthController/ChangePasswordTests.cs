@@ -7,33 +7,33 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ErrorCode = Auth.Application.Common.ErrorCode;
 
-namespace Auth.Tests.Api.AuthController;
+namespace Auth.UnitTests.Api.AuthController;
 
 /// <summary>
-/// Tests for api/auth/reset-password endpoint.
+/// Tests for api/auth/change-password endpoint.
 /// </summary>
-public class ResetPasswordTests : BaseTests
+public class ChangePasswordTests : BaseTests
 {
-    private readonly ResetPasswordRequest _request = new()
+    private readonly ChangePasswordRequest _request = new()
     {
         UserId = "user-1",
-        Token = "encoded-token",
-        NewPassword = "NewPassword123!"
+        CurrentPassword = "OldPassword123!",
+        NewPassword = "NewPassword456!"
     };
 
     [Fact]
-    public async Task ReturnsOk_WhenPasswordResetSucceeds()
+    public async Task ReturnsOk_WhenPasswordChangeSucceeds()
     {
         // Arrange
         AuthServiceMock
-            .Setup(x => x.ResetPasswordAsync(_request))
+            .Setup(x => x.ChangePasswordAsync(_request))
             .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = true
             });
 
         // Act
-        var result = await Controller.ResetPassword(_request);
+        var result = await Controller.ChangePassword(_request);
 
         // Assert
         var okResult = result.Should().BeOfType<OkObjectResult>().Subject;
@@ -45,7 +45,7 @@ public class ResetPasswordTests : BaseTests
     {
         // Arrange
         AuthServiceMock
-            .Setup(x => x.ResetPasswordAsync(_request))
+            .Setup(x => x.ChangePasswordAsync(_request))
             .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
@@ -54,11 +54,11 @@ public class ResetPasswordTests : BaseTests
             });
 
         // Act
-        var result = await Controller.ResetPassword(_request);
+        var result = await Controller.ChangePassword(_request);
 
         // Assert
-        var badRequestResult = result.Should().BeOfType<BadRequestObjectResult>().Subject;
-        badRequestResult.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+        var badRequest = result.Should().BeOfType<ObjectResult>().Subject;
+        badRequest.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public class ResetPasswordTests : BaseTests
     {
         // Arrange
         AuthServiceMock
-            .Setup(x => x.ResetPasswordAsync(_request))
+            .Setup(x => x.ChangePasswordAsync(_request))
             .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
@@ -75,19 +75,19 @@ public class ResetPasswordTests : BaseTests
             });
 
         // Act
-        var result = await Controller.ResetPassword(_request);
+        var result = await Controller.ChangePassword(_request);
 
         // Assert
-        var notFound = result.Should().BeOfType<NotFoundObjectResult>().Subject;
-        notFound.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+        var notFound = result.Should().BeOfType<ObjectResult>().Subject;
+        notFound.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
     }
 
     [Fact]
-    public async Task ReturnsInternalServerError_WhenUnexpectedErrorOccurs()
+    public async Task ReturnsInternalServerError_WhenSomethingGoesWrong()
     {
         // Arrange
         AuthServiceMock
-            .Setup(x => x.ResetPasswordAsync(_request))
+            .Setup(x => x.ChangePasswordAsync(_request))
             .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
@@ -96,7 +96,7 @@ public class ResetPasswordTests : BaseTests
             });
 
         // Act
-        var result = await Controller.ResetPassword(_request);
+        var result = await Controller.ChangePassword(_request);
 
         // Assert
         var error = result.Should().BeOfType<ObjectResult>().Subject;

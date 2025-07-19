@@ -7,31 +7,33 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ErrorCode = Auth.Application.Common.ErrorCode;
 
-namespace Auth.Tests.Api.AuthController;
+namespace Auth.UnitTests.Api.AuthController;
 
 /// <summary>
-/// Tests for api/auth/send-confirmation-email endpoint.
+/// Tests for api/auth/reset-password endpoint.
 /// </summary>
-public class SendConfirmationEmailTests : BaseTests
+public class ResetPasswordTests : BaseTests
 {
-    private readonly SendConfirmationEmailRequest _request = new()
+    private readonly ResetPasswordRequest _request = new()
     {
-        Email = "test@email.com"
+        UserId = "user-1",
+        Token = "encoded-token",
+        NewPassword = "NewPassword123!"
     };
 
     [Fact]
-    public async Task ReturnsOk_WhenEmailSentSuccessfully()
+    public async Task ReturnsOk_WhenPasswordResetSucceeds()
     {
         // Arrange
         AuthServiceMock
-            .Setup(x => x.SendConfirmationEmailAsync(_request))
+            .Setup(x => x.ResetPasswordAsync(_request))
             .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = true
             });
 
         // Act
-        var result = await Controller.SendConfirmationEmail(_request);
+        var result = await Controller.ResetPassword(_request);
 
         // Assert
         var okResult = result.Should().BeOfType<OkObjectResult>().Subject;
@@ -39,11 +41,32 @@ public class SendConfirmationEmailTests : BaseTests
     }
 
     [Fact]
-    public async Task ReturnsNotFound_WhenUserDoesNotExist()
+    public async Task ReturnsBadRequest_WhenValidationFails()
     {
         // Arrange
         AuthServiceMock
-            .Setup(x => x.SendConfirmationEmailAsync(_request))
+            .Setup(x => x.ResetPasswordAsync(_request))
+            .ReturnsAsync(new ServiceResult
+            {
+                IsSuccess = false,
+                ErrorType = ErrorType.InvalidRequestError,
+                ErrorCode = ErrorCode.PasswordTooShort
+            });
+
+        // Act
+        var result = await Controller.ResetPassword(_request);
+
+        // Assert
+        var badRequestResult = result.Should().BeOfType<ObjectResult>().Subject;
+        badRequestResult.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+    }
+
+    [Fact]
+    public async Task ReturnsBadRequest_WhenUserNotFound()
+    {
+        // Arrange
+        AuthServiceMock
+            .Setup(x => x.ResetPasswordAsync(_request))
             .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
@@ -52,32 +75,11 @@ public class SendConfirmationEmailTests : BaseTests
             });
 
         // Act
-        var result = await Controller.SendConfirmationEmail(_request);
+        var result = await Controller.ResetPassword(_request);
 
         // Assert
-        var notFoundResult = result.Should().BeOfType<NotFoundObjectResult>().Subject;
-        notFoundResult.StatusCode.Should().Be(StatusCodes.Status404NotFound);
-    }
-
-    [Fact]
-    public async Task ReturnsConflict_WhenEmailAlreadyVerified()
-    {
-        // Arrange
-        AuthServiceMock
-            .Setup(x => x.SendConfirmationEmailAsync(_request))
-            .ReturnsAsync(new ServiceResult
-            {
-                IsSuccess = false,
-                ErrorType = ErrorType.ConflictError,
-                ErrorCode = ErrorCode.EmailAlreadyVerified
-            });
-
-        // Act
-        var result = await Controller.SendConfirmationEmail(_request);
-
-        // Assert
-        var conflict = result.Should().BeOfType<ConflictObjectResult>().Subject;
-        conflict.StatusCode.Should().Be(StatusCodes.Status409Conflict);
+        var notFound = result.Should().BeOfType<ObjectResult>().Subject;
+        notFound.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
     }
 
     [Fact]
@@ -85,7 +87,7 @@ public class SendConfirmationEmailTests : BaseTests
     {
         // Arrange
         AuthServiceMock
-            .Setup(x => x.SendConfirmationEmailAsync(_request))
+            .Setup(x => x.ResetPasswordAsync(_request))
             .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
@@ -94,7 +96,7 @@ public class SendConfirmationEmailTests : BaseTests
             });
 
         // Act
-        var result = await Controller.SendConfirmationEmail(_request);
+        var result = await Controller.ResetPassword(_request);
 
         // Assert
         var error = result.Should().BeOfType<ObjectResult>().Subject;

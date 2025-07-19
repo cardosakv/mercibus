@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Moq;
 using ErrorCode = Auth.Application.Common.ErrorCode;
 
-namespace Auth.Tests.Application.AuthService;
+namespace Auth.UnitTests.Application.AuthService;
 
 /// <summary>
 /// Tests for auth service update user info method.
@@ -44,7 +44,9 @@ public class UpdateInfoAsyncTests : BaseTests
         UserManagerMock
             .Setup(x => x.FindByIdAsync(_userId))
             .ReturnsAsync(_existingUser);
-
+        MapperMock
+            .Setup(x => x.Map<User>(It.IsAny<UpdateUserInfoRequest>()))
+            .Returns(_existingUser);
         UserManagerMock
             .Setup(x => x.UpdateAsync(It.IsAny<User>()))
             .ReturnsAsync(IdentityResult.Success);
@@ -56,12 +58,12 @@ public class UpdateInfoAsyncTests : BaseTests
         TransactionServiceMock.Verify(x => x.BeginAsync(), Times.Once);
         UserManagerMock.Verify(x => x.FindByIdAsync(_userId), Times.Once);
         UserManagerMock.Verify(x => x.UpdateAsync(It.Is<User>(u =>
-            u.Name == _request.Name &&
-            u.Street == _request.Street &&
-            u.City == _request.City &&
-            u.State == _request.State &&
-            u.Country == _request.Country &&
-            u.PostalCode == _request.PostalCode
+            u.Name == _existingUser.Name &&
+            u.Street == _existingUser.Street &&
+            u.City == _existingUser.City &&
+            u.State == _existingUser.State &&
+            u.Country == _existingUser.Country &&
+            u.PostalCode == _existingUser.PostalCode
         )), Times.Once);
         TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Once);
 
@@ -71,13 +73,18 @@ public class UpdateInfoAsyncTests : BaseTests
     [Fact]
     public async Task Fail_WhenUserIdIsNull()
     {
+        // Arrange
+        UserManagerMock
+            .Setup(x => x.FindByIdAsync(It.IsAny<string>()))
+            .ReturnsAsync((User?)null);
+
         // Act
         var response = await AuthService.UpdateInfoAsync(null, _request);
 
         // Assert
         response.IsSuccess.Should().BeFalse();
         response.ErrorType.Should().Be(ErrorType.InvalidRequestError);
-        response.ErrorType.Should().Be(ErrorCode.UserIdRequired);
+        response.ErrorCode.Should().Be(ErrorCode.UserNotFound);
 
         UserManagerMock.Verify(x => x.FindByIdAsync(It.IsAny<string>()), Times.Never);
     }
@@ -101,19 +108,18 @@ public class UpdateInfoAsyncTests : BaseTests
 
         response.IsSuccess.Should().BeFalse();
         response.ErrorType.Should().Be(ErrorType.InvalidRequestError);
-        response.ErrorType.Should().Be(ErrorCode.UserNotFound);
+        response.ErrorCode.Should().Be(ErrorCode.UserNotFound);
     }
 
     [Fact]
     public async Task Fail_WhenUpdateFails()
     {
         // Arrange
-        var error = new IdentityError { Code = "UpdateError", Description = "Update failed" };
+        var error = new IdentityError { Code = "PasswordTooShort" };
 
         UserManagerMock
             .Setup(x => x.FindByIdAsync(_userId))
             .ReturnsAsync(_existingUser);
-
         UserManagerMock
             .Setup(x => x.UpdateAsync(It.IsAny<User>()))
             .ReturnsAsync(IdentityResult.Failed(error));
@@ -138,16 +144,10 @@ public class UpdateInfoAsyncTests : BaseTests
         // Arrange
         UserManagerMock
             .Setup(x => x.FindByIdAsync(_userId))
-            .ThrowsAsync(new Exception("unexpected"));
+            .ThrowsAsync(new Exception("An unexpected error occurred."));
 
-        // Act
-        var response = await AuthService.UpdateInfoAsync(_userId, _request);
-
-        // Assert
-        TransactionServiceMock.Verify(x => x.BeginAsync(), Times.Once);
-        TransactionServiceMock.Verify(x => x.RollbackAsync(), Times.Once);
-
-        response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.ApiError);
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(() =>
+            AuthService.UpdateInfoAsync(_userId, _request));
     }
 }

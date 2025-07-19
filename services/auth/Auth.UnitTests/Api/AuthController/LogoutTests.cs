@@ -7,31 +7,31 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ErrorCode = Auth.Application.Common.ErrorCode;
 
-namespace Auth.Tests.Api.AuthController;
+namespace Auth.UnitTests.Api.AuthController;
 
 /// <summary>
-/// Tests for api/auth/forgot-password endpoint.
+/// Tests for api/auth/logout endpoint.
 /// </summary>
-public class ForgotPasswordTests : BaseTests
+public class LogoutTests : BaseTests
 {
-    private readonly ForgotPasswordRequest _request = new()
+    private readonly LogoutRequest _request = new()
     {
-        Email = "test@email.com"
+        RefreshToken = "valid-refresh-token"
     };
 
     [Fact]
-    public async Task ReturnsOk_WhenResetLinkSent()
+    public async Task ReturnsOk_WhenLogoutSucceeds()
     {
         // Arrange
         AuthServiceMock
-            .Setup(x => x.ForgotPasswordAsync(_request))
+            .Setup(x => x.LogoutAsync(_request))
             .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = true
             });
 
         // Act
-        var result = await Controller.ForgotPassword(_request);
+        var result = await Controller.Logout(_request);
 
         // Assert
         var okResult = result.Should().BeOfType<OkObjectResult>().Subject;
@@ -39,24 +39,24 @@ public class ForgotPasswordTests : BaseTests
     }
 
     [Fact]
-    public async Task ReturnsBadRequest_WhenUserDoesNotExist()
+    public async Task ReturnsForbidden_WhenTokenIsInvalidOrRevoked()
     {
         // Arrange
         AuthServiceMock
-            .Setup(x => x.ForgotPasswordAsync(_request))
+            .Setup(x => x.LogoutAsync(_request))
             .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                ErrorType = ErrorType.InvalidRequestError,
-                ErrorCode = ErrorCode.UserNotFound
+                ErrorType = ErrorType.PermissionError,
+                ErrorCode = ErrorCode.TokenInvalid
             });
 
         // Act
-        var result = await Controller.ForgotPassword(_request);
+        var result = await Controller.Logout(_request);
 
         // Assert
-        var notFoundResult = result.Should().BeOfType<ObjectResult>().Subject;
-        notFoundResult.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+        var response = result.Should().BeOfType<ObjectResult>().Subject;
+        response.StatusCode.Should().Be(StatusCodes.Status403Forbidden);
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class ForgotPasswordTests : BaseTests
     {
         // Arrange
         AuthServiceMock
-            .Setup(x => x.ForgotPasswordAsync(_request))
+            .Setup(x => x.LogoutAsync(_request))
             .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
@@ -73,10 +73,10 @@ public class ForgotPasswordTests : BaseTests
             });
 
         // Act
-        var result = await Controller.ForgotPassword(_request);
+        var result = await Controller.Logout(_request);
 
         // Assert
-        var error = result.Should().BeOfType<ObjectResult>().Subject;
-        error.StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
+        var objectResult = result.Should().BeOfType<ObjectResult>().Subject;
+        objectResult.StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
     }
 }

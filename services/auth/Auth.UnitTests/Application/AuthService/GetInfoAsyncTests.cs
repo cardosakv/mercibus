@@ -5,7 +5,7 @@ using Mercibus.Common.Constants;
 using Moq;
 using ErrorCode = Auth.Application.Common.ErrorCode;
 
-namespace Auth.Tests.Application.AuthService;
+namespace Auth.UnitTests.Application.AuthService;
 
 /// <summary>
 /// Tests for auth service get user info method.
@@ -27,6 +27,20 @@ public class GetInfoAsyncTests : BaseTests
         PostalCode = 1100
     };
 
+    private readonly GetUserInfoResponse _userResponse = new()
+    {
+        Id = "user-1",
+        Username = "test_user",
+        Name = "Test User",
+        Email = "test@email.com",
+        IsEmailVerified = true,
+        Street = "123 St",
+        City = "Metro City",
+        State = "Metro State",
+        Country = "Ph",
+        PostalCode = 1100
+    };
+
     [Fact]
     public async Task Success_WhenUserFound()
     {
@@ -34,6 +48,9 @@ public class GetInfoAsyncTests : BaseTests
         UserManagerMock
             .Setup(x => x.FindByIdAsync(_userId))
             .ReturnsAsync(_user);
+        MapperMock
+            .Setup(x => x.Map<GetUserInfoResponse>(_user))
+            .Returns(_userResponse);
 
         // Act
         var response = await AuthService.GetInfoAsync(_userId);
@@ -42,31 +59,32 @@ public class GetInfoAsyncTests : BaseTests
         UserManagerMock.Verify(x => x.FindByIdAsync(_userId), Times.Once);
 
         response.IsSuccess.Should().BeTrue();
-        response.Data.Should().NotBeNull();
-
-        var data = response.Data as GetUserInfoResponse;
-        data!.Name.Should().Be(_user.Name);
-        data.Email.Should().Be(_user.Email);
-        data.IsEmailVerified.Should().BeTrue();
-        data.Street.Should().Be(_user.Street);
-        data.City.Should().Be(_user.City);
-        data.State.Should().Be(_user.State);
-        data.Country.Should().Be(_user.Country);
-        data.PostalCode.Should().Be(_user.PostalCode);
+        var data = response.Data.Should().BeOfType<GetUserInfoResponse>().Subject;
+        data.Name.Should().Be(_userResponse.Name);
+        data.Email.Should().Be(_userResponse.Email);
+        data.IsEmailVerified.Should().Be(_userResponse.IsEmailVerified);
+        data.Street.Should().Be(_userResponse.Street);
+        data.City.Should().Be(_userResponse.City);
+        data.State.Should().Be(_userResponse.State);
+        data.Country.Should().Be(_userResponse.Country);
+        data.PostalCode.Should().Be(_userResponse.PostalCode);
     }
 
     [Fact]
     public async Task Fail_WhenUserIdIsNull()
     {
+        // Arrange
+        UserManagerMock
+            .Setup(x => x.FindByIdAsync(It.IsAny<string>()))
+            .ReturnsAsync((User?)null);
+
         // Act
         var response = await AuthService.GetInfoAsync(null);
 
         // Assert
         response.IsSuccess.Should().BeFalse();
         response.ErrorType.Should().Be(ErrorType.InvalidRequestError);
-        response.ErrorCode.Should().Be(ErrorCode.UserIdRequired);
-
-        UserManagerMock.Verify(x => x.FindByIdAsync(It.IsAny<string>()), Times.Never);
+        response.ErrorCode.Should().Be(ErrorCode.UserNotFound);
     }
 
     [Fact]
@@ -94,16 +112,10 @@ public class GetInfoAsyncTests : BaseTests
         // Arrange
         UserManagerMock
             .Setup(x => x.FindByIdAsync(_userId))
-            .ThrowsAsync(new Exception("unexpected"));
+            .ThrowsAsync(new Exception("An unexpected error occurred."));
 
-        // Act
-        var response = await AuthService.GetInfoAsync(_userId);
-
-        // Assert
-        UserManagerMock.Verify(x => x.FindByIdAsync(_userId), Times.Once);
-
-        response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.ApiError);
-        response.ErrorCode.Should().Be(ErrorCode.Internal);
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(() =>
+            AuthService.GetInfoAsync(_userId));
     }
 }

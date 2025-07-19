@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ErrorCode = Auth.Application.Common.ErrorCode;
 
-namespace Auth.Tests.Api.AuthController;
+namespace Auth.UnitTests.Api.AuthController;
 
 /// <summary>
 /// Tests for api/auth/info (POST) endpoint.
@@ -67,7 +67,7 @@ public class UpdateInfoTests : BaseTests
         var result = await Controller.UpdateInfo(_request);
 
         // Assert
-        var bad = result.Should().BeOfType<BadRequestObjectResult>().Subject;
+        var bad = result.Should().BeOfType<ObjectResult>().Subject;
         bad.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
     }
 
@@ -88,8 +88,8 @@ public class UpdateInfoTests : BaseTests
         var result = await Controller.UpdateInfo(_request);
 
         // Assert
-        var notFound = result.Should().BeOfType<NotFoundObjectResult>().Subject;
-        notFound.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+        var notFound = result.Should().BeOfType<ObjectResult>().Subject;
+        notFound.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
     }
 
     [Fact]

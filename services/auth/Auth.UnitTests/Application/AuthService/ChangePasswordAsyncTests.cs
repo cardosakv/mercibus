@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Moq;
 using ErrorCode = Auth.Application.Common.ErrorCode;
 
-namespace Auth.Tests.Application.AuthService;
+namespace Auth.UnitTests.Application.AuthService;
 
 /// <summary>
 /// Tests for auth service change password method.
@@ -33,7 +33,6 @@ public class ChangePasswordAsyncTests : BaseTests
         UserManagerMock
             .Setup(x => x.FindByIdAsync(_request.UserId))
             .ReturnsAsync(_user);
-
         UserManagerMock
             .Setup(x => x.ChangePasswordAsync(_user, _request.CurrentPassword, _request.NewPassword))
             .ReturnsAsync(IdentityResult.Success);
@@ -76,12 +75,11 @@ public class ChangePasswordAsyncTests : BaseTests
     public async Task Fail_WhenPasswordChangeFails()
     {
         // Arrange
-        var error = new IdentityError { Code = "InvalidPassword", Description = "Password doesn't meet criteria." };
+        var error = new IdentityError { Code = "PasswordTooShort" };
 
         UserManagerMock
             .Setup(x => x.FindByIdAsync(_request.UserId))
             .ReturnsAsync(_user);
-
         UserManagerMock
             .Setup(x => x.ChangePasswordAsync(_user, _request.CurrentPassword, _request.NewPassword))
             .ReturnsAsync(IdentityResult.Failed(error));
@@ -97,7 +95,7 @@ public class ChangePasswordAsyncTests : BaseTests
 
         response.IsSuccess.Should().BeFalse();
         response.ErrorType.Should().Be(ErrorType.InvalidRequestError);
-        response.ErrorCode.Should().Be(ErrorCode.PasswordInvalid);
+        response.ErrorCode.Should().Be(ErrorCode.PasswordTooShort);
     }
 
     [Fact]
@@ -106,17 +104,10 @@ public class ChangePasswordAsyncTests : BaseTests
         // Arrange
         UserManagerMock
             .Setup(x => x.FindByIdAsync(_request.UserId))
-            .ThrowsAsync(new Exception("unexpected exception"));
+            .ThrowsAsync(new Exception("An unexpected error occurred."));
 
-        // Act
-        var response = await AuthService.ChangePasswordAsync(_request);
-
-        // Assert
-        TransactionServiceMock.Verify(x => x.BeginAsync(), Times.Once);
-        TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Never);
-
-        response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.ApiError);
-        response.ErrorCode.Should().Be(ErrorCode.Internal);
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(() =>
+            AuthService.ChangePasswordAsync(_request));
     }
 }

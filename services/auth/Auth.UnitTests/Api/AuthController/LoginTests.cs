@@ -2,12 +2,13 @@ using Auth.Application.DTOs;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Models;
+using Mercibus.Common.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ErrorCode = Auth.Application.Common.ErrorCode;
 
-namespace Auth.Tests.Api.AuthController;
+namespace Auth.UnitTests.Api.AuthController;
 
 /// <summary>
 /// Tests for api/auth/login endpoint.
@@ -44,8 +45,8 @@ public class LoginTests : BaseTests
 
         // Assert
         var okResult = result.Should().BeOfType<OkObjectResult>().Subject;
-        okResult.StatusCode.Should().Be(StatusCodes.Status200OK);
-        okResult.Value.Should().BeEquivalentTo(_token);
+        var token = okResult.Value.Should().BeOfType<ApiSuccessResponse>().Subject;
+        token.Data.Should().BeEquivalentTo(_token);
     }
 
     [Fact]
@@ -58,7 +59,7 @@ public class LoginTests : BaseTests
             {
                 IsSuccess = false,
                 ErrorType = ErrorType.InvalidRequestError,
-                ErrorCode = ErrorCode.PasswordTooShort,
+                ErrorCode = ErrorCode.PasswordTooShort
             });
 
         // Act

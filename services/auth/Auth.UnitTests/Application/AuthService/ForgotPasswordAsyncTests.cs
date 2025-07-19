@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Moq;
 using ErrorCode = Auth.Application.Common.ErrorCode;
 
-namespace Auth.Tests.Application.AuthService;
+namespace Auth.UnitTests.Application.AuthService;
 
 /// <summary>
 /// Tests for auth service forgot password method.
@@ -37,19 +37,15 @@ public class ForgotPasswordAsyncTests : BaseTests
         UserManagerMock
             .Setup(x => x.FindByEmailAsync(_request.Email))
             .ReturnsAsync(_user);
-
         UserManagerMock
             .Setup(x => x.GeneratePasswordResetTokenAsync(_user))
             .ReturnsAsync(token);
-
         HttpContextAccessorMock
             .Setup(x => x.HttpContext)
             .Returns(new DefaultHttpContext());
-
         ConfigurationMock
             .Setup(x => x["RedirectUrl:PasswordReset"])
             .Returns(resetUrl);
-
         EmailServiceMock
             .Setup(x => x.SendPasswordResetLink(_request.Email, It.IsAny<string>()))
             .ReturnsAsync(true);
@@ -88,7 +84,6 @@ public class ForgotPasswordAsyncTests : BaseTests
         UserManagerMock
             .Setup(x => x.FindByEmailAsync(_request.Email))
             .ReturnsAsync(_user);
-
         HttpContextAccessorMock
             .Setup(x => x.HttpContext)
             .Returns((HttpContext?)null);
@@ -113,19 +108,15 @@ public class ForgotPasswordAsyncTests : BaseTests
         UserManagerMock
             .Setup(x => x.FindByEmailAsync(_request.Email))
             .ReturnsAsync(_user);
-
         UserManagerMock
             .Setup(x => x.GeneratePasswordResetTokenAsync(_user))
             .ReturnsAsync("token");
-
         HttpContextAccessorMock
             .Setup(x => x.HttpContext)
             .Returns(new DefaultHttpContext());
-
         ConfigurationMock
             .Setup(x => x["RedirectUrl:PasswordReset"])
             .Returns("https://redirect.com/reset");
-
         EmailServiceMock
             .Setup(x => x.SendPasswordResetLink(_request.Email, It.IsAny<string>()))
             .ReturnsAsync(false);
@@ -149,16 +140,10 @@ public class ForgotPasswordAsyncTests : BaseTests
         // Arrange
         UserManagerMock
             .Setup(x => x.FindByEmailAsync(_request.Email))
-            .ThrowsAsync(new Exception("unexpected"));
+            .ThrowsAsync(new Exception("An unexpected error occurred."));
 
-        // Act
-        var response = await AuthService.ForgotPasswordAsync(_request);
-
-        // Assert
-        response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.ApiError);
-        response.ErrorCode.Should().Be(ErrorCode.Internal);
-
-        UserManagerMock.Verify(x => x.FindByEmailAsync(_request.Email), Times.Once);
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(() =>
+            AuthService.ForgotPasswordAsync(_request));
     }
 }

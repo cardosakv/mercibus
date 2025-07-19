@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Moq;
 using ErrorCode = Auth.Application.Common.ErrorCode;
 
-namespace Auth.Tests.Application.AuthService;
+namespace Auth.UnitTests.Application.AuthService;
 
 /// <summary>
 /// Tests for auth service send confirmation email method.
@@ -143,13 +143,10 @@ public class SendConfirmationEmailAsyncTests : BaseTests
         // Arrange
         UserManagerMock
             .Setup(x => x.FindByEmailAsync(_request.Email))
-            .ThrowsAsync(new Exception("unexpected"));
+            .ThrowsAsync(new Exception("An unexpected error occurred."));
 
-        // Act
-        var response = await AuthService.SendConfirmationEmailAsync(_request);
-
-        // Assert
-        response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.ApiError);
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(() =>
+            AuthService.SendConfirmationEmailAsync(_request));
     }
 }

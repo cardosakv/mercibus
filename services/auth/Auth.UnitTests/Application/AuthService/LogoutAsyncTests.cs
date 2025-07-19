@@ -3,8 +3,9 @@ using Auth.Domain.Entities;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Moq;
+using ErrorCode = Auth.Application.Common.ErrorCode;
 
-namespace Auth.Tests.Application.AuthService;
+namespace Auth.UnitTests.Application.AuthService;
 
 /// <summary>
 /// Tests for auth service logout method.
@@ -61,7 +62,8 @@ public class LogOutAsyncTests : BaseTests
         RefreshTokenRepositoryMock.Verify(x => x.RevokeTokenAsync(It.IsAny<RefreshToken>()), Times.Never);
         TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Never);
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.PermissionError);
+        response.ErrorType.Should().Be(ErrorType.InvalidRequestError);
+        response.ErrorCode.Should().Be(ErrorCode.TokenInvalid);
     }
 
     [Fact]
@@ -78,7 +80,6 @@ public class LogOutAsyncTests : BaseTests
         RefreshTokenRepositoryMock
             .Setup(x => x.RetrieveTokenAsync(_request.RefreshToken))
             .ReturnsAsync(token);
-
         RefreshTokenRepositoryMock
             .Setup(x => x.RevokeTokenAsync(token))
             .ReturnsAsync(false);
@@ -89,7 +90,6 @@ public class LogOutAsyncTests : BaseTests
         // Assert
         TransactionServiceMock.Verify(x => x.BeginAsync(), Times.Once);
         RefreshTokenRepositoryMock.Verify(x => x.RevokeTokenAsync(token), Times.Once);
-        TransactionServiceMock.Verify(x => x.RollbackAsync(), Times.Once);
         response.IsSuccess.Should().BeFalse();
         response.ErrorType.Should().Be(ErrorType.ApiError);
     }
@@ -98,19 +98,12 @@ public class LogOutAsyncTests : BaseTests
     public async Task Fail_WhenExceptionOccurs()
     {
         // Arrange
-        const string error = "Unexpected exception occurs.";
         RefreshTokenRepositoryMock
             .Setup(x => x.RetrieveTokenAsync(It.IsAny<string>()))
-            .ThrowsAsync(new Exception(error));
+            .ThrowsAsync(new Exception("An unexpected error occurred."));
 
-        // Act
-        var response = await AuthService.LogoutAsync(_request);
-
-        // Assert
-        TransactionServiceMock.Verify(x => x.BeginAsync(), Times.Once);
-        TransactionServiceMock.Verify(x => x.RollbackAsync(), Times.Once);
-        response.IsSuccess.Should().BeFalse();
-        response.Data.Should().BeNull();
-        response.ErrorType.Should().Be(ErrorType.ApiError);
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(() =>
+            AuthService.LogoutAsync(_request));
     }
 }

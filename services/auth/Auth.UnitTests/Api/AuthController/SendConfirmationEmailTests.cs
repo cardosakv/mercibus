@@ -7,33 +7,31 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ErrorCode = Auth.Application.Common.ErrorCode;
 
-namespace Auth.Tests.Api.AuthController;
+namespace Auth.UnitTests.Api.AuthController;
 
 /// <summary>
-/// Tests for api/auth/change-password endpoint.
+/// Tests for api/auth/send-confirmation-email endpoint.
 /// </summary>
-public class ChangePasswordTests : BaseTests
+public class SendConfirmationEmailTests : BaseTests
 {
-    private readonly ChangePasswordRequest _request = new()
+    private readonly SendConfirmationEmailRequest _request = new()
     {
-        UserId = "user-1",
-        CurrentPassword = "OldPassword123!",
-        NewPassword = "NewPassword456!"
+        Email = "test@email.com"
     };
 
     [Fact]
-    public async Task ReturnsOk_WhenPasswordChangeSucceeds()
+    public async Task ReturnsOk_WhenEmailSentSuccessfully()
     {
         // Arrange
         AuthServiceMock
-            .Setup(x => x.ChangePasswordAsync(_request))
+            .Setup(x => x.SendConfirmationEmailAsync(_request))
             .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = true
             });
 
         // Act
-        var result = await Controller.ChangePassword(_request);
+        var result = await Controller.SendConfirmationEmail(_request);
 
         // Assert
         var okResult = result.Should().BeOfType<OkObjectResult>().Subject;
@@ -41,32 +39,11 @@ public class ChangePasswordTests : BaseTests
     }
 
     [Fact]
-    public async Task ReturnsBadRequest_WhenValidationFails()
+    public async Task ReturnsNotFound_WhenUserDoesNotExist()
     {
         // Arrange
         AuthServiceMock
-            .Setup(x => x.ChangePasswordAsync(_request))
-            .ReturnsAsync(new ServiceResult
-            {
-                IsSuccess = false,
-                ErrorType = ErrorType.InvalidRequestError,
-                ErrorCode = ErrorCode.PasswordTooShort
-            });
-
-        // Act
-        var result = await Controller.ChangePassword(_request);
-
-        // Assert
-        var badRequest = result.Should().BeOfType<ObjectResult>().Subject;
-        badRequest.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
-    }
-
-    [Fact]
-    public async Task ReturnsBadRequest_WhenUserNotFound()
-    {
-        // Arrange
-        AuthServiceMock
-            .Setup(x => x.ChangePasswordAsync(_request))
+            .Setup(x => x.SendConfirmationEmailAsync(_request))
             .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
@@ -75,19 +52,40 @@ public class ChangePasswordTests : BaseTests
             });
 
         // Act
-        var result = await Controller.ChangePassword(_request);
+        var result = await Controller.SendConfirmationEmail(_request);
 
         // Assert
-        var notFound = result.Should().BeOfType<ObjectResult>().Subject;
-        notFound.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+        var notFoundResult = result.Should().BeOfType<ObjectResult>().Subject;
+        notFoundResult.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
     }
 
     [Fact]
-    public async Task ReturnsInternalServerError_WhenSomethingGoesWrong()
+    public async Task ReturnsConflict_WhenEmailAlreadyVerified()
     {
         // Arrange
         AuthServiceMock
-            .Setup(x => x.ChangePasswordAsync(_request))
+            .Setup(x => x.SendConfirmationEmailAsync(_request))
+            .ReturnsAsync(new ServiceResult
+            {
+                IsSuccess = false,
+                ErrorType = ErrorType.ConflictError,
+                ErrorCode = ErrorCode.EmailAlreadyVerified
+            });
+
+        // Act
+        var result = await Controller.SendConfirmationEmail(_request);
+
+        // Assert
+        var conflict = result.Should().BeOfType<ObjectResult>().Subject;
+        conflict.StatusCode.Should().Be(StatusCodes.Status409Conflict);
+    }
+
+    [Fact]
+    public async Task ReturnsInternalServerError_WhenUnexpectedErrorOccurs()
+    {
+        // Arrange
+        AuthServiceMock
+            .Setup(x => x.SendConfirmationEmailAsync(_request))
             .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
@@ -96,7 +94,7 @@ public class ChangePasswordTests : BaseTests
             });
 
         // Act
-        var result = await Controller.ChangePassword(_request);
+        var result = await Controller.SendConfirmationEmail(_request);
 
         // Assert
         var error = result.Should().BeOfType<ObjectResult>().Subject;

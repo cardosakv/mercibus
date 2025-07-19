@@ -7,7 +7,7 @@ using Moq;
 using ErrorCode = Auth.Application.Common.ErrorCode;
 using RegisterRequest = Auth.Application.DTOs.RegisterRequest;
 
-namespace Auth.Tests.Api.AuthController;
+namespace Auth.UnitTests.Api.AuthController;
 
 /// <summary>
 /// Tests for api/auth/register endpoint.
@@ -29,7 +29,7 @@ public class RegisterTests : BaseTests
             .Setup(x => x.RegisterAsync(_request))
             .ReturnsAsync(new ServiceResult
             {
-                IsSuccess = true,
+                IsSuccess = true
             });
 
         // Act
@@ -57,7 +57,7 @@ public class RegisterTests : BaseTests
         var result = await Controller.Register(_request);
 
         // Assert
-        var conflictResult = result.Should().BeOfType<ConflictObjectResult>().Subject;
+        var conflictResult = result.Should().BeOfType<ObjectResult>().Subject;
         conflictResult.StatusCode.Should().Be(StatusCodes.Status409Conflict);
     }
 
@@ -78,7 +78,7 @@ public class RegisterTests : BaseTests
         var result = await Controller.Register(_request);
 
         // Assert
-        var badRequestResult = result.Should().BeOfType<BadRequestObjectResult>().Subject;
+        var badRequestResult = result.Should().BeOfType<ObjectResult>().Subject;
         badRequestResult.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
     }
 

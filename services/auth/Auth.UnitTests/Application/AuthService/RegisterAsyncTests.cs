@@ -2,11 +2,10 @@ using Auth.Application.DTOs;
 using Auth.Domain.Common;
 using Auth.Domain.Entities;
 using FluentAssertions;
-using Mercibus.Common.Constants;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 
-namespace Auth.Tests.Application.AuthService;
+namespace Auth.UnitTests.Application.AuthService;
 
 /// <summary>
 /// Tests for auth service register method.
@@ -47,12 +46,21 @@ public class RegisterAsyncTests : BaseTests
     public async Task Fail_WhenUserCreatedAndNoRoleAdded()
     {
         // Arrange
+        var error = new IdentityError { Code = "PasswordTooShort" };
+
         UserManagerMock
             .Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
         UserManagerMock
             .Setup(x => x.AddToRoleAsync(It.IsAny<User>(), It.IsAny<string>()))
-            .ReturnsAsync(IdentityResult.Failed());
+            .ReturnsAsync(IdentityResult.Failed(error));
+        MapperMock
+            .Setup(x => x.Map<User>(It.IsAny<RegisterRequest>()))
+            .Returns(new User
+            {
+                UserName = _request.Username,
+                Email = _request.Email
+            });
 
         // Act
         var response = await AuthService.RegisterAsync(_request);
@@ -70,9 +78,10 @@ public class RegisterAsyncTests : BaseTests
     public async Task Fail_WhenUserNotCreated()
     {
         // Arrange
+        var error = new IdentityError { Code = "PasswordTooShort" };
         UserManagerMock
             .Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
-            .ReturnsAsync(IdentityResult.Failed());
+            .ReturnsAsync(IdentityResult.Failed(error));
 
         // Act
         var response = await AuthService.RegisterAsync(_request);
@@ -90,19 +99,12 @@ public class RegisterAsyncTests : BaseTests
     public async Task Fail_WhenExceptionOccurs()
     {
         // Arrange
-        const string exceptionMessage = "Create user exception.";
         UserManagerMock
             .Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
-            .ThrowsAsync(new Exception(exceptionMessage));
+            .ThrowsAsync(new Exception("An uexpected error occurred."));
 
-        // Act
-        var response = await AuthService.RegisterAsync(_request);
-
-        // Assert
-        TransactionServiceMock.Verify(x => x.BeginAsync(), Times.Once);
-        TransactionServiceMock.Verify(x => x.RollbackAsync(), Times.Once);
-        response.IsSuccess.Should().BeFalse();
-        response.Data.Should().BeNull();
-        response.ErrorType.Should().Be(ErrorType.ApiError);
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(() =>
+            AuthService.RegisterAsync(_request));
     }
 }

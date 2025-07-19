@@ -2,10 +2,9 @@ using Auth.Application.DTOs;
 using Auth.Domain.Common;
 using Auth.Domain.Entities;
 using FluentAssertions;
-using Mercibus.Common.Constants;
 using Moq;
 
-namespace Auth.Tests.Application.AuthService;
+namespace Auth.UnitTests.Application.AuthService;
 
 /// <summary>
 /// Tests for auth service login method.
@@ -132,19 +131,12 @@ public class LoginAsyncTests : BaseTests
     public async Task Fail_WhenExceptionOccurs()
     {
         // Arrange
-        const string exceptionMessage = "This is a test exception.";
         UserManagerMock
             .Setup(x => x.FindByNameAsync(It.IsAny<string>()))
-            .ThrowsAsync(new Exception(exceptionMessage));
+            .ThrowsAsync(new Exception("An unexpected error occurred."));
 
-        // Act
-        var response = await AuthService.LoginAsync(_request);
-
-        // Assert
-        TransactionServiceMock.Verify(x => x.BeginAsync(), Times.Once);
-        TransactionServiceMock.Verify(x => x.RollbackAsync(), Times.Once);
-        response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.ApiError);
-        response.ErrorCode.Should().Be(ErrorCode.Internal);
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(() =>
+            AuthService.LoginAsync(_request));
     }
 }

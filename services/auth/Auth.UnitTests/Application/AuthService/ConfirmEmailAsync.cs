@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Moq;
 using ErrorCode = Auth.Application.Common.ErrorCode;
 
-namespace Auth.Tests.Application.AuthService;
+namespace Auth.UnitTests.Application.AuthService;
 
 /// <summary>
 /// Tests for auth service confirm email method.
@@ -33,15 +33,17 @@ public class ConfirmEmailAsyncTests : BaseTests
         UserManagerMock
             .Setup(x => x.FindByIdAsync(_query.UserId))
             .ReturnsAsync(_user);
-
         UserManagerMock
-            .Setup(x => x.ConfirmEmailAsync(_user, _query.Token))
+            .Setup(x => x.ConfirmEmailAsync(_user, It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
 
         // Act
         var response = await AuthService.ConfirmEmailAsync(_query);
 
         // Assert
+        UserManagerMock.Verify(x => x.FindByIdAsync(_query.UserId), Times.Once);
+        UserManagerMock.Verify(x => x.ConfirmEmailAsync(_user, It.IsAny<string>()), Times.Once);
+
         response.IsSuccess.Should().BeTrue();
     }
 
@@ -57,6 +59,9 @@ public class ConfirmEmailAsyncTests : BaseTests
         var response = await AuthService.ConfirmEmailAsync(_query);
 
         // Assert
+        UserManagerMock.Verify(x => x.FindByIdAsync(_query.UserId), Times.Once);
+        UserManagerMock.Verify(x => x.ConfirmEmailAsync(It.IsAny<User>(), It.IsAny<string>()), Times.Never);
+
         response.IsSuccess.Should().BeFalse();
         response.ErrorType.Should().Be(ErrorType.InvalidRequestError);
         response.ErrorCode.Should().Be(ErrorCode.UserNotFound);
@@ -66,20 +71,22 @@ public class ConfirmEmailAsyncTests : BaseTests
     public async Task Fail_WhenConfirmationFails()
     {
         // Arrange
-        var error = new IdentityError { Code = "InvalidToken", Description = "Invalid token" };
+        var error = new IdentityError { Code = "InvalidToken" };
 
         UserManagerMock
             .Setup(x => x.FindByIdAsync(_query.UserId))
             .ReturnsAsync(_user);
-
         UserManagerMock
-            .Setup(x => x.ConfirmEmailAsync(_user, _query.Token))
+            .Setup(x => x.ConfirmEmailAsync(_user, It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Failed(error));
 
         // Act
         var response = await AuthService.ConfirmEmailAsync(_query);
 
         // Assert
+        UserManagerMock.Verify(x => x.FindByIdAsync(_query.UserId), Times.Once);
+        UserManagerMock.Verify(x => x.ConfirmEmailAsync(_user, It.IsAny<string>()), Times.Once);
+
         response.IsSuccess.Should().BeFalse();
         response.ErrorType.Should().Be(ErrorType.InvalidRequestError);
         response.ErrorCode.Should().Be(ErrorCode.TokenInvalid);
@@ -91,14 +98,10 @@ public class ConfirmEmailAsyncTests : BaseTests
         // Arrange
         UserManagerMock
             .Setup(x => x.FindByIdAsync(_query.UserId))
-            .ThrowsAsync(new Exception("Unexpected"));
+            .ThrowsAsync(new Exception("An unexpected error occurred."));
 
-        // Act
-        var response = await AuthService.ConfirmEmailAsync(_query);
-
-        // Assert
-        response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.ApiError);
-        response.ErrorCode.Should().Be(ErrorCode.Internal);
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(() =>
+            AuthService.ConfirmEmailAsync(_query));
     }
 }

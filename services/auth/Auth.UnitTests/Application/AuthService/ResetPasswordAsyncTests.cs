@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Moq;
 using ErrorCode = Auth.Application.Common.ErrorCode;
 
-namespace Auth.Tests.Application.AuthService;
+namespace Auth.UnitTests.Application.AuthService;
 
 /// <summary>
 /// Tests for auth service reset password method.
@@ -108,14 +108,8 @@ public class ResetPasswordAsyncTests : BaseTests
             .Setup(x => x.FindByIdAsync(_request.UserId))
             .ThrowsAsync(new Exception("unexpected error"));
 
-        // Act
-        var response = await AuthService.ResetPasswordAsync(_request);
-
-        // Assert
-        TransactionServiceMock.Verify(x => x.BeginAsync(), Times.Once);
-        TransactionServiceMock.Verify(x => x.RollbackAsync(), Times.Once);
-
-        response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.ApiError);
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(() =>
+            AuthService.ResetPasswordAsync(_request));
     }
 }

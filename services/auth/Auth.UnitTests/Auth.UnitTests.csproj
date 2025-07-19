@@ -8,6 +8,8 @@
         <PreserveCompilationContext>true</PreserveCompilationContext>
         <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
         <PreserveCompilationContext>true</PreserveCompilationContext>
+        <AssemblyName>Auth.UnitTests</AssemblyName>
+        <RootNamespace>Auth.UnitTests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

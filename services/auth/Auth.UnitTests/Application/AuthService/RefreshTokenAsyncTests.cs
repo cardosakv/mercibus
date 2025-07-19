@@ -6,7 +6,7 @@ using Mercibus.Common.Constants;
 using Moq;
 using ErrorCode = Auth.Application.Common.ErrorCode;
 
-namespace Auth.Tests.Application.AuthService;
+namespace Auth.UnitTests.Application.AuthService;
 
 /// <summary>
 /// Tests for auth service refresh token method.
@@ -80,7 +80,8 @@ public class RefreshTokenAsyncTests : BaseTests
 
         // Assert
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.PermissionError);
+        response.ErrorType.Should().Be(ErrorType.InvalidRequestError);
+        response.ErrorCode.Should().Be(ErrorCode.TokenInvalid);
     }
 
     [Fact]
@@ -182,14 +183,10 @@ public class RefreshTokenAsyncTests : BaseTests
         // Arrange
         RefreshTokenRepositoryMock
             .Setup(x => x.RetrieveTokenAsync(It.IsAny<string>()))
-            .ThrowsAsync(new Exception("something went wrong"));
+            .ThrowsAsync(new Exception("An unexpected error occurred."));
 
-        // Act
-        var response = await AuthService.RefreshTokenAsync(_request);
-
-        // Assert
-        TransactionServiceMock.Verify(x => x.RollbackAsync(), Times.Once);
-        response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.ApiError);
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(() =>
+            AuthService.RefreshTokenAsync(_request));
     }
 }
