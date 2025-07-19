@@ -1,9 +1,11 @@
-using Auth.Application.Common;
 using Auth.Application.DTOs;
 using FluentAssertions;
+using Mercibus.Common.Constants;
+using Mercibus.Common.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using ErrorCode = Auth.Application.Common.ErrorCode;
 
 namespace Auth.Tests.Api.AuthController;
 
@@ -23,10 +25,9 @@ public class ForgotPasswordTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.ForgotPasswordAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
-                IsSuccess = true,
-                Message = Messages.PasswordResetLinkSent
+                IsSuccess = true
             });
 
         // Act
@@ -38,24 +39,24 @@ public class ForgotPasswordTests : BaseTests
     }
 
     [Fact]
-    public async Task ReturnsNotFound_WhenUserDoesNotExist()
+    public async Task ReturnsBadRequest_WhenUserDoesNotExist()
     {
         // Arrange
         AuthServiceMock
             .Setup(x => x.ForgotPasswordAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "User not found",
-                ErrorType = ErrorType.NotFound
+                ErrorType = ErrorType.InvalidRequestError,
+                ErrorCode = ErrorCode.UserNotFound
             });
 
         // Act
         var result = await Controller.ForgotPassword(_request);
 
         // Assert
-        var notFoundResult = result.Should().BeOfType<NotFoundObjectResult>().Subject;
-        notFoundResult.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+        var notFoundResult = result.Should().BeOfType<ObjectResult>().Subject;
+        notFoundResult.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
     }
 
     [Fact]
@@ -64,11 +65,11 @@ public class ForgotPasswordTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.ForgotPasswordAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "Internal failure",
-                ErrorType = ErrorType.Internal
+                ErrorType = ErrorType.ApiError,
+                ErrorCode = ErrorCode.Internal
             });
 
         // Act

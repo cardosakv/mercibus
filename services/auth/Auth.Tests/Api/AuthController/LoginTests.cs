@@ -1,9 +1,11 @@
-using Auth.Application.Common;
 using Auth.Application.DTOs;
 using FluentAssertions;
+using Mercibus.Common.Constants;
+using Mercibus.Common.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using ErrorCode = Auth.Application.Common.ErrorCode;
 
 namespace Auth.Tests.Api.AuthController;
 
@@ -18,7 +20,7 @@ public class LoginTests : BaseTests
         Password = "password"
     };
 
-    private readonly AuthToken _token = new()
+    private readonly AuthTokenResponse _token = new()
     {
         AccessToken = "access-token",
         RefreshToken = "refresh-token",
@@ -31,7 +33,7 @@ public class LoginTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.LoginAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = true,
                 Data = _token
@@ -52,40 +54,40 @@ public class LoginTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.LoginAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "Invalid password",
-                ErrorType = ErrorType.Validation
+                ErrorType = ErrorType.InvalidRequestError,
+                ErrorCode = ErrorCode.PasswordTooShort,
             });
 
         // Act
         var result = await Controller.Login(_request);
 
         // Assert
-        var badRequestResult = result.Should().BeOfType<BadRequestObjectResult>().Subject;
+        var badRequestResult = result.Should().BeOfType<ObjectResult>().Subject;
         badRequestResult.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
     }
 
     [Fact]
-    public async Task ReturnsNotFound_WhenUserNotFound()
+    public async Task ReturnsBadRequest_WhenUserNotFound()
     {
         // Arrange
         AuthServiceMock
             .Setup(x => x.LoginAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "User not found",
-                ErrorType = ErrorType.NotFound
+                ErrorType = ErrorType.InvalidRequestError,
+                ErrorCode = ErrorCode.UserNotFound
             });
 
         // Act
         var result = await Controller.Login(_request);
 
         // Assert
-        var notFoundResult = result.Should().BeOfType<NotFoundObjectResult>().Subject;
-        notFoundResult.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+        var notFoundResult = result.Should().BeOfType<ObjectResult>().Subject;
+        notFoundResult.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
     }
 
     [Fact]
@@ -94,18 +96,18 @@ public class LoginTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.LoginAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "User forbidden",
-                ErrorType = ErrorType.Forbidden
+                ErrorType = ErrorType.PermissionError,
+                ErrorCode = ErrorCode.UserNoRoleAssigned
             });
 
         // Act
         var result = await Controller.Login(_request);
 
         // Assert
-        result.Should().BeOfType<ForbidResult>();
+        result.Should().BeOfType<ObjectResult>();
     }
 
     [Fact]
@@ -114,11 +116,11 @@ public class LoginTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.LoginAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "Something went wrong",
-                ErrorType = ErrorType.Internal
+                ErrorType = ErrorType.ApiError,
+                ErrorCode = ErrorCode.Internal
             });
 
         // Act

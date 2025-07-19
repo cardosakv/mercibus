@@ -1,8 +1,7 @@
-using Auth.Application.Common;
 using Auth.Application.DTOs;
 using Auth.Domain.Entities;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
+using Mercibus.Common.Constants;
 using Moq;
 
 namespace Auth.Tests.Application.AuthService;
@@ -44,7 +43,6 @@ public class LogOutAsyncTests : BaseTests
         RefreshTokenRepositoryMock.Verify(x => x.RevokeTokenAsync(token), Times.Once);
         TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Once);
         response.IsSuccess.Should().BeTrue();
-        response.Message.Should().Be(Messages.UserLoggedOut);
     }
 
     [Fact]
@@ -63,7 +61,7 @@ public class LogOutAsyncTests : BaseTests
         RefreshTokenRepositoryMock.Verify(x => x.RevokeTokenAsync(It.IsAny<RefreshToken>()), Times.Never);
         TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Never);
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.Forbidden);
+        response.ErrorType.Should().Be(ErrorType.PermissionError);
     }
 
     [Fact]
@@ -93,7 +91,7 @@ public class LogOutAsyncTests : BaseTests
         RefreshTokenRepositoryMock.Verify(x => x.RevokeTokenAsync(token), Times.Once);
         TransactionServiceMock.Verify(x => x.RollbackAsync(), Times.Once);
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.Internal);
+        response.ErrorType.Should().Be(ErrorType.ApiError);
     }
 
     [Fact]
@@ -111,16 +109,8 @@ public class LogOutAsyncTests : BaseTests
         // Assert
         TransactionServiceMock.Verify(x => x.BeginAsync(), Times.Once);
         TransactionServiceMock.Verify(x => x.RollbackAsync(), Times.Once);
-        LoggerMock.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
-            Times.Once);
         response.IsSuccess.Should().BeFalse();
         response.Data.Should().BeNull();
-        response.ErrorType.Should().Be(ErrorType.Internal);
+        response.ErrorType.Should().Be(ErrorType.ApiError);
     }
 }

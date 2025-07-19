@@ -1,8 +1,9 @@
-using Auth.Application.Common;
 using Auth.Application.DTOs;
 using Auth.Domain.Entities;
 using FluentAssertions;
+using Mercibus.Common.Constants;
 using Moq;
+using ErrorCode = Auth.Application.Common.ErrorCode;
 
 namespace Auth.Tests.Application.AuthService;
 
@@ -62,8 +63,8 @@ public class GetInfoAsyncTests : BaseTests
 
         // Assert
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.NotFound);
-        response.Message.Should().Be(Messages.UserNotFound);
+        response.ErrorType.Should().Be(ErrorType.InvalidRequestError);
+        response.ErrorCode.Should().Be(ErrorCode.UserIdRequired);
 
         UserManagerMock.Verify(x => x.FindByIdAsync(It.IsAny<string>()), Times.Never);
     }
@@ -83,8 +84,8 @@ public class GetInfoAsyncTests : BaseTests
         UserManagerMock.Verify(x => x.FindByIdAsync(_userId), Times.Once);
 
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.NotFound);
-        response.Message.Should().Be(Messages.UserNotFound);
+        response.ErrorType.Should().Be(ErrorType.InvalidRequestError);
+        response.ErrorCode.Should().Be(ErrorCode.UserNotFound);
     }
 
     [Fact]
@@ -102,7 +103,7 @@ public class GetInfoAsyncTests : BaseTests
         UserManagerMock.Verify(x => x.FindByIdAsync(_userId), Times.Once);
 
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.Internal);
-        response.Message.Should().Be(Messages.UnexpectedError);
+        response.ErrorType.Should().Be(ErrorType.ApiError);
+        response.ErrorCode.Should().Be(ErrorCode.Internal);
     }
 }

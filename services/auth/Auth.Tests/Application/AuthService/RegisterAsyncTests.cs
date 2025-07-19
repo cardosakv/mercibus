@@ -1,10 +1,9 @@
-using Auth.Application.Common;
 using Auth.Application.DTOs;
 using Auth.Domain.Common;
 using Auth.Domain.Entities;
 using FluentAssertions;
+using Mercibus.Common.Constants;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Auth.Tests.Application.AuthService;
@@ -102,16 +101,8 @@ public class RegisterAsyncTests : BaseTests
         // Assert
         TransactionServiceMock.Verify(x => x.BeginAsync(), Times.Once);
         TransactionServiceMock.Verify(x => x.RollbackAsync(), Times.Once);
-        LoggerMock.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
-            Times.Once);
         response.IsSuccess.Should().BeFalse();
         response.Data.Should().BeNull();
-        response.ErrorType.Should().Be(ErrorType.Internal);
+        response.ErrorType.Should().Be(ErrorType.ApiError);
     }
 }

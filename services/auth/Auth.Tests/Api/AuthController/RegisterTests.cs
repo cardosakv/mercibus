@@ -1,8 +1,10 @@
-using Auth.Application.Common;
 using FluentAssertions;
+using Mercibus.Common.Constants;
+using Mercibus.Common.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using ErrorCode = Auth.Application.Common.ErrorCode;
 using RegisterRequest = Auth.Application.DTOs.RegisterRequest;
 
 namespace Auth.Tests.Api.AuthController;
@@ -25,10 +27,9 @@ public class RegisterTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.RegisterAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = true,
-                Message = "User registered successfully."
             });
 
         // Act
@@ -45,11 +46,11 @@ public class RegisterTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.RegisterAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "Username already taken.",
-                ErrorType = ErrorType.Conflict
+                ErrorType = ErrorType.ConflictError,
+                ErrorCode = ErrorCode.UsernameAlreadyExists
             });
 
         // Act
@@ -66,11 +67,11 @@ public class RegisterTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.RegisterAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "Password is too short.",
-                ErrorType = ErrorType.Validation
+                ErrorType = ErrorType.InvalidRequestError,
+                ErrorCode = ErrorCode.PasswordTooShort
             });
 
         // Act
@@ -87,11 +88,11 @@ public class RegisterTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.RegisterAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "Unexpected failure.",
-                ErrorType = ErrorType.Internal
+                ErrorType = ErrorType.ApiError,
+                ErrorCode = ErrorCode.Internal
             });
 
         // Act

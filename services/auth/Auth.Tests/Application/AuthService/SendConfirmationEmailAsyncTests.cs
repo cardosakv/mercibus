@@ -1,9 +1,10 @@
-using Auth.Application.Common;
 using Auth.Application.DTOs;
 using Auth.Domain.Entities;
 using FluentAssertions;
+using Mercibus.Common.Constants;
 using Microsoft.AspNetCore.Http;
 using Moq;
+using ErrorCode = Auth.Application.Common.ErrorCode;
 
 namespace Auth.Tests.Application.AuthService;
 
@@ -49,7 +50,6 @@ public class SendConfirmationEmailAsyncTests : BaseTests
 
         // Assert
         response.IsSuccess.Should().BeTrue();
-        response.Message.Should().Be(Messages.EmailConfirmationSent);
     }
 
     [Fact]
@@ -65,8 +65,8 @@ public class SendConfirmationEmailAsyncTests : BaseTests
 
         // Assert
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.NotFound);
-        response.Message.Should().Be(Messages.UserNotFound);
+        response.ErrorType.Should().Be(ErrorType.InvalidRequestError);
+        response.ErrorCode.Should().Be(ErrorCode.UserNotFound);
     }
 
     [Fact]
@@ -85,8 +85,8 @@ public class SendConfirmationEmailAsyncTests : BaseTests
 
         // Assert
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.Conflict);
-        response.Message.Should().Be(Messages.EmailAlreadyVerified);
+        response.ErrorType.Should().Be(ErrorType.ConflictError);
+        response.ErrorCode.Should().Be(ErrorCode.EmailAlreadyVerified);
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public class SendConfirmationEmailAsyncTests : BaseTests
 
         // Assert
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.Internal);
+        response.ErrorType.Should().Be(ErrorType.ApiError);
     }
 
     [Fact]
@@ -134,7 +134,7 @@ public class SendConfirmationEmailAsyncTests : BaseTests
 
         // Assert
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.Internal);
+        response.ErrorType.Should().Be(ErrorType.ApiError);
     }
 
     [Fact]
@@ -150,7 +150,6 @@ public class SendConfirmationEmailAsyncTests : BaseTests
 
         // Assert
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.Internal);
-        response.Message.Should().Be(Messages.UnexpectedError);
+        response.ErrorType.Should().Be(ErrorType.ApiError);
     }
 }

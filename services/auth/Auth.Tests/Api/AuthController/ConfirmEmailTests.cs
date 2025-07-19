@@ -1,7 +1,10 @@
-using Auth.Application.Common;
+using Auth.Application.DTOs;
 using FluentAssertions;
+using Mercibus.Common.Constants;
+using Mercibus.Common.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using ErrorCode = Auth.Application.Common.ErrorCode;
 
 namespace Auth.Tests.Api.AuthController;
 
@@ -10,8 +13,11 @@ namespace Auth.Tests.Api.AuthController;
 /// </summary>
 public class ConfirmEmailTests : BaseTests
 {
-    private readonly string _userId = "user-1";
-    private readonly string _token = "encoded-token";
+    private readonly ConfirmEmailQuery _query = new()
+    {
+        UserId = "user-1",
+        Token = "encoded-token"
+    };
 
     public ConfirmEmailTests()
     {
@@ -24,11 +30,11 @@ public class ConfirmEmailTests : BaseTests
     {
         // Arrange
         AuthServiceMock
-            .Setup(x => x.ConfirmEmailAsync(_userId, _token))
-            .ReturnsAsync(new Response { IsSuccess = true });
+            .Setup(x => x.ConfirmEmailAsync(_query))
+            .ReturnsAsync(new ServiceResult { IsSuccess = true });
 
         // Act
-        var result = await Controller.ConfirmEmail(_userId, _token);
+        var result = await Controller.ConfirmEmail(_query);
 
         // Assert
         var redirect = result.Should().BeOfType<RedirectResult>().Subject;
@@ -40,16 +46,16 @@ public class ConfirmEmailTests : BaseTests
     {
         // Arrange
         AuthServiceMock
-            .Setup(x => x.ConfirmEmailAsync(_userId, _token))
-            .ReturnsAsync(new Response
+            .Setup(x => x.ConfirmEmailAsync(_query))
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "Invalid or expired token",
-                ErrorType = ErrorType.BadRequest
+                ErrorType = ErrorType.InvalidRequestError,
+                ErrorCode = ErrorCode.Internal
             });
 
         // Act
-        var result = await Controller.ConfirmEmail(_userId, _token);
+        var result = await Controller.ConfirmEmail(_query);
 
         // Assert
         var redirect = result.Should().BeOfType<RedirectResult>().Subject;

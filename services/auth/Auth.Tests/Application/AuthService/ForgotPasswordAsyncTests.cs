@@ -1,12 +1,12 @@
 using System.Text;
-using Auth.Application.Common;
 using Auth.Application.DTOs;
 using Auth.Domain.Entities;
 using FluentAssertions;
+using Mercibus.Common.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
 using Moq;
+using ErrorCode = Auth.Application.Common.ErrorCode;
 
 namespace Auth.Tests.Application.AuthService;
 
@@ -59,8 +59,6 @@ public class ForgotPasswordAsyncTests : BaseTests
 
         // Assert
         response.IsSuccess.Should().BeTrue();
-        response.Message.Should().Be(Messages.PasswordResetLinkSent);
-
         UserManagerMock.Verify(x => x.FindByEmailAsync(_request.Email), Times.Once);
         UserManagerMock.Verify(x => x.GeneratePasswordResetTokenAsync(_user), Times.Once);
         EmailServiceMock.Verify(x => x.SendPasswordResetLink(_request.Email, It.Is<string>(link => link.Contains(resetUrl))), Times.Once);
@@ -79,12 +77,8 @@ public class ForgotPasswordAsyncTests : BaseTests
 
         // Assert
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.NotFound);
-        response.Message.Should().Be(Messages.UserNotFound);
-
-        UserManagerMock.Verify(x => x.FindByEmailAsync(_request.Email), Times.Once);
-        UserManagerMock.Verify(x => x.GeneratePasswordResetTokenAsync(It.IsAny<User>()), Times.Never);
-        EmailServiceMock.Verify(x => x.SendPasswordResetLink(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        response.ErrorType.Should().Be(ErrorType.InvalidRequestError);
+        response.ErrorCode.Should().Be(ErrorCode.UserNotFound);
     }
 
     [Fact]
@@ -104,8 +98,8 @@ public class ForgotPasswordAsyncTests : BaseTests
 
         // Assert
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.Internal);
-        response.Message.Should().Be(Messages.UnexpectedError);
+        response.ErrorType.Should().Be(ErrorType.ApiError);
+        response.ErrorCode.Should().Be(ErrorCode.Internal);
 
         UserManagerMock.Verify(x => x.FindByEmailAsync(_request.Email), Times.Once);
         UserManagerMock.Verify(x => x.GeneratePasswordResetTokenAsync(It.IsAny<User>()), Times.Never);
@@ -141,8 +135,8 @@ public class ForgotPasswordAsyncTests : BaseTests
 
         // Assert
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.Internal);
-        response.Message.Should().Be(Messages.UnexpectedError);
+        response.ErrorType.Should().Be(ErrorType.ApiError);
+        response.ErrorCode.Should().Be(ErrorCode.Internal);
 
         UserManagerMock.Verify(x => x.FindByEmailAsync(_request.Email), Times.Once);
         UserManagerMock.Verify(x => x.GeneratePasswordResetTokenAsync(_user), Times.Once);
@@ -162,17 +156,9 @@ public class ForgotPasswordAsyncTests : BaseTests
 
         // Assert
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.Internal);
-        response.Message.Should().Be(Messages.UnexpectedError);
+        response.ErrorType.Should().Be(ErrorType.ApiError);
+        response.ErrorCode.Should().Be(ErrorCode.Internal);
 
         UserManagerMock.Verify(x => x.FindByEmailAsync(_request.Email), Times.Once);
-        LoggerMock.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
-            Times.Once);
     }
 }

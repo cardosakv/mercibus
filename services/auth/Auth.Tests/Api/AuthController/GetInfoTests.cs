@@ -1,10 +1,13 @@
 using System.Security.Claims;
-using Auth.Application.Common;
 using Auth.Application.DTOs;
 using FluentAssertions;
+using Mercibus.Common.Constants;
+using Mercibus.Common.Models;
+using Mercibus.Common.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using ErrorCode = Auth.Application.Common.ErrorCode;
 
 namespace Auth.Tests.Api.AuthController;
 
@@ -23,11 +26,28 @@ public class GetInfoTests : BaseTests
     public async Task ReturnsOk_WhenUserInfoRetrieved()
     {
         // Arrange
-        var userInfo = new GetUserInfoResponse { Name = "Test User", Email = "test@email.com" };
+        var userInfo = new GetUserInfoResponse
+        {
+            Id = "user-1",
+            Name = "Test User",
+            Email = "test@email.com",
+            Username = "test_user",
+            IsEmailVerified = true,
+            Street = "123 St",
+            City = "Metro City",
+            State = "Metro State",
+            Country = "Ph",
+            PostalCode = 1100
+        };
+
+        var response = new ApiSuccessResponse
+        {
+            Data = userInfo
+        };
 
         AuthServiceMock
             .Setup(x => x.GetInfoAsync("user-1"))
-            .ReturnsAsync(new Response { IsSuccess = true, Data = userInfo });
+            .ReturnsAsync(new ServiceResult { IsSuccess = true, Data = userInfo });
 
         // Act
         var result = await Controller.GetInfo();
@@ -35,28 +55,28 @@ public class GetInfoTests : BaseTests
         // Assert
         var ok = result.Should().BeOfType<OkObjectResult>().Subject;
         ok.StatusCode.Should().Be(StatusCodes.Status200OK);
-        ok.Value.Should().BeEquivalentTo(userInfo);
+        ok.Value.Should().BeEquivalentTo(response);
     }
 
     [Fact]
-    public async Task ReturnsNotFound_WhenUserDoesNotExist()
+    public async Task ReturnsBadRequest_WhenUserDoesNotExist()
     {
         // Arrange
         AuthServiceMock
             .Setup(x => x.GetInfoAsync("user-1"))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "User not found",
-                ErrorType = ErrorType.NotFound
+                ErrorType = ErrorType.InvalidRequestError,
+                ErrorCode = ErrorCode.UserNotFound
             });
 
         // Act
         var result = await Controller.GetInfo();
 
         // Assert
-        var notFound = result.Should().BeOfType<NotFoundObjectResult>().Subject;
-        notFound.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+        var notFound = result.Should().BeOfType<ObjectResult>().Subject;
+        notFound.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
     }
 
     [Fact]
@@ -65,11 +85,11 @@ public class GetInfoTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.GetInfoAsync("user-1"))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "Unexpected error",
-                ErrorType = ErrorType.Internal
+                ErrorType = ErrorType.ApiError,
+                ErrorCode = ErrorCode.Internal
             });
 
         // Act

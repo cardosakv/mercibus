@@ -1,4 +1,4 @@
-using Auth.Application.Interfaces;
+using Auth.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;

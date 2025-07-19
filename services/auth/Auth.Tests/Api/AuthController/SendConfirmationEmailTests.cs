@@ -1,9 +1,11 @@
-using Auth.Application.Common;
 using Auth.Application.DTOs;
 using FluentAssertions;
+using Mercibus.Common.Constants;
+using Mercibus.Common.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using ErrorCode = Auth.Application.Common.ErrorCode;
 
 namespace Auth.Tests.Api.AuthController;
 
@@ -23,10 +25,9 @@ public class SendConfirmationEmailTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.SendConfirmationEmailAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
-                IsSuccess = true,
-                Message = Messages.EmailConfirmationSent
+                IsSuccess = true
             });
 
         // Act
@@ -43,11 +44,11 @@ public class SendConfirmationEmailTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.SendConfirmationEmailAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "User not found",
-                ErrorType = ErrorType.NotFound
+                ErrorType = ErrorType.InvalidRequestError,
+                ErrorCode = ErrorCode.UserNotFound
             });
 
         // Act
@@ -64,11 +65,11 @@ public class SendConfirmationEmailTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.SendConfirmationEmailAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "Email already verified",
-                ErrorType = ErrorType.Conflict
+                ErrorType = ErrorType.ConflictError,
+                ErrorCode = ErrorCode.EmailAlreadyVerified
             });
 
         // Act
@@ -85,11 +86,11 @@ public class SendConfirmationEmailTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.SendConfirmationEmailAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "Something went wrong",
-                ErrorType = ErrorType.Internal
+                ErrorType = ErrorType.ApiError,
+                ErrorCode = ErrorCode.Internal
             });
 
         // Act

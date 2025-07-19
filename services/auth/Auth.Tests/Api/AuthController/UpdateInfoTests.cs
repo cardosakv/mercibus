@@ -1,10 +1,12 @@
 using System.Security.Claims;
-using Auth.Application.Common;
 using Auth.Application.DTOs;
 using FluentAssertions;
+using Mercibus.Common.Constants;
+using Mercibus.Common.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using ErrorCode = Auth.Application.Common.ErrorCode;
 
 namespace Auth.Tests.Api.AuthController;
 
@@ -35,10 +37,9 @@ public class UpdateInfoTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.UpdateInfoAsync("user-1", _request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
-                IsSuccess = true,
-                Message = Messages.UserInfoUpdated
+                IsSuccess = true
             });
 
         // Act
@@ -55,11 +56,11 @@ public class UpdateInfoTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.UpdateInfoAsync("user-1", _request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "Invalid input",
-                ErrorType = ErrorType.Validation
+                ErrorType = ErrorType.InvalidRequestError,
+                ErrorCode = ErrorCode.NameTooShort
             });
 
         // Act
@@ -71,16 +72,16 @@ public class UpdateInfoTests : BaseTests
     }
 
     [Fact]
-    public async Task ReturnsNotFound_WhenUserNotFound()
+    public async Task ReturnsBadRequest_WhenUserNotFound()
     {
         // Arrange
         AuthServiceMock
             .Setup(x => x.UpdateInfoAsync("user-1", _request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "User not found",
-                ErrorType = ErrorType.NotFound
+                ErrorType = ErrorType.InvalidRequestError,
+                ErrorCode = ErrorCode.UserNotFound
             });
 
         // Act
@@ -97,11 +98,11 @@ public class UpdateInfoTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.UpdateInfoAsync("user-1", _request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "Something failed",
-                ErrorType = ErrorType.Internal
+                ErrorType = ErrorType.ApiError,
+                ErrorCode = ErrorCode.Internal
             });
 
         // Act

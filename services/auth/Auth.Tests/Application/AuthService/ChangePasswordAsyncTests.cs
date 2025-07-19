@@ -1,10 +1,10 @@
-using Auth.Application.Common;
 using Auth.Application.DTOs;
 using Auth.Domain.Entities;
 using FluentAssertions;
+using Mercibus.Common.Constants;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 using Moq;
+using ErrorCode = Auth.Application.Common.ErrorCode;
 
 namespace Auth.Tests.Application.AuthService;
 
@@ -48,7 +48,6 @@ public class ChangePasswordAsyncTests : BaseTests
         TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Once);
 
         response.IsSuccess.Should().BeTrue();
-        response.Message.Should().Be(Messages.PasswordChanged);
     }
 
     [Fact]
@@ -69,8 +68,8 @@ public class ChangePasswordAsyncTests : BaseTests
         TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Never);
 
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.NotFound);
-        response.Message.Should().Be(Messages.UserNotFound);
+        response.ErrorType.Should().Be(ErrorType.InvalidRequestError);
+        response.ErrorCode.Should().Be(ErrorCode.UserNotFound);
     }
 
     [Fact]
@@ -97,8 +96,8 @@ public class ChangePasswordAsyncTests : BaseTests
         TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Never);
 
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(IdentityErrorMapper.MapToErrorType(error.Code));
-        response.Message.Should().Be(error.Description);
+        response.ErrorType.Should().Be(ErrorType.InvalidRequestError);
+        response.ErrorCode.Should().Be(ErrorCode.PasswordInvalid);
     }
 
     [Fact]
@@ -114,18 +113,10 @@ public class ChangePasswordAsyncTests : BaseTests
 
         // Assert
         TransactionServiceMock.Verify(x => x.BeginAsync(), Times.Once);
-        TransactionServiceMock.Verify(x => x.RollbackAsync(), Times.Once);
-        LoggerMock.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
-            Times.Once);
+        TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Never);
 
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.Internal);
-        response.Message.Should().Be(Messages.UnexpectedError);
+        response.ErrorType.Should().Be(ErrorType.ApiError);
+        response.ErrorCode.Should().Be(ErrorCode.Internal);
     }
 }

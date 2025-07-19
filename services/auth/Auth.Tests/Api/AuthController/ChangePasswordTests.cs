@@ -1,9 +1,11 @@
-using Auth.Application.Common;
 using Auth.Application.DTOs;
 using FluentAssertions;
+using Mercibus.Common.Constants;
+using Mercibus.Common.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using ErrorCode = Auth.Application.Common.ErrorCode;
 
 namespace Auth.Tests.Api.AuthController;
 
@@ -25,10 +27,9 @@ public class ChangePasswordTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.ChangePasswordAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
-                IsSuccess = true,
-                Message = Messages.PasswordChanged
+                IsSuccess = true
             });
 
         // Act
@@ -45,40 +46,40 @@ public class ChangePasswordTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.ChangePasswordAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "Password too short",
-                ErrorType = ErrorType.Validation
+                ErrorType = ErrorType.InvalidRequestError,
+                ErrorCode = ErrorCode.PasswordTooShort
             });
 
         // Act
         var result = await Controller.ChangePassword(_request);
 
         // Assert
-        var badRequest = result.Should().BeOfType<BadRequestObjectResult>().Subject;
+        var badRequest = result.Should().BeOfType<ObjectResult>().Subject;
         badRequest.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
     }
 
     [Fact]
-    public async Task ReturnsNotFound_WhenUserNotFound()
+    public async Task ReturnsBadRequest_WhenUserNotFound()
     {
         // Arrange
         AuthServiceMock
             .Setup(x => x.ChangePasswordAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "User not found",
-                ErrorType = ErrorType.NotFound
+                ErrorType = ErrorType.InvalidRequestError,
+                ErrorCode = ErrorCode.UserNotFound
             });
 
         // Act
         var result = await Controller.ChangePassword(_request);
 
         // Assert
-        var notFound = result.Should().BeOfType<NotFoundObjectResult>().Subject;
-        notFound.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+        var notFound = result.Should().BeOfType<ObjectResult>().Subject;
+        notFound.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
     }
 
     [Fact]
@@ -87,11 +88,11 @@ public class ChangePasswordTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.ChangePasswordAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "Unexpected error",
-                ErrorType = ErrorType.Internal
+                ErrorType = ErrorType.ApiError,
+                ErrorCode = ErrorCode.Internal
             });
 
         // Act

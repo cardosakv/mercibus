@@ -1,10 +1,10 @@
-using Auth.Application.Common;
 using Auth.Application.DTOs;
 using Auth.Domain.Entities;
 using FluentAssertions;
+using Mercibus.Common.Constants;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 using Moq;
+using ErrorCode = Auth.Application.Common.ErrorCode;
 
 namespace Auth.Tests.Application.AuthService;
 
@@ -48,7 +48,6 @@ public class ResetPasswordAsyncTests : BaseTests
         TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Once);
 
         response.IsSuccess.Should().BeTrue();
-        response.Message.Should().Be(Messages.PasswordResetSuccess);
     }
 
     [Fact]
@@ -69,8 +68,8 @@ public class ResetPasswordAsyncTests : BaseTests
         TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Never);
 
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.NotFound);
-        response.Message.Should().Be(Messages.UserNotFound);
+        response.ErrorType.Should().Be(ErrorType.InvalidRequestError);
+        response.ErrorCode.Should().Be(ErrorCode.UserNotFound);
     }
 
     [Fact]
@@ -97,8 +96,8 @@ public class ResetPasswordAsyncTests : BaseTests
         TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Never);
 
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(IdentityErrorMapper.MapToErrorType(error.Code));
-        response.Message.Should().Be(error.Description);
+        response.ErrorType.Should().Be(ErrorType.InvalidRequestError);
+        response.ErrorCode.Should().Be(ErrorCode.TokenInvalid);
     }
 
     [Fact]
@@ -115,17 +114,8 @@ public class ResetPasswordAsyncTests : BaseTests
         // Assert
         TransactionServiceMock.Verify(x => x.BeginAsync(), Times.Once);
         TransactionServiceMock.Verify(x => x.RollbackAsync(), Times.Once);
-        LoggerMock.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
-            Times.Once);
 
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.Internal);
-        response.Message.Should().Be(Messages.UnexpectedError);
+        response.ErrorType.Should().Be(ErrorType.ApiError);
     }
 }

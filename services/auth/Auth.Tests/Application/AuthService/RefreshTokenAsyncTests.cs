@@ -1,9 +1,10 @@
-using Auth.Application.Common;
 using Auth.Application.DTOs;
 using Auth.Domain.Common;
 using Auth.Domain.Entities;
 using FluentAssertions;
+using Mercibus.Common.Constants;
 using Moq;
+using ErrorCode = Auth.Application.Common.ErrorCode;
 
 namespace Auth.Tests.Application.AuthService;
 
@@ -60,7 +61,7 @@ public class RefreshTokenAsyncTests : BaseTests
         TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Once);
         response.IsSuccess.Should().BeTrue();
 
-        var tokenData = response.Data as AuthToken;
+        var tokenData = response.Data as AuthTokenResponse;
         tokenData.Should().NotBeNull();
         tokenData!.AccessToken.Should().Be("access-token");
         tokenData.RefreshToken.Should().Be("new-refresh-token");
@@ -79,7 +80,7 @@ public class RefreshTokenAsyncTests : BaseTests
 
         // Assert
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.Forbidden);
+        response.ErrorType.Should().Be(ErrorType.PermissionError);
     }
 
     [Fact]
@@ -107,8 +108,8 @@ public class RefreshTokenAsyncTests : BaseTests
 
         // Assert
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.Unauthorized);
-        response.Message.Should().Be(Messages.RefreshTokenExpired);
+        response.ErrorType.Should().Be(ErrorType.AuthenticationError);
+        response.ErrorCode.Should().Be(ErrorCode.RefreshTokenExpired);
     }
 
     [Fact]
@@ -136,7 +137,8 @@ public class RefreshTokenAsyncTests : BaseTests
 
         // Assert
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.NotFound);
+        response.ErrorType.Should().Be(ErrorType.InvalidRequestError);
+        response.ErrorCode.Should().Be(ErrorCode.UserNotFound);
     }
 
     [Fact]
@@ -170,7 +172,8 @@ public class RefreshTokenAsyncTests : BaseTests
 
         // Assert
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.Forbidden);
+        response.ErrorType.Should().Be(ErrorType.PermissionError);
+        response.ErrorCode.Should().Be(ErrorCode.UserNoRoleAssigned);
     }
 
     [Fact]
@@ -187,6 +190,6 @@ public class RefreshTokenAsyncTests : BaseTests
         // Assert
         TransactionServiceMock.Verify(x => x.RollbackAsync(), Times.Once);
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.Internal);
+        response.ErrorType.Should().Be(ErrorType.ApiError);
     }
 }

@@ -1,9 +1,11 @@
-using Auth.Application.Common;
 using Auth.Application.DTOs;
 using FluentAssertions;
+using Mercibus.Common.Constants;
+using Mercibus.Common.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using ErrorCode = Auth.Application.Common.ErrorCode;
 
 namespace Auth.Tests.Api.AuthController;
 
@@ -23,10 +25,9 @@ public class LogoutTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.LogoutAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
-                IsSuccess = true,
-                Message = Messages.UserLoggedOut
+                IsSuccess = true
             });
 
         // Act
@@ -43,11 +44,11 @@ public class LogoutTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.LogoutAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "Token revoked",
-                ErrorType = ErrorType.Forbidden
+                ErrorType = ErrorType.PermissionError,
+                ErrorCode = ErrorCode.TokenInvalid
             });
 
         // Act
@@ -63,11 +64,11 @@ public class LogoutTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.LogoutAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "Unexpected error",
-                ErrorType = ErrorType.Internal
+                ErrorType = ErrorType.ApiError,
+                ErrorCode = ErrorCode.Internal
             });
 
         // Act

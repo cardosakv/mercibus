@@ -2,9 +2,10 @@ using Auth.Application.Common;
 using Auth.Application.DTOs;
 using Auth.Domain.Entities;
 using FluentAssertions;
+using Mercibus.Common.Constants;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
 using Moq;
+using ErrorCode = Auth.Application.Common.ErrorCode;
 
 namespace Auth.Tests.Application.AuthService;
 
@@ -65,7 +66,6 @@ public class UpdateInfoAsyncTests : BaseTests
         TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Once);
 
         response.IsSuccess.Should().BeTrue();
-        response.Message.Should().Be(Messages.UserInfoUpdated);
     }
 
     [Fact]
@@ -76,8 +76,8 @@ public class UpdateInfoAsyncTests : BaseTests
 
         // Assert
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.NotFound);
-        response.Message.Should().Be(Messages.UserNotFound);
+        response.ErrorType.Should().Be(ErrorType.InvalidRequestError);
+        response.ErrorType.Should().Be(ErrorCode.UserIdRequired);
 
         UserManagerMock.Verify(x => x.FindByIdAsync(It.IsAny<string>()), Times.Never);
     }
@@ -100,8 +100,8 @@ public class UpdateInfoAsyncTests : BaseTests
         TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Never);
 
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.NotFound);
-        response.Message.Should().Be(Messages.UserNotFound);
+        response.ErrorType.Should().Be(ErrorType.InvalidRequestError);
+        response.ErrorType.Should().Be(ErrorCode.UserNotFound);
     }
 
     [Fact]
@@ -128,8 +128,8 @@ public class UpdateInfoAsyncTests : BaseTests
         TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Never);
 
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(IdentityErrorMapper.MapToErrorType(error.Code));
-        response.Message.Should().Be(error.Description);
+        response.ErrorCode.Should().Be(Utils.IdentityErrorToCode(error.Code));
+        response.ErrorType.Should().Be(Utils.IdentityErrorToType(error.Code));
     }
 
     [Fact]
@@ -147,17 +147,7 @@ public class UpdateInfoAsyncTests : BaseTests
         TransactionServiceMock.Verify(x => x.BeginAsync(), Times.Once);
         TransactionServiceMock.Verify(x => x.RollbackAsync(), Times.Once);
 
-        LoggerMock.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
-            Times.Once);
-
         response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.Internal);
-        response.Message.Should().Be(Messages.UnexpectedError);
+        response.ErrorType.Should().Be(ErrorType.ApiError);
     }
 }

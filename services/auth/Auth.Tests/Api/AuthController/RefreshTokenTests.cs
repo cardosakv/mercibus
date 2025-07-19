@@ -1,9 +1,11 @@
-using Auth.Application.Common;
 using Auth.Application.DTOs;
 using FluentAssertions;
+using Mercibus.Common.Constants;
+using Mercibus.Common.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using ErrorCode = Auth.Application.Common.ErrorCode;
 
 namespace Auth.Tests.Api.AuthController;
 
@@ -17,7 +19,7 @@ public class RefreshTokenTests : BaseTests
         RefreshToken = "valid-refresh-token"
     };
 
-    private readonly AuthToken _token = new()
+    private readonly AuthTokenResponse _token = new()
     {
         AccessToken = "new-access-token",
         RefreshToken = "new-refresh-token",
@@ -30,7 +32,7 @@ public class RefreshTokenTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.RefreshTokenAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = true,
                 Data = _token
@@ -51,11 +53,11 @@ public class RefreshTokenTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.RefreshTokenAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "Token is revoked",
-                ErrorType = ErrorType.Forbidden
+                ErrorType = ErrorType.PermissionError,
+                ErrorCode = ErrorCode.TokenInvalid
             });
 
         // Act
@@ -71,11 +73,11 @@ public class RefreshTokenTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.RefreshTokenAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "Token is expired",
-                ErrorType = ErrorType.Unauthorized
+                ErrorType = ErrorType.AuthenticationError,
+                ErrorCode = ErrorCode.RefreshTokenExpired
             });
 
         // Act
@@ -92,11 +94,11 @@ public class RefreshTokenTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.RefreshTokenAsync(_request))
-            .ReturnsAsync(new Response
+            .ReturnsAsync(new ServiceResult
             {
                 IsSuccess = false,
-                Message = "Unexpected error",
-                ErrorType = ErrorType.Internal
+                ErrorType = ErrorType.ApiError,
+                ErrorCode = ErrorCode.Internal
             });
 
         // Act

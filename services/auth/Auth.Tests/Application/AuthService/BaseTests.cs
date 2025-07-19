@@ -1,5 +1,7 @@
-using Auth.Application.Interfaces;
+using Auth.Application.Interfaces.Repositories;
+using Auth.Application.Interfaces.Services;
 using Auth.Domain.Entities;
+using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing;
@@ -25,7 +27,7 @@ public abstract class BaseTests
     protected readonly Mock<IHttpContextAccessor> HttpContextAccessorMock;
     protected readonly Mock<LinkGenerator> LinkGeneratorMock;
     protected readonly Mock<IConfiguration> ConfigurationMock;
-    protected readonly Mock<ILogger<IAuthService>> LoggerMock;
+    protected readonly Mock<IMapper> MapperMock;
 
     protected BaseTests()
     {
@@ -59,7 +61,7 @@ public abstract class BaseTests
         HttpContextAccessorMock = new Mock<IHttpContextAccessor>();
         LinkGeneratorMock = new Mock<LinkGenerator>();
         ConfigurationMock = new Mock<IConfiguration>();
-        LoggerMock = new Mock<ILogger<IAuthService>>();
+        MapperMock = new Mock<IMapper>();
 
         AuthService = new Auth.Application.Services.AuthService(
             UserManagerMock.Object,
@@ -70,6 +72,6 @@ public abstract class BaseTests
             HttpContextAccessorMock.Object,
             LinkGeneratorMock.Object,
             ConfigurationMock.Object,
-            LoggerMock.Object);
+            MapperMock.Object);
     }
 }

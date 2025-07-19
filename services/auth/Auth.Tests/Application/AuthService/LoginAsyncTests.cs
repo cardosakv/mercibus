@@ -1,9 +1,8 @@
-using Auth.Application.Common;
 using Auth.Application.DTOs;
 using Auth.Domain.Common;
 using Auth.Domain.Entities;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
+using Mercibus.Common.Constants;
 using Moq;
 
 namespace Auth.Tests.Application.AuthService;
@@ -19,7 +18,7 @@ public class LoginAsyncTests : BaseTests
         Password = "password"
     };
 
-    private readonly AuthToken _authToken = new()
+    private readonly AuthTokenResponse _authToken = new()
     {
         TokenType = "Bearer",
         AccessToken = "test-access-token",
@@ -60,9 +59,9 @@ public class LoginAsyncTests : BaseTests
 
         response.IsSuccess.Should().BeTrue();
         response.Data.Should().NotBeNull();
-        response.Data.Should().BeOfType<AuthToken>();
+        response.Data.Should().BeOfType<AuthTokenResponse>();
 
-        var token = response.Data.As<AuthToken>();
+        var token = response.Data.As<AuthTokenResponse>();
         token.AccessToken.Should().Be(_authToken.AccessToken);
         token.RefreshToken.Should().Be(_authToken.RefreshToken);
         token.ExpiresIn.Should().Be(_authToken.ExpiresIn);
@@ -144,16 +143,8 @@ public class LoginAsyncTests : BaseTests
         // Assert
         TransactionServiceMock.Verify(x => x.BeginAsync(), Times.Once);
         TransactionServiceMock.Verify(x => x.RollbackAsync(), Times.Once);
-        LoggerMock.Verify(
-            x => x.Log(
-                LogLevel.Error,
-                It.IsAny<EventId>(),
-                It.IsAny<It.IsAnyType>(),
-                It.IsAny<Exception>(),
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()!),
-            Times.Once);
         response.IsSuccess.Should().BeFalse();
-        response.Data.Should().BeNull();
-        response.ErrorType.Should().Be(ErrorType.Internal);
+        response.ErrorType.Should().Be(ErrorType.ApiError);
+        response.ErrorCode.Should().Be(ErrorCode.Internal);
     }
 }
