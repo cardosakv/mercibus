@@ -22,7 +22,12 @@ public static class MappingConfig
             .Map(dest => dest.City, src => src.City)
             .Map(dest => dest.State, src => src.State)
             .Map(dest => dest.Country, src => src.Country)
-            .Map(dest => dest.PostalCode, src => src.PostalCode);
+            .Map(dest => dest.PostalCode, src => src.PostalCode)
+            .Map(dest => dest.BirthDate, src => src.BirthDate)
+            .Map(dest => dest.ProfileImageUrl, src => src.ProfileImageUrl)
+            .Map(dest => dest.LastLoginAt, src => src.LastLoginAt)
+            .Map(dest => dest.PhoneNumber, src => src.PhoneNumber)
+            .Map(dest => dest.CreatedAt, src => src.CreatedAt);
 
         TypeAdapterConfig<UpdateUserInfoRequest, User>
             .NewConfig()
@@ -31,7 +36,10 @@ public static class MappingConfig
             .Map(dest => dest.City, src => src.City)
             .Map(dest => dest.State, src => src.State)
             .Map(dest => dest.Country, src => src.Country)
-            .Map(dest => dest.PostalCode, src => src.PostalCode);
+            .Map(dest => dest.PostalCode, src => src.PostalCode)
+            .Map(dest => dest.BirthDate, src => src.BirthDate)
+            .Map(dest => dest.PhoneNumber, src => src.PhoneNumber)
+            .Map(dest => dest.ProfileImageUrl, src => src.ProfileImageUrl);
 
         TypeAdapterConfig<RegisterRequest, User>
             .NewConfig()

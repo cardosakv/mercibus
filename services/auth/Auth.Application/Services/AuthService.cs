@@ -78,6 +78,15 @@ public class AuthService(
             return Error(ErrorType.PermissionError, ErrorCode.UserNoRoleAssigned);
         }
 
+        user.LastLoginAt = DateTime.UtcNow;
+        var updateResult = await userManager.UpdateAsync(user);
+        if (!updateResult.Succeeded)
+        {
+            await transactionService.RollbackAsync();
+            var error = updateResult.Errors.First();
+            return Error(Utils.IdentityErrorToType(error.Code), Utils.IdentityErrorToCode(error.Code));
+        }
+
         var (accessToken, expiresIn) = tokenService.CreateAccessToken(user, role[0]);
         var refreshToken = await refreshTokenRepository.CreateTokenAsync(user.Id);
 

@@ -2,6 +2,7 @@ using Auth.Application.DTOs;
 using Auth.Domain.Common;
 using Auth.Domain.Entities;
 using FluentAssertions;
+using Microsoft.AspNetCore.Identity;
 using Moq;
 
 namespace Auth.UnitTests.Application.AuthService;
@@ -38,6 +39,9 @@ public class LoginAsyncTests : BaseTests
         UserManagerMock
             .Setup(x => x.GetRolesAsync(It.IsAny<User>()))
             .ReturnsAsync([Roles.Customer]);
+        UserManagerMock
+            .Setup(x => x.UpdateAsync(It.IsAny<User>()))
+            .ReturnsAsync(IdentityResult.Success);
         TokenServiceMock
             .Setup(x => x.CreateAccessToken(It.IsAny<User>(), It.IsAny<string>()))
             .Returns((_authToken.AccessToken, _authToken.ExpiresIn));
