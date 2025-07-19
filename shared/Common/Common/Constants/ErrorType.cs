@@ -1,4 +1,4 @@
-﻿namespace Common.Constants;
+﻿namespace Mercibus.Common.Constants;
 
 /// <summary>
 /// Error types for API responses.

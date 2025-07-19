@@ -1,10 +1,10 @@
-﻿using Common.Constants;
-using Common.Models;
-using Common.Responses;
+﻿using Common.Responses;
+using Mercibus.Common.Constants;
+using Mercibus.Common.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace Common.Controllers;
+namespace Mercibus.Common.Controllers;
 
 /// <summary>
 /// Base controller for handling API responses.

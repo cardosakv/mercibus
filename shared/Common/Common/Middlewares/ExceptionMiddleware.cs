@@ -1,12 +1,12 @@
-using Common.Constants;
 using Common.Responses;
+using Mercibus.Common.Constants;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Common.Middlewares;
+namespace Mercibus.Common.Middlewares;
 
 /// <summary>
 /// Middleware to handle exceptions globally.

@@ -1,6 +1,6 @@
-using Common.Models;
+using Mercibus.Common.Models;
 
-namespace Common.Services;
+namespace Mercibus.Common.Services;
 
 /// <summary>
 /// Base service class providing common functionality for services.

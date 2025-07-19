@@ -1,4 +1,4 @@
-﻿namespace Common.Models;
+﻿namespace Mercibus.Common.Models;
 
 /// <summary>
 /// Represents a standard service returned result.

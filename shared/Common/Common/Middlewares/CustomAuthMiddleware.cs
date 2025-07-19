@@ -1,12 +1,12 @@
-using Common.Constants;
 using Common.Responses;
+using Mercibus.Common.Constants;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Net;
 
-namespace Common.Middlewares;
+namespace Mercibus.Common.Middlewares;
 
 /// <summary>
 /// Middleware to handle 401 Unauthorized responses globally.
@@ -47,7 +47,7 @@ public class CustomAuthMiddleware(RequestDelegate next)
                 Error = new ApiError
                 {
                     Type = ErrorType.PermissionError,
-                    Code = ErrorCode.NotAllowed
+                    Code = ErrorCode.AccessDenied
                 }
             };
 

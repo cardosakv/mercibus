@@ -1,4 +1,4 @@
-namespace Common.Responses;
+namespace Mercibus.Common.Responses;
 
 /// <summary>
 /// Represents an error response from the API.

@@ -1,11 +1,11 @@
-﻿using Common.Constants;
-using Common.Responses;
+﻿using Common.Responses;
+using Mercibus.Common.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Results;
 using System.Text.Json;
 
-namespace Common.Validations;
+namespace Mercibus.Common.Validations;
 
 /// <summary>
 /// Custom validation result factory.

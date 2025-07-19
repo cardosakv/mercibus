@@ -1,4 +1,4 @@
-namespace Common.Responses;
+namespace Mercibus.Common.Responses;
 
 /// <summary>
 /// Represents a successful API response containing data of type T.
