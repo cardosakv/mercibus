@@ -5,6 +5,8 @@ namespace Auth.Application.Common;
 /// </summary>
 public static class ErrorCode
 {
+    public const string ValidationFailed = "validation_failed";
+
     public const string UserIdRequired = "user_id_required";
     public const string UsernameRequired = "username_required";
     public const string UsernameInvalid = "username_invalid";
