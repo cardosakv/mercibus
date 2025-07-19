@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+using Auth.Api.Extensions;
 using Auth.Application.Interfaces.Repositories;
 using Auth.Application.Interfaces.Services;
 using Auth.Application.Mappings;
@@ -91,6 +92,7 @@ try
     {
         app.UseSwagger();
         app.UseSwaggerUI();
+        app.ApplyMigrations();
     }
 
     app.UseExceptionMiddleware();
@@ -105,4 +107,8 @@ try
 catch (Exception ex)
 {
     Console.WriteLine(ex.Message);
+}
+
+public partial class Program
+{
 }
