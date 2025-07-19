@@ -68,8 +68,7 @@ jobs:
             /o:"cardosakv" `
             /d:sonar.token="${{ secrets.sonar_token }}" `
             /d:sonar.host.url="https://sonarcloud.io" `
-            /d:"sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml" `
-            /d:"sonar.coverage.exclusions=**/${{ inputs.project_dll }}.Infrastructure/**/*.cs,**/${{ inputs.project_dll }}.Domain/**/*.cs,**/${{ inputs.project_dll }}.Api/Program.cs,**/${{ inputs.project_dll }}.Api/Middlewares/**/*.cs,**/${{ inputs.project_dll }}.Application/Common/**/*.cs,**/${{ inputs.project_dll }}.Validators/**/*.cs"
+            /d:"sonar.cs.opencover.reportsPaths=**/TestResults/Merged/coverage.opencover.xml" `
 
       - name: Restore and build
         shell: powershell
@@ -81,18 +80,30 @@ jobs:
         shell: powershell
         run: dotnet tool install --global coverlet.console
 
-      - name: Run tests with OpenCover coverage
+      - name: Run unit and integration tests with OpenCover coverage
         shell: powershell
         run: |
-          coverlet ./${{ inputs.project_dll }}.Tests/bin/Release/net8.0/${{ inputs.project_dll }}.Tests.dll `
+          coverlet ./${{ inputs.project_dll }}.UnitTests/bin/Release/net8.0/${{ inputs.project_dll }}.UnitTests.dll `
             --target "dotnet" `
-            --targetargs "test ./${{ inputs.project_dll }}.Tests/${{ inputs.project_dll }}.Tests.csproj --no-build --configuration Release" `
+            --targetargs "test ./${{ inputs.project_dll }}.UnitTests/${{ inputs.project_dll }}.UnitTests.csproj --no-build --configuration Release" `
             --format opencover `
-            --output "./TestResults/coverage.opencover.xml"
+            --output "./TestResults/unit.coverage.opencover.xml"
 
-      - name: List coverage files (debug)
-        shell: powershell
-        run: Get-ChildItem -Recurse -Filter "coverage.opencover.xml"
+          coverlet ./${{ inputs.project_dll }}.IntegrationTests/bin/Release/net8.0/${{ inputs.project_dll }}.IntegrationTests.dll `
+            --target "dotnet" `
+            --targetargs "test ./${{ inputs.project_dll }}.IntegrationTests/${{ inputs.project_dll }}.IntegrationTests.csproj --no-build --configuration Release" `
+            --format opencover `
+            --output "./TestResults/integration.coverage.opencover.xml"
+
+      - name: Install ReportGenerator
+        run: dotnet tool install --global dotnet-reportgenerator-globaltool
+
+      - name: Merge coverage reports
+        run: |
+          reportgenerator `
+            -reports:"./TestResults/*.coverage.opencover.xml" `
+            -targetdir:"./TestResults/Merged" `
+            -reporttypes:Opencover
 
       - name: End SonarCloud analysis
         env:
