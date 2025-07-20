@@ -1,4 +1,4 @@
-using Auth.Application.Interfaces;
+using Auth.Application.Interfaces.Services;
 using FluentEmail.Core;
 
 namespace Auth.Infrastructure.Services;

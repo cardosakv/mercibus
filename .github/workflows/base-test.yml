@@ -6,9 +6,28 @@ on:
       service:
         required: true
         type: string
+    secrets:
+      jwt_key:
+        required: false
+      email_server:
+        required: false
+      email_port:
+        required: false
+      email_sender:
+        required: false
+      email_username:
+        required: false
+      email_password:
+        required: false
+      redirect_email_confirm_success:
+        required: false
+      redirect_email_confirm_fail:
+        required: false
+      redirect_password_reset:
+        required: false
 
 jobs:
-  build-test:
+  test:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -18,6 +37,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup Docker
+        uses: docker/setup-docker-action@v4.3.0
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -26,5 +48,15 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build
+      - name: Test
         run: dotnet test --no-restore --verbosity normal
+        env:
+          Jwt__Key: ${{ secrets.jwt_key }}
+          Email__Server: ${{ secrets.email_server }}
+          Email__Port: ${{ secrets.email_port }}
+          Email__Sender: ${{ secrets.email_sender }}
+          Email__Username: ${{ secrets.email_username }}
+          Email__Password: ${{ secrets.email_password }}
+          RedirectUrl__EmailConfirmSuccess: ${{ secrets.redirect_email_confirm_success }}
+          RedirectUrl__EmailConfirmFail: ${{ secrets.redirect_email_confirm_fail }}
+          RedirectUrl__PasswordReset: ${{ secrets.redirect_password_reset }}
