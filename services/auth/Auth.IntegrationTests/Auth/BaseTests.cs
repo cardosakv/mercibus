@@ -1,3 +1,4 @@
+using Auth.Application.Interfaces.Services;
 using Auth.Domain.Entities;
 using Auth.Infrastructure;
 using Microsoft.AspNetCore.Identity;
@@ -22,6 +23,7 @@ public abstract class BaseTests(TestWebAppFactory factory) : IClassFixture<TestW
     protected const string ChangePasswordUrl = "/api/auth/change-password";
     protected const string GetUpdateInfoUrl = "/api/auth/info";
 
+    protected readonly IAuthService AuthService = factory.Services.CreateScope().ServiceProvider.GetRequiredService<IAuthService>();
     protected readonly AppDbContext DbContext = factory.Services.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
     protected readonly UserManager<User> UserManager = factory.Services.CreateScope().ServiceProvider.GetRequiredService<UserManager<User>>();
     protected readonly IConfiguration Configuration = factory.Services.CreateScope().ServiceProvider.GetRequiredService<IConfiguration>();
