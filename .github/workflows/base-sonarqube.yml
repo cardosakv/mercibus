@@ -84,7 +84,7 @@ jobs:
             /o:"cardosakv" \
             /d:sonar.token="${{ secrets.sonar_token }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.cs.opencover.reportsPaths="**/TestResults/Merged/coverage.opencover.xml"
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/*.coverage.opencover.xml"
 
       - name: Restore and build
         run: |
@@ -120,17 +120,6 @@ jobs:
           RedirectUrl__EmailConfirmSuccess: ${{ secrets.redirect_email_confirm_success }}
           RedirectUrl__EmailConfirmFail: ${{ secrets.redirect_email_confirm_fail }}
           RedirectUrl__PasswordReset: ${{ secrets.redirect_password_reset }}
-
-      - name: Install ReportGenerator
-        run: dotnet tool install --global dotnet-reportgenerator-globaltool
-
-      - name: Merge coverage reports
-        run: |
-          reportgenerator \
-            -reports:"./TestResults/*.coverage.opencover.xml" \
-            -targetdir:"./TestResults/Merged" \
-            -reporttypes:Opencover \
-            -reportfile:"coverage.opencover.xml"
       
       - name: End SonarCloud analysis
         env:
