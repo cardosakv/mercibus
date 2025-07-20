@@ -30,6 +30,7 @@ try
     builder.Services.AddScoped<ITokenService, JwtTokenService>();
     builder.Services.AddScoped<IEmailService, EmailService>();
     builder.Services.AddScoped<ITransactionService, TransactionService>();
+    builder.Services.AddScoped<IBlobStorageService, BlobStorageService>();
     builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
     // Add validators.

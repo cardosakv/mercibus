@@ -2,7 +2,9 @@ using Auth.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Testcontainers.Azurite;
 using Testcontainers.PostgreSql;
 
 namespace Auth.IntegrationTests;
@@ -18,21 +20,39 @@ public class TestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
         .WithPassword("test_password")
         .Build();
 
+    private readonly AzuriteContainer _azuriteContainer = new AzuriteBuilder()
+        .WithImage("mcr.microsoft.com/azure-storage/azurite:latest")
+        .WithCommand("--skipApiVersionCheck")
+        .Build();
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>
         {
-            services.AddDbContext<AppDbContext>(options => options.UseNpgsql(_dbContainer.GetConnectionString()));
+            var connectionString = _dbContainer.GetConnectionString();
+            services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
+        });
+
+        builder.ConfigureAppConfiguration((_, config) =>
+        {
+            config.AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "ConnectionStrings:BlobStorageConnection", _azuriteContainer.GetConnectionString() },
+                { "BlobStorage:AccountName", "devstoreaccount1" },
+                { "BlobStorage:AccountKey", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==" }
+            }!);
         });
     }
 
-    public Task InitializeAsync()
+    public async Task InitializeAsync()
     {
-        return _dbContainer.StartAsync();
+        await _dbContainer.StartAsync();
+        await _azuriteContainer.StartAsync();
     }
 
-    public new Task DisposeAsync()
+    public new async Task DisposeAsync()
     {
-        return _dbContainer.StopAsync();
+        await _dbContainer.StopAsync();
+        await _azuriteContainer.StopAsync();
     }
 }
