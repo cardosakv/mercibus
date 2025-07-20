@@ -22,7 +22,9 @@ public abstract class BaseTests(TestWebAppFactory factory) : IClassFixture<TestW
     protected const string ResetPasswordUrl = "/api/auth/reset-password";
     protected const string ChangePasswordUrl = "/api/auth/change-password";
     protected const string GetUpdateInfoUrl = "/api/auth/info";
+    protected const string UploadProfilePictureUrl = "/api/auth/upload-profile-picture";
 
+    protected readonly IServiceScope ServiceScope = factory.Services.CreateScope();
     protected readonly IAuthService AuthService = factory.Services.CreateScope().ServiceProvider.GetRequiredService<IAuthService>();
     protected readonly AppDbContext DbContext = factory.Services.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
     protected readonly UserManager<User> UserManager = factory.Services.CreateScope().ServiceProvider.GetRequiredService<UserManager<User>>();

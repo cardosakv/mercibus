@@ -1,6 +1,8 @@
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Auth.Application.DTOs;
 using Mercibus.Common.Responses;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
 namespace Auth.IntegrationTests.Common;
@@ -26,5 +28,36 @@ public static class TestUtils
         }
 
         return JsonConvert.DeserializeObject<AuthTokenResponse>(loginContent.Data.ToString()!);
+    }
+
+    private static FormFile CreateDummyFormFile(string fileName = "test.jpg", string contentType = "image/jpeg")
+    {
+        // JPEG header (FFD8) and footer (FFD9)
+        var imageBytes = new byte[]
+        {
+            0xFF, 0xD8, // JPEG SOI marker
+            0xFF, 0xE0, 0x00, 0x10, // APP0 marker
+            0x4A, 0x46, 0x49, 0x46, // 'JFIF'
+            0x00, // '\0'
+            0xFF, 0xD9 // JPEG EOI marker
+        };
+
+        var stream = new MemoryStream(imageBytes);
+        return new FormFile(stream, 0, stream.Length, "image/jpeg", fileName)
+        {
+            Headers = new HeaderDictionary(),
+            ContentType = contentType
+        };
+    }
+
+    public static MultipartFormDataContent CreateDummyImageForm()
+    {
+        var dummyFile = CreateDummyFormFile("upload_sample.jpg");
+        var form = new MultipartFormDataContent();
+        var streamContent = new StreamContent(dummyFile.OpenReadStream());
+        streamContent.Headers.ContentType = new MediaTypeHeaderValue(dummyFile.ContentType);
+        form.Add(streamContent, "image", dummyFile.FileName);
+
+        return form;
     }
 }
