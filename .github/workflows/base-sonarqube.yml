@@ -129,8 +129,9 @@ jobs:
           reportgenerator \
             -reports:"./TestResults/*.coverage.opencover.xml" \
             -targetdir:"./TestResults/Merged" \
-            -reporttypes:Opencover
-
+            -reporttypes:Opencover \
+            -reportfile:"coverage.opencover.xml"
+      
       - name: End SonarCloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
