@@ -37,7 +37,10 @@ public class GetInfoTests : BaseTests
             City = "Metro City",
             State = "Metro State",
             Country = "Ph",
-            PostalCode = 1100
+            PostalCode = 1100,
+            PhoneNumber = "09123456789",
+            BirthDate = DateTime.UtcNow.AddYears(-25),
+            ProfileImageUrl = "https://example.com/profile.jpg"
         };
 
         var response = new ApiSuccessResponse

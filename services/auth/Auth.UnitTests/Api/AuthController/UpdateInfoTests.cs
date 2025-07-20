@@ -22,7 +22,10 @@ public class UpdateInfoTests : BaseTests
         City = "Metro",
         State = "State",
         Country = "PH",
-        PostalCode = 1111
+        PostalCode = 1111,
+        PhoneNumber = "09123456789",
+        BirthDate = DateTime.UtcNow.AddYears(-25),
+        ProfileImageUrl = "https://example.com/image.jpg"
     };
 
     public UpdateInfoTests()
