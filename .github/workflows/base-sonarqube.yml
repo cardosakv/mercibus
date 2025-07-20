@@ -58,6 +58,9 @@ jobs:
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
+      - name: Setup Docker
+        uses: docker/setup-docker-action@v4.3.0
+
       - name: Begin SonarCloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
