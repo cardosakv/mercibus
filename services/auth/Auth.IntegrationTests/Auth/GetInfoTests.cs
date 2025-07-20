@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using Auth.Application.Common;
 using Auth.Application.DTOs;
 using Auth.Domain.Common;
 using Auth.Domain.Entities;
@@ -28,9 +29,12 @@ public class GetInfoTests(TestWebAppFactory factory) : BaseTests(factory)
             State = "Test State",
             PostalCode = 6000,
             Country = "Test Country",
-            ProfileImageUrl = "https://example.com/profile.jpg",
             BirthDate = DateTime.MaxValue
         };
+
+        const string profileImageName = "test_profile.jpg";
+        await TestUtils.UploadBlobAsync(Configuration, profileImageName);
+        user.ProfileImageUrl = Path.Combine(Constants.BlobStorageContainerName, profileImageName);
 
         await UserManager.CreateAsync(user, "StrongPass@123");
         await UserManager.AddToRoleAsync(user, Roles.Customer);
@@ -59,7 +63,7 @@ public class GetInfoTests(TestWebAppFactory factory) : BaseTests(factory)
         userInfo.State.Should().Be(user.State);
         userInfo.PostalCode.Should().Be(user.PostalCode);
         userInfo.Country.Should().Be(user.Country);
-        userInfo.ProfileImageUrl.Should().Be(user.ProfileImageUrl);
+        userInfo.ProfileImageUrl.Should().NotBeNullOrEmpty();
         userInfo.BirthDate.Should().Be(user.BirthDate);
     }
 

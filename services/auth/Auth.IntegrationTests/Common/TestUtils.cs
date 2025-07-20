@@ -1,8 +1,11 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using Auth.Application.Common;
 using Auth.Application.DTOs;
+using Azure.Storage.Blobs;
 using Mercibus.Common.Responses;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace Auth.IntegrationTests.Common;
@@ -59,5 +62,14 @@ public static class TestUtils
         form.Add(streamContent, "image", dummyFile.FileName);
 
         return form;
+    }
+
+    public static async Task UploadBlobAsync(IConfiguration configuration, string fileName)
+    {
+        var blobServiceClient = new BlobServiceClient(configuration["ConnectionStrings:BlobStorageConnection"]);
+        var containerClient = blobServiceClient.GetBlobContainerClient(Constants.BlobStorageContainerName);
+        await containerClient.CreateIfNotExistsAsync();
+        var blobClient = containerClient.GetBlobClient(fileName);
+        await blobClient.UploadAsync(new MemoryStream([0x1, 0x2, 0x3]), overwrite: true);
     }
 }
