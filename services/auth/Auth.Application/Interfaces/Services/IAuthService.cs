@@ -1,5 +1,6 @@
 ﻿using Auth.Application.DTOs;
 using Mercibus.Common.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Auth.Application.Interfaces.Services;
 
@@ -85,4 +86,12 @@ public interface IAuthService
     /// <param name="request">The request containing the user info.</param>
     /// <returns><see cref="ServiceResult"/> with a boolean value indicating whether the process was successful.</returns>
     Task<ServiceResult> UpdateInfoAsync(string? userId, UpdateUserInfoRequest request);
+
+    /// <summary>
+    /// Upload the profile picture of the user to storage.
+    /// </summary>
+    /// <param name="userId">User ID.</param>
+    /// <param name="image">Image file.</param>
+    /// <returns><see cref="ServiceResult"/> with a boolean value indicating whether the process was successful.</returns>
+    Task<ServiceResult> UploadProfilePictureAsync(string? userId, IFormFile image);
 }

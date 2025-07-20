@@ -23,6 +23,7 @@ public class AuthService(
     ITokenService tokenService,
     IEmailService emailService,
     ITransactionService transactionService,
+    IBlobStorageService blobStorageService,
     IRefreshTokenRepository refreshTokenRepository,
     IHttpContextAccessor httpContextAccessor,
     LinkGenerator linkGenerator,
@@ -307,6 +308,12 @@ public class AuthService(
         }
 
         var userResponse = mapper.Map<GetUserInfoResponse>(user);
+        if (user.ProfileImageUrl is not null && user.ProfileImageUrl.StartsWith(Constants.BlobStorageContainerName))
+        {
+            var blobName = user.ProfileImageUrl[(Constants.BlobStorageContainerName.Length + 1)..];
+            var sasTokenExpiryOffset = DateTimeOffset.UtcNow.AddHours(Constants.BlobTokenExpirationHours);
+            userResponse.ProfileImageUrl = await blobStorageService.GenerateBlobUrlAsync(blobName, sasTokenExpiryOffset);
+        }
 
         return Success(userResponse);
     }
@@ -340,5 +347,34 @@ public class AuthService(
         var userResponse = mapper.Map<GetUserInfoResponse>(user);
 
         return Success(userResponse);
+    }
+
+    public async Task<ServiceResult> UploadProfilePictureAsync(string? userId, IFormFile image)
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return Error(ErrorType.InvalidRequestError, ErrorCode.UserNotFound);
+        }
+
+        var user = await userManager.FindByIdAsync(userId);
+        if (user is null)
+        {
+            return Error(ErrorType.InvalidRequestError, ErrorCode.UserNotFound);
+        }
+
+        var fileName = Guid.NewGuid().ToString();
+        var fileExtension = Path.GetExtension(image.FileName);
+        var blobName = $"{fileName}{fileExtension}";
+        await blobStorageService.UploadFileAsync(blobName, image.OpenReadStream());
+
+        user.ProfileImageUrl = Path.Combine(Constants.BlobStorageContainerName, blobName);
+        var updateResult = await userManager.UpdateAsync(user);
+        if (!updateResult.Succeeded)
+        {
+            var error = updateResult.Errors.First();
+            return Error(Utils.IdentityErrorToType(error.Code), Utils.IdentityErrorToCode(error.Code));
+        }
+
+        return Success();
     }
 }

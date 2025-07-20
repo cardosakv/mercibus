@@ -97,4 +97,13 @@ public class AuthController(IAuthService authService, IConfiguration configurati
         var response = await authService.UpdateInfoAsync(userId, request);
         return Ok(response);
     }
+
+    [HttpPost("upload-profile-picture")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> UploadProfilePicture(IFormFile image)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var response = await authService.UploadProfilePictureAsync(userId, image);
+        return Ok(response);
+    }
 }
