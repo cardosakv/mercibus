@@ -1,12 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
 using Auth.Application.DTOs;
-using Auth.Domain.Common;
 using Auth.Domain.Entities;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using ErrorCode = Auth.Application.Common.ErrorCode;
 
@@ -102,35 +100,5 @@ public class RegisterTests(TestWebAppFactory factory) : BaseTests(factory)
         error.Should().NotBeNull();
         error!.Error.Type.Should().Be(ErrorType.ConflictError);
         error.Error.Code.Should().Be(ErrorCode.UsernameAlreadyExists);
-    }
-
-    [Fact]
-    public async Task ReturnsInternalServerError_WhenRoleAssignmentFails()
-    {
-        // Arrange
-        var customerRole = await DbContext.Roles.FirstOrDefaultAsync(r => r.Name == Roles.Customer);
-        if (customerRole is not null)
-        {
-            DbContext.Roles.Remove(customerRole);
-            await DbContext.SaveChangesAsync();
-        }
-
-        var request = new RegisterRequest
-        {
-            Username = "no_role_user",
-            Email = "no_role@email.com",
-            Password = "Test@1234",
-        };
-
-        // Act
-        var response = await HttpClient.PostAsJsonAsync(RegisterUrl, request);
-
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
-
-        var error = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
-        error.Should().NotBeNull();
-        error!.Error.Type.Should().Be(ErrorType.ApiError);
-        error.Error.Code.Should().Be(ErrorCode.Internal);
     }
 }

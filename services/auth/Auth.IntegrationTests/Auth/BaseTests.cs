@@ -1,6 +1,7 @@
 using Auth.Domain.Entities;
 using Auth.Infrastructure;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Auth.IntegrationTests.Auth;
@@ -23,5 +24,6 @@ public abstract class BaseTests(TestWebAppFactory factory) : IClassFixture<TestW
 
     protected readonly AppDbContext DbContext = factory.Services.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
     protected readonly UserManager<User> UserManager = factory.Services.CreateScope().ServiceProvider.GetRequiredService<UserManager<User>>();
+    protected readonly IConfiguration Configuration = factory.Services.CreateScope().ServiceProvider.GetRequiredService<IConfiguration>();
     protected readonly HttpClient HttpClient = factory.CreateClient();
 }
