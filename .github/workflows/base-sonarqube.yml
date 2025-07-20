@@ -36,7 +36,7 @@ on:
 
 jobs:
   analyze:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     defaults:
       run:
@@ -71,49 +71,44 @@ jobs:
 
       - name: Install SonarCloud scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
-        shell: powershell
         run: |
-          New-Item -Path .\.sonar\scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-
-      - name: Setup Docker
-        uses: docker/setup-docker-action@v4.3.0
+          mkdir -p .sonar/scanner
+          dotnet tool update dotnet-sonarscanner --tool-path .sonar/scanner
 
       - name: Begin SonarCloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
-        shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin `
-            /k:"${{ inputs.project_key }}" `
-            /o:"cardosakv" `
-            /d:sonar.token="${{ secrets.sonar_token }}" `
-            /d:sonar.host.url="https://sonarcloud.io" `
-            /d:"sonar.cs.opencover.reportsPaths=**/TestResults/Merged/coverage.opencover.xml" `
+          .sonar/scanner/dotnet-sonarscanner begin \
+            /k:"${{ inputs.project_key }}" \
+            /o:"cardosakv" \
+            /d:sonar.token="${{ secrets.sonar_token }}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/Merged/coverage.opencover.xml"
 
       - name: Restore and build
-        shell: powershell
         run: |
           dotnet restore
           dotnet build --no-restore --configuration Release
 
       - name: Install Coverlet CLI
-        shell: powershell
         run: dotnet tool install --global coverlet.console
 
+      - name: Add .NET tools to PATH
+        run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
       - name: Run unit and integration tests with OpenCover coverage
-        shell: powershell
         run: |
-          coverlet ./${{ inputs.project_dll }}.UnitTests/bin/Release/net8.0/${{ inputs.project_dll }}.UnitTests.dll `
-            --target "dotnet" `
-            --targetargs "test ./${{ inputs.project_dll }}.UnitTests/${{ inputs.project_dll }}.UnitTests.csproj --no-build --configuration Release" `
-            --format opencover `
+          coverlet ./${{ inputs.project_dll }}.UnitTests/bin/Release/net8.0/${{ inputs.project_dll }}.UnitTests.dll \
+            --target "dotnet" \
+            --targetargs "test ./${{ inputs.project_dll }}.UnitTests/${{ inputs.project_dll }}.UnitTests.csproj --no-build --configuration Release" \
+            --format opencover \
             --output "./TestResults/unit.coverage.opencover.xml"
 
-          coverlet ./${{ inputs.project_dll }}.IntegrationTests/bin/Release/net8.0/${{ inputs.project_dll }}.IntegrationTests.dll `
-            --target "dotnet" `
-            --targetargs "test ./${{ inputs.project_dll }}.IntegrationTests/${{ inputs.project_dll }}.IntegrationTests.csproj --no-build --configuration Release" `
-            --format opencover `
+          coverlet ./${{ inputs.project_dll }}.IntegrationTests/bin/Release/net8.0/${{ inputs.project_dll }}.IntegrationTests.dll \
+            --target "dotnet" \
+            --targetargs "test ./${{ inputs.project_dll }}.IntegrationTests/${{ inputs.project_dll }}.IntegrationTests.csproj --no-build --configuration Release" \
+            --format opencover \
             --output "./TestResults/integration.coverage.opencover.xml"
         env:
           Jwt__Key: ${{ secrets.jwt_key }}
@@ -131,13 +126,12 @@ jobs:
 
       - name: Merge coverage reports
         run: |
-          reportgenerator `
-            -reports:"./TestResults/*.coverage.opencover.xml" `
-            -targetdir:"./TestResults/Merged" `
+          reportgenerator \
+            -reports:"./TestResults/*.coverage.opencover.xml" \
+            -targetdir:"./TestResults/Merged" \
             -reporttypes:Opencover
 
       - name: End SonarCloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
-        shell: powershell
-        run: .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.sonar_token }}"
+        run: .sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.sonar_token }}"
