@@ -61,3 +61,7 @@ catch (Exception ex)
 {
     Console.WriteLine(ex.Message);
 }
+
+public partial class Program
+{
+}

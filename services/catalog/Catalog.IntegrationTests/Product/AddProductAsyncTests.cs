@@ -1,0 +1,66 @@
+using System.Net;
+using System.Net.Http.Json;
+using Catalog.Application.DTOs;
+using Catalog.Domain.Entities;
+using Catalog.Infrastructure;
+using FluentAssertions;
+using Mercibus.Common.Responses;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+
+namespace Catalog.IntegrationTests.Product;
+
+/// <summary>
+/// Integration tests for adding a product.
+/// </summary>
+public class AddProductAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
+{
+    private const string AddProductUrl = "api/Products";
+    private readonly AppDbContext _dbContext = factory.Services.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
+    private readonly HttpClient _httpClient = factory.CreateClient();
+
+    [Fact]
+    public async Task ReturnsOk_WhenAddedSuccessfully()
+    {
+        // Arrange
+        var testCategory = await _dbContext.Categories.AddAsync(new Category { Name = "Category 1" });
+        var testBrand = await _dbContext.Brands.AddAsync(new Brand { Name = "Brand 1" });
+        await _dbContext.SaveChangesAsync();
+
+        var request = new AddProductRequest(
+            Name: "Product 1",
+            Description: "A sample product during testing.",
+            Sku: "SKU01",
+            Price: 99.99m,
+            StockQuantity: 100,
+            testCategory.Entity.Id,
+            testBrand.Entity.Id
+        );
+
+        // Act
+        var response = await _httpClient.PostAsJsonAsync(AddProductUrl, request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var content = await response.Content.ReadFromJsonAsync<ApiSuccessResponse>();
+        content.Should().NotBeNull();
+        content!.Data.Should().NotBeNull();
+
+        var responseProduct = JsonConvert.DeserializeObject<ProductResponse>(content.Data!.ToString()!);
+        responseProduct.Should().NotBeNull();
+        responseProduct!.Name.Should().Be("Product 1");
+        responseProduct.Description.Should().Be("A sample product during testing.");
+        responseProduct.Sku.Should().Be("SKU01");
+        responseProduct.Price.Should().Be(99.99m);
+        responseProduct.StockQuantity.Should().Be(100);
+
+        var savedProduct = await _dbContext.Products.FirstOrDefaultAsync(p => p.Sku == "SKU01");
+        savedProduct.Should().NotBeNull();
+        savedProduct!.Name.Should().Be("Product 1");
+        savedProduct.Description.Should().Be("A sample product during testing.");
+        savedProduct.Price.Should().Be(99.99m);
+        savedProduct.StockQuantity.Should().Be(100);
+    }
+}
