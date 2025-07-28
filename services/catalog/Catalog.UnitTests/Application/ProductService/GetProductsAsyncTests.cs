@@ -62,7 +62,7 @@ public class GetProductsAsyncTests : BaseTest
                 DateTime.UtcNow
             ),
             new(
-                Id: 1,
+                Id: 2,
                 Name: "Product 2",
                 Description: "Description 2",
                 Price: 10.0m,
