@@ -15,7 +15,6 @@ public class AddProductAsyncTests : BaseTest
         Sku: "SKU-NEW",
         Price: 100,
         StockQuantity: 10,
-        Status: "listed",
         CategoryId: 1,
         BrandId: 1
     );

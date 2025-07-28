@@ -17,7 +17,6 @@ public class AddProductAsyncTests : BaseTest
             Sku: "TP-001",
             Price: 199.99m,
             StockQuantity: 10,
-            Status: "listed",
             CategoryId: 1,
             BrandId: 2
         );
@@ -63,7 +62,6 @@ public class AddProductAsyncTests : BaseTest
             Sku: "NOSAVE-01",
             Price: 50,
             StockQuantity: 3,
-            Status: "listed",
             CategoryId: 1,
             BrandId: 1
         );
@@ -108,7 +106,6 @@ public class AddProductAsyncTests : BaseTest
             Sku: "ERR-001",
             Price: 10,
             StockQuantity: 1,
-            Status: "listed",
             CategoryId: 1,
             BrandId: 2
         );
