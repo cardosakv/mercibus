@@ -1,3 +1,4 @@
+using Catalog.Api.Extensions;
 using Catalog.Application.Interfaces;
 using Catalog.Application.Interfaces.Repositories;
 using Catalog.Application.Interfaces.Services;
@@ -46,6 +47,7 @@ try
     {
         app.UseSwagger();
         app.UseSwaggerUI();
+        app.ApplyMigrations();
     }
 
     app.UseExceptionMiddleware();
