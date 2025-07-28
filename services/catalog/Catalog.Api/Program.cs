@@ -10,7 +10,6 @@ using FluentValidation;
 using Mercibus.Common.Middlewares;
 using Mercibus.Common.Validations;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Converters;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 try
@@ -24,9 +23,9 @@ try
     builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
     // Add validators.
+    builder.Services.AddValidatorsFromAssembly(typeof(AddProductRequestValidator).Assembly);
     builder.Services.AddFluentValidationAutoValidation(options =>
         options.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
-    builder.Services.AddValidatorsFromAssembly(typeof(AddProductRequestValidator).Assembly);
 
     // Add auto mapper.
     builder.Services.AddAutoMapper(config => config.AddProfile<MappingProfile>());
@@ -37,7 +36,7 @@ try
     builder.Services.AddScoped<IAppDbContext>(provider =>
         provider.GetRequiredService<AppDbContext>());
 
-    builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.Converters.Add(new StringEnumConverter()));
+    builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
