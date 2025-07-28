@@ -1,10 +1,10 @@
 using System.Net;
 using System.Net.Mail;
 using System.Text;
-using Auth.Api.Filters;
-using Auth.Api.Middlewares;
+using Auth.Api.Extensions;
 using Auth.Application.Interfaces.Repositories;
 using Auth.Application.Interfaces.Services;
+using Auth.Application.Mappings;
 using Auth.Application.Services;
 using Auth.Application.Validators;
 using Auth.Domain.Entities;
@@ -12,6 +12,9 @@ using Auth.Infrastructure;
 using Auth.Infrastructure.Repositories;
 using Auth.Infrastructure.Services;
 using FluentValidation;
+using Mapster;
+using Mercibus.Common.Middlewares;
+using Mercibus.Common.Validations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -22,9 +25,6 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    // Add logging.
-    builder.Services.AddTransient<LoggingMiddleware>();
-
     // Add services to the container.
     builder.Services.AddScoped<IAuthService, AuthService>();
     builder.Services.AddScoped<ITokenService, JwtTokenService>();
@@ -33,13 +33,13 @@ try
     builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
     // Add validators.
-    builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
-    builder.Services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
-    builder.Services.AddValidatorsFromAssemblyContaining<SendConfirmationEmailRequestValidator>();
-    builder.Services.AddValidatorsFromAssemblyContaining<ForgotPasswordRequestValidator>();
-    builder.Services.AddValidatorsFromAssemblyContaining<UpdateUserInfoRequestValidator>();
+    builder.Services.AddValidatorsFromAssembly(typeof(RegisterRequestValidator).Assembly);
     builder.Services.AddFluentValidationAutoValidation(config =>
         config.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
+
+    // Add mapping.
+    builder.Services.AddMapster();
+    MappingConfig.Configure();
 
     // Add identity services.
     builder.Services.AddIdentityCore<User>()
@@ -92,16 +92,23 @@ try
     {
         app.UseSwagger();
         app.UseSwaggerUI();
+        app.ApplyMigrations();
     }
 
+    app.UseExceptionMiddleware();
+    app.UseLoggingMiddleware();
+    app.UseCustomAuthMiddleware();
     app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();
-    app.UseMiddleware<LoggingMiddleware>();
 
     await app.RunAsync();
 }
 catch (Exception ex)
 {
     Console.WriteLine(ex.Message);
+}
+
+public partial class Program
+{
 }

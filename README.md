@@ -10,6 +10,9 @@ is responsible for a distinct domain and communicates via asynchronous messaging
 ### 🔐 Auth Service
 
 [![Auth Service CI](https://github.com/cardosakv/mercibus/actions/workflows/auth-ci.yml/badge.svg)](https://github.com/cardosakv/mercibus/actions/workflows/auth-ci.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mercibus_auth&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mercibus_auth)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=mercibus_auth&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=mercibus_auth)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=mercibus_auth&metric=coverage)](https://sonarcloud.io/summary/new_code?id=mercibus_auth)
 
 Handles user registration, login, roles, and JWT-based authentication.
 

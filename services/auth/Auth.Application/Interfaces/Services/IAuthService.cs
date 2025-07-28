@@ -1,5 +1,5 @@
-﻿using Auth.Application.Common;
-using Auth.Application.DTOs;
+﻿using Auth.Application.DTOs;
+using Mercibus.Common.Models;
 
 namespace Auth.Application.Interfaces.Services;
 
@@ -12,78 +12,77 @@ public interface IAuthService
     /// Registers a new user.
     /// </summary>
     /// <param name="request">The registration request containing user email and password.</param>
-    /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
-    Task<Response> RegisterAsync(RegisterRequest request);
+    /// <returns><see cref="ServiceResult"/> with a boolean value indicating whether the process was successful.</returns>
+    Task<ServiceResult> RegisterAsync(RegisterRequest request);
 
     /// <summary>
     /// Logins a user.
     /// </summary>
     /// <param name="request">The registration request containing username and password.</param>
-    /// <returns><see cref="Response"/> with the generated token.</returns>
-    Task<Response> LoginAsync(LoginRequest request);
+    /// <returns><see cref="ServiceResult"/> with the generated token.</returns>
+    Task<ServiceResult> LoginAsync(LoginRequest request);
 
     /// <summary>
     /// Logouts a user.
     /// </summary>
     /// <param name="request">The logout request containing the refresh token.</param>
-    /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
-    Task<Response> LogoutAsync(LogoutRequest request);
+    /// <returns><see cref="ServiceResult"/> with a boolean value indicating whether the process was successful.</returns>
+    Task<ServiceResult> LogoutAsync(LogoutRequest request);
 
     /// <summary>
     /// Provides new tokens using the refresh token.
     /// </summary>
     /// <param name="request">The refresh request containing refresh token string.</param>
-    /// <returns><see cref="Response"/> with the generated token.</returns>
-    Task<Response> RefreshTokenAsync(RefreshRequest request);
+    /// <returns><see cref="ServiceResult"/> with the generated token.</returns>
+    Task<ServiceResult> RefreshTokenAsync(RefreshRequest request);
 
     /// <summary>
     /// Sends a confirmation to the specified user email.
     /// </summary>
     /// <param name="request">The request containing the user email address.</param>
-    /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
-    Task<Response> SendConfirmationEmailAsync(SendConfirmationEmailRequest request);
+    /// <returns><see cref="ServiceResult"/> with a boolean value indicating whether the process was successful.</returns>
+    Task<ServiceResult> SendConfirmationEmailAsync(SendConfirmationEmailRequest request);
 
     /// <summary>
     /// Verifies the user email based on the token sent to email.
     /// </summary>
-    /// <param name="userId">User ID.</param>
-    /// <param name="token">Verification token.</param>
-    /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
-    Task<Response> ConfirmEmailAsync(string userId, string token);
+    /// <param name="query">Query containing user ID and token.</param>
+    /// <returns><see cref="ServiceResult"/> with a boolean value indicating whether the process was successful.</returns>
+    Task<ServiceResult> ConfirmEmailAsync(ConfirmEmailQuery query);
 
     /// <summary>
     /// Sends a reset link to the specified user email.
     /// </summary>
     /// <param name="request">The request containing the user email address.</param>
-    /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
-    Task<Response> ForgotPasswordAsync(ForgotPasswordRequest request);
+    /// <returns><see cref="ServiceResult"/> with a boolean value indicating whether the process was successful.</returns>
+    Task<ServiceResult> ForgotPasswordAsync(ForgotPasswordRequest request);
 
     /// <summary>
     /// Resets the user password with a new one.
     /// </summary>
     /// <param name="request">The request containing the token and new password.</param>
-    /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
-    Task<Response> ResetPasswordAsync(ResetPasswordRequest request);
+    /// <returns><see cref="ServiceResult"/> with a boolean value indicating whether the process was successful.</returns>
+    Task<ServiceResult> ResetPasswordAsync(ResetPasswordRequest request);
 
     /// <summary>
     /// Changes the current password of the user with a new one.
     /// </summary>
     /// <param name="request">The request containing the current and new password.</param>
-    /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
-    Task<Response> ChangePasswordAsync(ChangePasswordRequest request);
+    /// <returns><see cref="ServiceResult"/> with a boolean value indicating whether the process was successful.</returns>
+    Task<ServiceResult> ChangePasswordAsync(ChangePasswordRequest request);
 
     /// <summary>
     /// Gets the logged-in user's information.
     /// </summary>
     /// <param name="userId">The user ID of the user.</param>
-    /// <returns><see cref="Response"/> with the user info.</returns>
-    Task<Response> GetInfoAsync(string? userId);
+    /// <returns><see cref="ServiceResult"/> with the user info.</returns>
+    Task<ServiceResult> GetInfoAsync(string? userId);
 
     /// <summary>
     /// Updates the logged-in user's information.
     /// </summary>
     /// <param name="userId">User ID.</param>
     /// <param name="request">The request containing the user info.</param>
-    /// <returns><see cref="Response"/> with a boolean value indicating whether the process was successful.</returns>
-    Task<Response> UpdateInfoAsync(string? userId, UpdateUserInfoRequest request);
+    /// <returns><see cref="ServiceResult"/> with a boolean value indicating whether the process was successful.</returns>
+    Task<ServiceResult> UpdateInfoAsync(string? userId, UpdateUserInfoRequest request);
 }
