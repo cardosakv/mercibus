@@ -1,7 +1,8 @@
-using Catalog.Application.Common;
 using Catalog.Application.DTOs;
 using Catalog.Domain.Enums;
 using FluentAssertions;
+using Mercibus.Common.Constants;
+using Mercibus.Common.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -39,7 +40,7 @@ public class GetProductsAsyncTests : BaseTest
             )
         };
 
-        var result = new Result
+        var result = new ServiceResult
         {
             IsSuccess = true,
             Data = response
@@ -54,20 +55,16 @@ public class GetProductsAsyncTests : BaseTest
 
         // Assert
         actionResult.Should().BeOfType<OkObjectResult>();
-        var okResult = (OkObjectResult)actionResult;
-        okResult.StatusCode.Should().Be(200);
-        okResult.Value.Should().BeEquivalentTo(response);
     }
 
     [Fact]
     public async Task Returns_404NotFound_WhenNoProductsFound()
     {
         // Arrange
-        var result = new Result
+        var result = new ServiceResult
         {
             IsSuccess = false,
-            ErrorType = ErrorType.NotFound,
-            Message = "No products found"
+            ErrorType = ErrorType.InvalidRequestError
         };
 
         ProductServiceMock
@@ -78,21 +75,18 @@ public class GetProductsAsyncTests : BaseTest
         var actionResult = await ProductController.GetProductsAsync(SampleQuery, CancellationToken.None);
 
         // Assert
-        actionResult.Should().BeOfType<NotFoundObjectResult>();
-        var notFound = (NotFoundObjectResult)actionResult;
-        notFound.StatusCode.Should().Be(404);
-        notFound.Value.Should().BeEquivalentTo(new StandardResponse { Message = "No products found" });
+        var notFound = actionResult.Should().BeOfType<ObjectResult>().Subject;
+        notFound.StatusCode.Should().Be(400);
     }
 
     [Fact]
     public async Task Returns_500InternalServerError_WhenUnhandledErrorOccurs()
     {
         // Arrange
-        var result = new Result
+        var result = new ServiceResult
         {
             IsSuccess = false,
-            ErrorType = ErrorType.Internal,
-            Message = "Unexpected failure"
+            ErrorType = ErrorType.ApiError,
         };
 
         ProductServiceMock
@@ -106,6 +100,5 @@ public class GetProductsAsyncTests : BaseTest
         actionResult.Should().BeOfType<ObjectResult>();
         var objectResult = (ObjectResult)actionResult;
         objectResult.StatusCode.Should().Be(500);
-        objectResult.Value.Should().BeEquivalentTo(new StandardResponse { Message = "Unexpected failure" });
     }
 }

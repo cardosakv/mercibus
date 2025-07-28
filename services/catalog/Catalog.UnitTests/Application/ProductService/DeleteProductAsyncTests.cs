@@ -2,6 +2,7 @@ using Catalog.Application.Common;
 using Catalog.Domain.Entities;
 using Catalog.Domain.Enums;
 using FluentAssertions;
+using Mercibus.Common.Constants;
 using Moq;
 
 namespace Catalog.Tests.Application.ProductService;
@@ -59,8 +60,8 @@ public class DeleteProductAsyncTests : BaseTest
 
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.ErrorType.Should().Be(ErrorType.NotFound);
-        result.Message.Should().Be(Messages.ProductNotFound);
+        result.ErrorType.Should().Be(ErrorType.InvalidRequestError);
+        result.ErrorCode.Should().Be(Constants.ErrorCode.ProductNotFound);
     }
 
     [Fact]

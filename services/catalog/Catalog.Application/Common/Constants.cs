@@ -11,4 +11,9 @@ public static class Constants
         public const int MaxDescriptionLength = 300;
         public const int MaxSkuLength = 100;
     }
+
+    public static class ErrorCode
+    {
+        public const string ProductNotFound = "product_not_found";
+    }
 }

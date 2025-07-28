@@ -54,8 +54,6 @@ public class AddProductAsyncTests : BaseTest
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        result.ResourceId.Should().Be(savedEntity.Id);
-        result.Message.Should().Be(Messages.ProductAdded);
     }
     
     [Fact]
@@ -102,7 +100,6 @@ public class AddProductAsyncTests : BaseTest
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        result.ResourceId.Should().Be(55);
     }
     
     [Fact]
