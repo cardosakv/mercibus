@@ -1,5 +1,3 @@
-using Catalog.Api.Filters;
-using Catalog.Api.Middlewares;
 using Catalog.Application.Interfaces;
 using Catalog.Application.Interfaces.Repositories;
 using Catalog.Application.Interfaces.Services;
@@ -9,6 +7,8 @@ using Catalog.Application.Validations;
 using Catalog.Infrastructure;
 using Catalog.Infrastructure.Repositories;
 using FluentValidation;
+using Mercibus.Common.Middlewares;
+using Mercibus.Common.Validations;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Converters;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
@@ -26,8 +26,7 @@ try
     // Add validators.
     builder.Services.AddFluentValidationAutoValidation(options =>
         options.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
-    builder.Services.AddValidatorsFromAssemblyContaining<AddProductRequestValidator>();
-    builder.Services.AddValidatorsFromAssemblyContaining<UpdateProductRequestValidator>();
+    builder.Services.AddValidatorsFromAssembly(typeof(AddProductRequestValidator).Assembly);
 
     // Add auto mapper.
     builder.Services.AddAutoMapper(config => config.AddProfile<MappingProfile>());
@@ -37,9 +36,6 @@ try
         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
     builder.Services.AddScoped<IAppDbContext>(provider =>
         provider.GetRequiredService<AppDbContext>());
-
-    // Add custom middlewares.
-    builder.Services.AddTransient<ExceptionMiddleware>();
 
     builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.Converters.Add(new StringEnumConverter()));
     builder.Services.AddEndpointsApiExplorer();
@@ -53,7 +49,8 @@ try
         app.UseSwaggerUI();
     }
 
-    app.UseMiddleware<ExceptionMiddleware>();
+    app.UseExceptionMiddleware();
+    app.UseLoggingMiddleware();
     app.UseAuthorization();
     app.MapControllers();
 

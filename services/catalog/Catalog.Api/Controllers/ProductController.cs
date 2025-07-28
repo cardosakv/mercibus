@@ -1,5 +1,6 @@
 using Catalog.Application.DTOs;
 using Catalog.Application.Interfaces.Services;
+using Mercibus.Common.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.Api.Controllers;
@@ -9,50 +10,37 @@ namespace Catalog.Api.Controllers;
 public class ProductController(IProductService productService) : BaseController
 {
     [HttpGet]
-    [ProducesResponseType(typeof(List<ProductResponse>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(StandardResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetProductsAsync([FromQuery] GetProductsQuery query, CancellationToken cancellationToken)
     {
         var response = await productService.GetProductsAsync(query, cancellationToken);
-        return HandleGet(response);
+        return Ok(response);
     }
-    
+
     [HttpPost]
-    [ProducesResponseType(typeof(StandardResponse), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(StandardResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> AddProductAsync([FromBody] AddProductRequest request, CancellationToken cancellationToken)
     {
         var response = await productService.AddProductAsync(request, cancellationToken);
-        return HandlePost(response);
+        return Ok(response);
     }
 
     [HttpGet("{id:long}")]
-    [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(StandardResponse), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(StandardResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetProductByIdAsync(long id, CancellationToken cancellationToken)
     {
         var response = await productService.GetProductByIdAsync(id, cancellationToken);
-        return HandleGet(response);
+        return Ok(response);
     }
 
     [HttpPut("{id:long}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(StandardResponse), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(StandardResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateProductAsync(long id, [FromBody] UpdateProductRequest request, CancellationToken cancellationToken)
     {
         var response = await productService.UpdateProductAsync(id, request, cancellationToken);
-        return HandlePutOrDelete(response);
+        return Ok(response);
     }
-    
+
     [HttpDelete("{id:long}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(StandardResponse), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(StandardResponse), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeleteProductAsync(long id, CancellationToken cancellationToken)
     {
         var response = await productService.DeleteProductAsync(id, cancellationToken);
-        return HandlePutOrDelete(response);
+        return Ok(response);
     }
 }
