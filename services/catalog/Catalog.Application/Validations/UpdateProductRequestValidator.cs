@@ -1,6 +1,5 @@
 using Catalog.Application.Common;
 using Catalog.Application.DTOs;
-using Catalog.Domain.Enums;
 using FluentValidation;
 
 namespace Catalog.Application.Validations;
@@ -22,10 +21,5 @@ public class UpdateProductRequestValidator : AbstractValidator<UpdateProductRequ
             .NotEmpty().WithMessage("Product SKU is required.")
             .MaximumLength(Constants.ProductValidation.MaxSkuLength)
             .WithMessage($"Product SKU must not exceed {Constants.ProductValidation.MaxSkuLength} characters.");
-
-        RuleFor(x => x.Status)
-            .Must(value => Enum.TryParse<ProductStatus>(value, ignoreCase: true, out _))
-            .WithMessage("Status must be one of the defined values: " +
-                         string.Join(", ", Enum.GetNames(typeof(ProductStatus)).Select(n => n.ToLower())));
     }
 }

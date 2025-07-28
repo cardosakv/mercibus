@@ -1,7 +1,6 @@
 using Catalog.Application.Common;
 using Catalog.Application.DTOs;
 using Catalog.Domain.Entities;
-using Catalog.Domain.Enums;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Moq;
@@ -23,7 +22,6 @@ public class GetProductByIdAsyncTests : BaseTest
             Description = "Description here",
             Price = 50,
             Sku = "SKU-001",
-            Status = ProductStatus.Listed,
             StockQuantity = 100,
             CategoryId = 1,
             BrandId = 2,
@@ -38,7 +36,6 @@ public class GetProductByIdAsyncTests : BaseTest
             Description: productEntity.Description,
             Price: productEntity.Price,
             Sku: productEntity.Sku,
-            Status: productEntity.Status,
             StockQuantity: productEntity.StockQuantity,
             Brand: new BrandResponse(productEntity.Brand.Id, productEntity.Brand.Name),
             Category: new CategoryResponse(productEntity.Category.Id, productEntity.Category.Name, null),

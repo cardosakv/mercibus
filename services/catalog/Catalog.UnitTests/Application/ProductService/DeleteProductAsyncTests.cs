@@ -1,6 +1,5 @@
 using Catalog.Application.Common;
 using Catalog.Domain.Entities;
-using Catalog.Domain.Enums;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Moq;
@@ -19,7 +18,6 @@ public class DeleteProductAsyncTests : BaseTest
             Id = productId,
             Name = "Delete Me",
             Sku = "DEL-001",
-            Status = ProductStatus.Listed,
             CategoryId = 1,
             BrandId = 2,
             Price = 100,
@@ -74,7 +72,6 @@ public class DeleteProductAsyncTests : BaseTest
             Id = productId,
             Name = "Explode",
             Sku = "ERR-123",
-            Status = ProductStatus.Unlisted,
             CategoryId = 1,
             BrandId = 1,
             Price = 20,

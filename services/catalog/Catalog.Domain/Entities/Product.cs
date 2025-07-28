@@ -1,5 +1,3 @@
-using Catalog.Domain.Enums;
-
 namespace Catalog.Domain.Entities;
 
 /// <summary>
@@ -31,11 +29,6 @@ public class Product
     /// Price of the product.
     /// </summary>
     public decimal Price { get; set; }
-
-    /// <summary>
-    /// Availability status of the product.
-    /// </summary>
-    public ProductStatus Status { get; set; }
 
     /// <summary>
     /// Quantity of the product in stock.

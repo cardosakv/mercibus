@@ -1,5 +1,4 @@
 using Catalog.Application.DTOs;
-using Catalog.Domain.Enums;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Models;
@@ -14,8 +13,7 @@ public class GetProductsAsyncTests : BaseTest
         CategoryId: null,
         BrandId: null,
         MinPrice: null,
-        MaxPrice: null,
-        Status: null
+        MaxPrice: null
     );
 
     [Fact]
@@ -30,7 +28,6 @@ public class GetProductsAsyncTests : BaseTest
                 Description: "Desc",
                 Price: 10,
                 Sku: "SKU1",
-                Status: ProductStatus.Listed,
                 StockQuantity: 100,
                 Brand: new BrandResponse(1, "Brand"),
                 Category: new CategoryResponse(1, "Category", null),

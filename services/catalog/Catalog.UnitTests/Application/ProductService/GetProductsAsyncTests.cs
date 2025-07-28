@@ -1,6 +1,5 @@
 using Catalog.Application.DTOs;
 using Catalog.Domain.Entities;
-using Catalog.Domain.Enums;
 using FluentAssertions;
 using Moq;
 
@@ -12,8 +11,7 @@ public class GetProductsAsyncTests : BaseTest
         CategoryId: null,
         BrandId: null,
         MinPrice: null,
-        MaxPrice: null,
-        Status: null
+        MaxPrice: null
     );
 
     [Fact]
@@ -29,7 +27,6 @@ public class GetProductsAsyncTests : BaseTest
                 Description = "Description 1",
                 Sku = "SKU1",
                 Price = 10.0m,
-                Status = ProductStatus.Listed,
                 StockQuantity = 100,
                 CategoryId = 1,
                 BrandId = 1,
@@ -42,7 +39,6 @@ public class GetProductsAsyncTests : BaseTest
                 Description = "Description 2",
                 Sku = "SKU2",
                 Price = 10.0m,
-                Status = ProductStatus.Listed,
                 StockQuantity = 100,
                 CategoryId = 1,
                 BrandId = 1,
@@ -58,7 +54,6 @@ public class GetProductsAsyncTests : BaseTest
                 Description: "Description 1",
                 Price: 10.0m,
                 Sku: "SKU1",
-                Status: ProductStatus.Listed,
                 StockQuantity: 100,
                 Brand: new BrandResponse(1, "Brand 1"),
                 Category: new CategoryResponse(1, "Category 1", null),
@@ -72,7 +67,6 @@ public class GetProductsAsyncTests : BaseTest
                 Description: "Description 2",
                 Price: 10.0m,
                 Sku: "SKU2",
-                Status: ProductStatus.Listed,
                 StockQuantity: 100,
                 Brand: new BrandResponse(1, "Brand 1"),
                 Category: new CategoryResponse(1, "Category 1", null),
@@ -113,60 +107,6 @@ public class GetProductsAsyncTests : BaseTest
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Data.Should().BeEquivalentTo(emptyResponseList);
-    }
-
-    [Fact]
-    public async Task Success_WhenFilteredByStatus()
-    {
-        // Arrange
-        var filteredQuery = _query with { Status = ProductStatus.Listed };
-
-        var productList = new List<Product>
-        {
-            new()
-            {
-                Id = 3,
-                Name = "Filtered Product",
-                Description = "Filtered Desc",
-                Sku = "F-SKU",
-                Price = 20,
-                Status = ProductStatus.Listed,
-                StockQuantity = 50,
-                CategoryId = 1,
-                BrandId = 1,
-                CreatedAt = DateTime.UtcNow,
-            }
-        };
-
-        var responseList = new List<ProductResponse>
-        {
-            new(
-                Id: 3,
-                Name: "Filtered Product",
-                Description: "Filtered Desc",
-                Price: 20,
-                Sku: "F-SKU",
-                Status: ProductStatus.Listed,
-                StockQuantity: 50,
-                Brand: new BrandResponse(1, "Brand 1"),
-                Category: new CategoryResponse(1, "Category 1", null),
-                Images: [],
-                Attributes: [],
-                CreatedAt: DateTime.UtcNow
-            )
-        };
-
-        ProductRepositoryMock.Setup(x => x.GetProductsAsync(filteredQuery, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(productList);
-        MapperMock.Setup(x => x.Map<List<ProductResponse>>(productList))
-            .Returns(responseList);
-
-        // Act
-        var result = await ProductService.GetProductsAsync(filteredQuery, CancellationToken.None);
-
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-        result.Data.Should().BeEquivalentTo(responseList);
     }
 
     [Fact]

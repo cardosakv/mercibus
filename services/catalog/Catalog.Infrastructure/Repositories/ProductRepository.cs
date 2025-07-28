@@ -1,7 +1,6 @@
 using Catalog.Application.DTOs;
 using Catalog.Application.Interfaces.Repositories;
 using Catalog.Domain.Entities;
-using Catalog.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Infrastructure.Repositories;
@@ -30,11 +29,6 @@ public class ProductRepository(AppDbContext dbContext) : IProductRepository
         if (query.MaxPrice.HasValue)
         {
             products = products.Where(p => p.Price <= query.MaxPrice.Value);
-        }
-
-        if (query.Status.HasValue)
-        {
-            products = products.Where(p => p.Status == query.Status);
         }
 
         products = query.SortBy switch

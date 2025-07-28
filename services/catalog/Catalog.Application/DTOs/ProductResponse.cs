@@ -1,5 +1,3 @@
-using Catalog.Domain.Enums;
-
 namespace Catalog.Application.DTOs;
 
 /// <summary>
@@ -11,7 +9,6 @@ public record ProductResponse(
     string Description,
     decimal Price,
     string Sku,
-    ProductStatus Status,
     int StockQuantity,
     BrandResponse Brand,
     CategoryResponse Category,

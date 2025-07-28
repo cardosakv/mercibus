@@ -1,7 +1,5 @@
-using Catalog.Application.Common;
 using Catalog.Application.DTOs;
 using Catalog.Domain.Entities;
-using Catalog.Domain.Enums;
 using FluentAssertions;
 using Moq;
 
@@ -30,7 +28,6 @@ public class AddProductAsyncTests : BaseTest
             Description = request.Description,
             Sku = request.Sku,
             Price = request.Price,
-            Status = ProductStatus.Listed,
             StockQuantity = request.StockQuantity,
             CategoryId = request.CategoryId,
             BrandId = request.BrandId,
@@ -77,7 +74,6 @@ public class AddProductAsyncTests : BaseTest
             Description = request.Description,
             Sku = request.Sku,
             Price = request.Price,
-            Status = ProductStatus.Listed,
             StockQuantity = request.StockQuantity,
             CategoryId = request.CategoryId,
             BrandId = request.BrandId,
@@ -123,7 +119,6 @@ public class AddProductAsyncTests : BaseTest
             Description = request.Description,
             Sku = request.Sku,
             Price = request.Price,
-            Status = ProductStatus.Listed,
             StockQuantity = request.StockQuantity,
             CategoryId = request.CategoryId,
             BrandId = request.BrandId,
