@@ -1,25 +1,33 @@
 using Catalog.Application.Common;
 using Catalog.Application.DTOs;
+using Catalog.Application.Interfaces;
 using FluentValidation;
 
 namespace Catalog.Application.Validations;
 
 public class AddProductRequestValidator : AbstractValidator<AddProductRequest>
 {
-    public AddProductRequestValidator()
+    public AddProductRequestValidator(IAppDbContext dbContext)
     {
         RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Product name is required.")
-            .MaximumLength(Constants.ProductValidation.MaxNameLength)
-            .WithMessage($"Product name must not exceed {Constants.ProductValidation.MaxNameLength} characters.");
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty().WithMessage(Constants.ErrorCode.NameRequired)
+            .MaximumLength(Constants.ProductValidation.MaxNameLength).WithMessage(Constants.ErrorCode.NameTooLong);
 
         RuleFor(x => x.Description)
-            .MaximumLength(Constants.ProductValidation.MaxDescriptionLength)
-            .WithMessage($"Product description must not exceed {Constants.ProductValidation.MaxDescriptionLength} characters.");
+            .Cascade(CascadeMode.Stop)
+            .MaximumLength(Constants.ProductValidation.MaxDescriptionLength).WithMessage(Constants.ErrorCode.DescriptionTooLong);
 
         RuleFor(x => x.Sku)
-            .NotEmpty().WithMessage("Product SKU is required.")
-            .MaximumLength(Constants.ProductValidation.MaxSkuLength)
-            .WithMessage($"Product SKU must not exceed {Constants.ProductValidation.MaxSkuLength} characters.");
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty().WithMessage(Constants.ErrorCode.SkuRequired);
+
+        RuleFor(x => x.Price)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty().WithMessage(Constants.ErrorCode.PriceRequired);
+
+        RuleFor(x => x.StockQuantity)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty().WithMessage(Constants.ErrorCode.StockQuantityRequired);
     }
 }
