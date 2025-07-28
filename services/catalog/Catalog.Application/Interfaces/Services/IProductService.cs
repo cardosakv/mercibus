@@ -1,4 +1,3 @@
-using Catalog.Application.Common;
 using Catalog.Application.DTOs;
 using Mercibus.Common.Models;
 
@@ -32,7 +31,7 @@ public interface IProductService
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>Result with a <see cref="ProductResponse"/> object if found.</returns>
     Task<ServiceResult> GetProductByIdAsync(long productId, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Asynchronously updates an existing product.
     /// </summary>
@@ -41,7 +40,7 @@ public interface IProductService
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>Result indicating the outcome of the update operation.</returns>
     Task<ServiceResult> UpdateProductAsync(long productId, UpdateProductRequest request, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Asynchronously deletes an existing product.
     /// </summary>

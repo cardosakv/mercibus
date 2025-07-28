@@ -23,7 +23,7 @@ public class DeleteProductAsyncTests : BaseTest
             .ReturnsAsync(result);
 
         // Act
-        var actionResult = await ProductController.DeleteProductAsync(1, CancellationToken.None);
+        var actionResult = await ProductController.DeleteProductAsync(id: 1, CancellationToken.None);
 
         // Assert
         actionResult.Should().BeOfType<OkObjectResult>();
@@ -45,7 +45,7 @@ public class DeleteProductAsyncTests : BaseTest
             .ReturnsAsync(result);
 
         // Act
-        var actionResult = await ProductController.DeleteProductAsync(999, CancellationToken.None);
+        var actionResult = await ProductController.DeleteProductAsync(id: 999, CancellationToken.None);
 
         // Assert
         var notFound = actionResult.Should().BeOfType<ObjectResult>().Subject;
@@ -67,7 +67,7 @@ public class DeleteProductAsyncTests : BaseTest
             .ReturnsAsync(result);
 
         // Act
-        var actionResult = await ProductController.DeleteProductAsync(1, CancellationToken.None);
+        var actionResult = await ProductController.DeleteProductAsync(id: 1, CancellationToken.None);
 
         // Assert
         var objectResult = actionResult.Should().BeOfType<ObjectResult>().Subject;

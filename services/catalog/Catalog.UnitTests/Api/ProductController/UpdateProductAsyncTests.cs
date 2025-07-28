@@ -35,7 +35,7 @@ public class UpdateProductAsyncTests : BaseTest
             .ReturnsAsync(result);
 
         // Act
-        var actionResult = await ProductController.UpdateProductAsync(1, SampleRequest, CancellationToken.None);
+        var actionResult = await ProductController.UpdateProductAsync(id: 1, SampleRequest, CancellationToken.None);
 
         // Assert
         actionResult.Should().BeOfType<OkObjectResult>();
@@ -57,7 +57,7 @@ public class UpdateProductAsyncTests : BaseTest
             .ReturnsAsync(result);
 
         // Act
-        var actionResult = await ProductController.UpdateProductAsync(999, SampleRequest, CancellationToken.None);
+        var actionResult = await ProductController.UpdateProductAsync(id: 999, SampleRequest, CancellationToken.None);
 
         // Assert
         var notFound = actionResult.Should().BeOfType<ObjectResult>().Subject;
@@ -79,7 +79,7 @@ public class UpdateProductAsyncTests : BaseTest
             .ReturnsAsync(result);
 
         // Act
-        var actionResult = await ProductController.UpdateProductAsync(1, SampleRequest, CancellationToken.None);
+        var actionResult = await ProductController.UpdateProductAsync(id: 1, SampleRequest, CancellationToken.None);
 
         // Assert
         var objectResult = actionResult.Should().BeOfType<ObjectResult>().Subject;

@@ -31,17 +31,17 @@ public class GetProductByIdAsyncTests : BaseTest
         };
 
         var responseDto = new ProductResponse(
-            Id: productId,
-            Name: productEntity.Name,
-            Description: productEntity.Description,
-            Price: productEntity.Price,
-            Sku: productEntity.Sku,
-            StockQuantity: productEntity.StockQuantity,
+            productId,
+            productEntity.Name,
+            productEntity.Description,
+            productEntity.Price,
+            productEntity.Sku,
+            productEntity.StockQuantity,
             Brand: new BrandResponse(productEntity.Brand.Id, productEntity.Brand.Name),
-            Category: new CategoryResponse(productEntity.Category.Id, productEntity.Category.Name, null),
+            Category: new CategoryResponse(productEntity.Category.Id, productEntity.Category.Name, ParentCategoryId: null),
             Images: [],
             Attributes: [],
-            CreatedAt: productEntity.CreatedAt
+            productEntity.CreatedAt
         );
 
         ProductRepositoryMock.Setup(x => x.GetProductByIdAsync(productId, It.IsAny<CancellationToken>()))

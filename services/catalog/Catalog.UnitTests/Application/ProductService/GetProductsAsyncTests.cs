@@ -18,7 +18,7 @@ public class GetProductsAsyncTests : BaseTest
     public async Task Success_WhenProductsExist()
     {
         // Arrange
-        var productEntities = new List<Product>()
+        var productEntities = new List<Product>
         {
             new()
             {
@@ -30,7 +30,7 @@ public class GetProductsAsyncTests : BaseTest
                 StockQuantity = 100,
                 CategoryId = 1,
                 BrandId = 1,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow
             },
             new()
             {
@@ -42,11 +42,11 @@ public class GetProductsAsyncTests : BaseTest
                 StockQuantity = 100,
                 CategoryId = 1,
                 BrandId = 1,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow
             }
         };
 
-        var productResponseList = new List<ProductResponse>()
+        var productResponseList = new List<ProductResponse>
         {
             new(
                 Id: 1,
@@ -55,11 +55,11 @@ public class GetProductsAsyncTests : BaseTest
                 Price: 10.0m,
                 Sku: "SKU1",
                 StockQuantity: 100,
-                Brand: new BrandResponse(1, "Brand 1"),
-                Category: new CategoryResponse(1, "Category 1", null),
+                Brand: new BrandResponse(Id: 1, Name: "Brand 1"),
+                Category: new CategoryResponse(Id: 1, Name: "Category 1", ParentCategoryId: null),
                 Images: [],
                 Attributes: [],
-                CreatedAt: DateTime.UtcNow
+                DateTime.UtcNow
             ),
             new(
                 Id: 1,
@@ -68,12 +68,12 @@ public class GetProductsAsyncTests : BaseTest
                 Price: 10.0m,
                 Sku: "SKU2",
                 StockQuantity: 100,
-                Brand: new BrandResponse(1, "Brand 1"),
-                Category: new CategoryResponse(1, "Category 1", null),
+                Brand: new BrandResponse(Id: 1, Name: "Brand 1"),
+                Category: new CategoryResponse(Id: 1, Name: "Category 1", ParentCategoryId: null),
                 Images: [],
                 Attributes: [],
-                CreatedAt: DateTime.UtcNow
-            ),
+                DateTime.UtcNow
+            )
         };
 
         ProductRepositoryMock.Setup(x => x.GetProductsAsync(It.IsAny<GetProductsQuery>(), It.IsAny<CancellationToken>()))

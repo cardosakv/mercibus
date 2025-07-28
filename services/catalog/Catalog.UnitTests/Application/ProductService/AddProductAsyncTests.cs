@@ -52,7 +52,7 @@ public class AddProductAsyncTests : BaseTest
         // Assert
         result.IsSuccess.Should().BeTrue();
     }
-    
+
     [Fact]
     public async Task Success_WhenSaveChangesReturnsZero()
     {
@@ -97,7 +97,7 @@ public class AddProductAsyncTests : BaseTest
         // Assert
         result.IsSuccess.Should().BeTrue();
     }
-    
+
     [Fact]
     public async Task Throws_WhenAddFails()
     {

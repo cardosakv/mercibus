@@ -17,17 +17,17 @@ public class GetProductByIdAsyncTests : BaseTest
         long productId = 1;
 
         var expectedProduct = new ProductResponse(
-            Id: productId,
+            productId,
             Name: "Product 1",
             Description: "Desc",
             Price: 10,
             Sku: "SKU1",
             StockQuantity: 100,
-            Brand: new BrandResponse(1, "Brand"),
-            Category: new CategoryResponse(1, "Category", null),
+            Brand: new BrandResponse(Id: 1, Name: "Brand"),
+            Category: new CategoryResponse(Id: 1, Name: "Category", ParentCategoryId: null),
             Images: [],
             Attributes: [],
-            CreatedAt: DateTime.UtcNow
+            DateTime.UtcNow
         );
 
         var result = new ServiceResult

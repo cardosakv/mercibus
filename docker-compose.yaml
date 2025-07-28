@@ -39,6 +39,6 @@ services:
 
 volumes:
   auth_postgres_data:
-    
+
 networks:
   backend-network:
