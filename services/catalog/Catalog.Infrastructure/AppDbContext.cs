@@ -2,7 +2,6 @@ using Catalog.Application.Interfaces;
 using Catalog.Domain.Entities;
 using Catalog.Infrastructure.Configurations;
 using Microsoft.EntityFrameworkCore;
-using Attribute = System.Attribute;
 
 namespace Catalog.Infrastructure;
 
