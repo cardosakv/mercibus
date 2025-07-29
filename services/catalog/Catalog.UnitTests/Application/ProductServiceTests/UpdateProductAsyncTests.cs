@@ -20,7 +20,6 @@ public class UpdateProductAsyncTests : BaseTest
             Sku: "SKU-UPD",
             Price: 250.00m,
             StockQuantity: 20,
-            Status: "listed",
             CategoryId: 1,
             BrandId: 2
         );
@@ -67,7 +66,6 @@ public class UpdateProductAsyncTests : BaseTest
             Sku: "NONE",
             Price: 0,
             StockQuantity: 0,
-            Status: "listed",
             CategoryId: 1,
             BrandId: 1
         );
@@ -96,7 +94,6 @@ public class UpdateProductAsyncTests : BaseTest
             Sku: "ERR",
             Price: 1,
             StockQuantity: 2,
-            Status: "listed",
             CategoryId: 1,
             BrandId: 1
         );

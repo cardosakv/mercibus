@@ -16,7 +16,6 @@ public class UpdateProductAsyncTests : BaseTest
         Sku: "UPDATED-SKU",
         Price: 120,
         StockQuantity: 20,
-        Status: "listed",
         CategoryId: 1,
         BrandId: 1
     );

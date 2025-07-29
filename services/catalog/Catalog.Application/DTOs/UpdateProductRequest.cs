@@ -9,7 +9,6 @@ public record UpdateProductRequest(
     string Sku,
     decimal Price,
     int StockQuantity,
-    string Status,
     long CategoryId,
     long BrandId
 );
