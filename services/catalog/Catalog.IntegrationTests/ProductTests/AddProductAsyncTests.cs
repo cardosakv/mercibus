@@ -6,7 +6,6 @@ using Catalog.Infrastructure;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
@@ -57,7 +56,7 @@ public class AddProductAsyncTests(TestWebAppFactory factory) : IClassFixture<Tes
         responseProduct.Price.Should().Be(99.99m);
         responseProduct.StockQuantity.Should().Be(100);
 
-        var savedProduct = await _dbContext.Products.FirstOrDefaultAsync(p => p.Sku == "SKU01");
+        var savedProduct = await _dbContext.Products.FindAsync(responseProduct.Id);
         savedProduct.Should().NotBeNull();
         savedProduct!.Name.Should().Be("Product 1");
         savedProduct.Description.Should().Be("A sample product during testing.");
