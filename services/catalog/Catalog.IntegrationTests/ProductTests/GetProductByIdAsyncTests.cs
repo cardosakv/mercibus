@@ -13,7 +13,6 @@ namespace Catalog.IntegrationTests.ProductTests;
 public class GetProductByIdAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
 {
     private const string GetProductByIdUrl = "api/Products/";
-    private readonly HttpClient _httpClient = factory.CreateClient();
 
     [Fact]
     public async Task ReturnsOk_WhenGetSuccessfully()
@@ -37,7 +36,8 @@ public class GetProductByIdAsyncTests(TestWebAppFactory factory) : IClassFixture
         await dbContext.SaveChangesAsync();
 
         // Act
-        var response = await _httpClient.GetAsync(GetProductByIdUrl + testProduct.Entity.Id);
+        var httpClient = factory.CreateClient();
+        var response = await httpClient.GetAsync(GetProductByIdUrl + testProduct.Entity.Id);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -62,7 +62,8 @@ public class GetProductByIdAsyncTests(TestWebAppFactory factory) : IClassFixture
         const int testProductId = 999;
 
         // Act
-        var response = await _httpClient.GetAsync(GetProductByIdUrl + testProductId);
+        var httpClient = factory.CreateClient();
+        var response = await httpClient.GetAsync(GetProductByIdUrl + testProductId);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

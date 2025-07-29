@@ -12,7 +12,6 @@ namespace Catalog.IntegrationTests.ProductTests;
 public class GetProductsAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
 {
     private const string GetProductsUrl = "api/products";
-    private readonly HttpClient _httpClient = factory.CreateClient();
 
     [Fact]
     public async Task ReturnsOk_WhenProductsExist()
@@ -48,7 +47,8 @@ public class GetProductsAsyncTests(TestWebAppFactory factory) : IClassFixture<Te
         await dbContext.SaveChangesAsync();
 
         // Act
-        var response = await _httpClient.GetAsync(GetProductsUrl);
+        var httpClient = factory.CreateClient();
+        var response = await httpClient.GetAsync(GetProductsUrl);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -72,7 +72,8 @@ public class GetProductsAsyncTests(TestWebAppFactory factory) : IClassFixture<Te
         await dbContext.SaveChangesAsync();
 
         // Act
-        var response = await _httpClient.GetAsync(GetProductsUrl);
+        var httpClient = factory.CreateClient();
+        var response = await httpClient.GetAsync(GetProductsUrl);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -92,7 +93,8 @@ public class GetProductsAsyncTests(TestWebAppFactory factory) : IClassFixture<Te
         const int invalidPrice = -100;
 
         // Act
-        var response = await _httpClient.GetAsync(GetProductsUrl + "?minPrice=" + invalidPrice);
+        var httpClient = factory.CreateClient();
+        var response = await httpClient.GetAsync(GetProductsUrl + "?minPrice=" + invalidPrice);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

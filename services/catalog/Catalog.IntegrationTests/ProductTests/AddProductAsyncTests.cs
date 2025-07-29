@@ -15,7 +15,6 @@ namespace Catalog.IntegrationTests.ProductTests;
 public class AddProductAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
 {
     private const string AddProductUrl = "api/Products";
-    private readonly HttpClient _httpClient = factory.CreateClient();
 
     [Fact]
     public async Task ReturnsOk_WhenAddedSuccessfully()
@@ -37,7 +36,8 @@ public class AddProductAsyncTests(TestWebAppFactory factory) : IClassFixture<Tes
         );
 
         // Act
-        var response = await _httpClient.PostAsJsonAsync(AddProductUrl, request);
+        var httpClient = factory.CreateClient();
+        var response = await httpClient.PostAsJsonAsync(AddProductUrl, request);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -78,7 +78,8 @@ public class AddProductAsyncTests(TestWebAppFactory factory) : IClassFixture<Tes
         );
 
         // Act
-        var response = await _httpClient.PostAsJsonAsync(AddProductUrl, request);
+        var httpClient = factory.CreateClient();
+        var response = await httpClient.PostAsJsonAsync(AddProductUrl, request);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
