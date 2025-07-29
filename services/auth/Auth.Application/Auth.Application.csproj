@@ -8,7 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="Mapster" Version="7.4.0"/>
-        <PackageReference Include="Mercibus.Common" Version="1.0.4"/>
+        <PackageReference Include="Mercibus.Common" Version="1.0.5" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
         <PackageReference Include="Serilog.AspNetCore" Version="9.0.0"/>
         <PackageReference Include="SharpGrip.FluentValidation.AutoValidation.Mvc" Version="1.5.0"/>
