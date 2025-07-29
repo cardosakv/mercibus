@@ -12,7 +12,6 @@ namespace Catalog.IntegrationTests.ProductTests;
 public class UpdateProductAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
 {
     private const string UpdateProductUrl = "api/products/";
-    private readonly HttpClient _httpClient = factory.CreateClient();
 
     [Fact]
     public async Task ReturnsOk_WhenUpdatedSuccessfully()
@@ -47,7 +46,8 @@ public class UpdateProductAsyncTests(TestWebAppFactory factory) : IClassFixture<
         );
 
         // Act
-        var response = await _httpClient.PutAsJsonAsync(requestUri: UpdateProductUrl + product.Entity.Id, updateRequest);
+        var httpClient = factory.CreateClient();
+        var response = await httpClient.PutAsJsonAsync(requestUri: UpdateProductUrl + product.Entity.Id, updateRequest);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -79,7 +79,8 @@ public class UpdateProductAsyncTests(TestWebAppFactory factory) : IClassFixture<
         const long nonExistentProductId = 9999;
 
         // Act
-        var response = await _httpClient.PutAsJsonAsync(requestUri: UpdateProductUrl + nonExistentProductId, updateRequest);
+        var httpClient = factory.CreateClient();
+        var response = await httpClient.PutAsJsonAsync(requestUri: UpdateProductUrl + nonExistentProductId, updateRequest);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -104,7 +105,8 @@ public class UpdateProductAsyncTests(TestWebAppFactory factory) : IClassFixture<
         );
 
         // Act
-        var response = await _httpClient.PutAsJsonAsync(requestUri: UpdateProductUrl + 999, invalidRequest);
+        var httpClient = factory.CreateClient();
+        var response = await httpClient.PutAsJsonAsync(requestUri: UpdateProductUrl + 999, invalidRequest);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

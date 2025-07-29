@@ -11,7 +11,6 @@ namespace Catalog.IntegrationTests.ProductTests;
 public class DeleteProductAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
 {
     private const string DeleteProductUrl = "api/products/";
-    private readonly HttpClient _httpClient = factory.CreateClient();
 
     [Fact]
     public async Task ReturnsOk_WhenProductDeletedSuccessfully()
@@ -36,7 +35,8 @@ public class DeleteProductAsyncTests(TestWebAppFactory factory) : IClassFixture<
         await dbContext.SaveChangesAsync();
 
         // Act
-        var response = await _httpClient.DeleteAsync(DeleteProductUrl + product.Entity.Id);
+        var httpClient = factory.CreateClient();
+        var response = await httpClient.DeleteAsync(DeleteProductUrl + product.Entity.Id);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -53,7 +53,8 @@ public class DeleteProductAsyncTests(TestWebAppFactory factory) : IClassFixture<
         const long nonExistentProductId = 9999;
 
         // Act
-        var response = await _httpClient.DeleteAsync(DeleteProductUrl + nonExistentProductId);
+        var httpClient = factory.CreateClient();
+        var response = await httpClient.DeleteAsync(DeleteProductUrl + nonExistentProductId);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
