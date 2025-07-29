@@ -4,12 +4,13 @@ using Catalog.Application.DTOs;
 using Catalog.Domain.Entities;
 using Catalog.Infrastructure;
 using FluentAssertions;
+using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
-namespace Catalog.IntegrationTests.Product;
+namespace Catalog.IntegrationTests.ProductTests;
 
 /// <summary>
 /// Integration tests for adding a product.
@@ -62,5 +63,30 @@ public class AddProductAsyncTests(TestWebAppFactory factory) : IClassFixture<Tes
         savedProduct.Description.Should().Be("A sample product during testing.");
         savedProduct.Price.Should().Be(99.99m);
         savedProduct.StockQuantity.Should().Be(100);
+    }
+
+    [Fact]
+    public async Task ReturnsBadRequest_WhenValidationFails()
+    {
+        // Arrange
+        var request = new AddProductRequest(
+            Name: "", // Invalid name
+            Description: "A sample product during testing.",
+            Sku: "SKU01",
+            Price: 99.99m,
+            StockQuantity: 100,
+            CategoryId: 1,
+            BrandId: 1
+        );
+
+        // Act
+        var response = await _httpClient.PostAsJsonAsync(AddProductUrl, request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var content = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
+        content.Should().NotBeNull();
+        content!.Error.Should().NotBeNull();
+        content.Error.Type.Should().Be(ErrorType.InvalidRequestError);
     }
 }
