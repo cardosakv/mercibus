@@ -1,4 +1,5 @@
 using Catalog.Infrastructure;
+using DotNet.Testcontainers.Builders;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,7 @@ public class TestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
         .WithImage("postgres:latest")
         .WithUsername("test_user")
         .WithPassword("test_password")
+        .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(5432))
         .Build();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
