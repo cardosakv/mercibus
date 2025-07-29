@@ -1,0 +1,49 @@
+name: Catalog Service CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'services/catalog/**'
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'services/catalog/**'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    uses: ./.github/workflows/base-build.yml
+    with:
+      service: catalog
+  
+  test:
+    uses: ./.github/workflows/base-test.yml
+    with:
+      service: catalog
+  
+  analyze:
+    uses: ./.github/workflows/base-sonarqube.yml
+    with:
+      service: catalog
+      project_key: mercibus_catalog
+      project_dll: Catalog
+    secrets:
+      sonar_token: ${{ secrets.SONAR_TOKEN_CATALOG }}
+  
+  dockerize:
+    uses: ./.github/workflows/base-dockerize.yml
+    with:
+      service: catalog
+      project_dll: Catalog
+      image_name: mercibus-catalog
+    secrets:
+      docker_username: ${{ secrets.DOCKER_USERNAME }}
+      docker_password: ${{ secrets.DOCKER_PASSWORD }}
