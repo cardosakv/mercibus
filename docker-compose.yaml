@@ -29,9 +29,9 @@ services:
     ports:
       - '5001:5432'
     environment:
-      POSTGRES_USER: 'postgres'
-      POSTGRES_PASSWORD: 'postgres'
-      POSTGRES_DB: 'mercibus_auth_db'
+      POSTGRES_USER: ''
+      POSTGRES_PASSWORD: ''
+      POSTGRES_DB: ''
     volumes:
       - auth_db_data:/var/lib/postgresql/data
     networks:
@@ -45,7 +45,7 @@ services:
     ports:
       - '6000:8080'
     environment:
-      ConnectionStrings__DefaultConnection: 'Host=catalog-db;Port=5432;Database=mercibus_catalog_db;User Id=postgres;Password=postgres;'
+      ConnectionStrings__DefaultConnection: ''
     depends_on:
       - catalog-db
     restart: always
@@ -58,9 +58,9 @@ services:
     ports:
       - '6001:5432'
     environment:
-      POSTGRES_USER: 'postgres'
-      POSTGRES_PASSWORD: 'postgres'
-      POSTGRES_DB: 'mercibus_catalog_db'
+      POSTGRES_USER: ''
+      POSTGRES_PASSWORD: ''
+      POSTGRES_DB: ''
     volumes:
       - catalog_db_data:/var/lib/postgresql/data
     networks:
