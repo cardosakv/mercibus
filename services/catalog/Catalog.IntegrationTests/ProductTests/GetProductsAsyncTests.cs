@@ -1,0 +1,106 @@
+using System.Net;
+using System.Net.Http.Json;
+using Catalog.Application.DTOs;
+using Catalog.Domain.Entities;
+using Catalog.Infrastructure;
+using FluentAssertions;
+using Mercibus.Common.Constants;
+using Mercibus.Common.Responses;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+
+namespace Catalog.IntegrationTests.ProductTests;
+
+public class GetProductsAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
+{
+    private const string GetProductsUrl = "api/products";
+    private readonly AppDbContext _dbContext = factory.Services.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
+    private readonly HttpClient _httpClient = factory.CreateClient();
+
+    [Fact]
+    public async Task ReturnsOk_WhenProductsExist()
+    {
+        // Arrange
+        var category = await _dbContext.Categories.AddAsync(new Category { Name = "Electronics" });
+        var brand = await _dbContext.Brands.AddAsync(new Brand { Name = "BrandX" });
+        await _dbContext.SaveChangesAsync();
+
+        await _dbContext.Products.AddAsync(
+            new Product
+            {
+                Name = "Phone",
+                Price = 500,
+                Sku = "ELEC001",
+                StockQuantity = 50,
+                CategoryId = category.Entity.Id,
+                BrandId = brand.Entity.Id
+            });
+
+        await _dbContext.Products.AddAsync(
+            new Product
+            {
+                Name = "Laptop",
+                Price = 1200,
+                Sku = "ELEC002",
+                StockQuantity = 30,
+                CategoryId = category.Entity.Id,
+                BrandId = brand.Entity.Id
+            });
+
+        await _dbContext.SaveChangesAsync();
+
+        // Act
+        var response = await _httpClient.GetAsync(GetProductsUrl);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var content = await response.Content.ReadFromJsonAsync<ApiSuccessResponse>();
+        content.Should().NotBeNull();
+        content!.Data.Should().NotBeNull();
+
+        var productList = JsonConvert.DeserializeObject<List<ProductResponse>>(content.Data!.ToString()!);
+        productList.Should().NotBeNullOrEmpty();
+        productList!.Count.Should().BeGreaterThan(1);
+    }
+
+    [Fact]
+    public async Task ReturnsEmptyList_WhenNoProductsExist()
+    {
+        // Arrange
+        var allProducts = _dbContext.Products.ToList();
+        _dbContext.Products.RemoveRange(allProducts);
+        await _dbContext.SaveChangesAsync();
+
+        // Act
+        var response = await _httpClient.GetAsync(GetProductsUrl);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var content = await response.Content.ReadFromJsonAsync<ApiSuccessResponse>();
+        content.Should().NotBeNull();
+
+        var productList = JsonConvert.DeserializeObject<List<ProductResponse>>(content!.Data!.ToString()!);
+        productList.Should().NotBeNull();
+        productList.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task ReturnsBadRequest_WhenInvalidQueryProvided()
+    {
+        // Arrange
+        const int invalidPrice = -100;
+
+        // Act
+        var response = await _httpClient.GetAsync(GetProductsUrl + "?minPrice=" + invalidPrice);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+        var content = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
+        content.Should().NotBeNull();
+        content!.Error.Should().NotBeNull();
+        content.Error.Type.Should().Be(ErrorType.InvalidRequestError);
+    }
+}
