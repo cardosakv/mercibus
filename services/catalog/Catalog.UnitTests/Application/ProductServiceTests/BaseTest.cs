@@ -2,9 +2,10 @@ using AutoMapper;
 using Catalog.Application.Interfaces;
 using Catalog.Application.Interfaces.Repositories;
 using Catalog.Application.Interfaces.Services;
+using Catalog.Application.Services;
 using Moq;
 
-namespace Catalog.Tests.Application.ProductService;
+namespace Catalog.UnitTests.Application.ProductServiceTests;
 
 /// <summary>
 /// Base class for unit tests in the product service.
@@ -23,6 +24,6 @@ public abstract class BaseTest
         MapperMock = new Mock<IMapper>();
         DbContextMock = new Mock<IAppDbContext>();
 
-        ProductService = new Catalog.Application.Services.ProductService(ProductRepositoryMock.Object, MapperMock.Object, DbContextMock.Object);
+        ProductService = new ProductService(ProductRepositoryMock.Object, MapperMock.Object, DbContextMock.Object);
     }
 }

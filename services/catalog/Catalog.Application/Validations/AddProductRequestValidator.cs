@@ -1,13 +1,12 @@
 using Catalog.Application.Common;
 using Catalog.Application.DTOs;
-using Catalog.Application.Interfaces;
 using FluentValidation;
 
 namespace Catalog.Application.Validations;
 
 public class AddProductRequestValidator : AbstractValidator<AddProductRequest>
 {
-    public AddProductRequestValidator(IAppDbContext dbContext)
+    public AddProductRequestValidator()
     {
         RuleFor(x => x.Name)
             .Cascade(CascadeMode.Stop)

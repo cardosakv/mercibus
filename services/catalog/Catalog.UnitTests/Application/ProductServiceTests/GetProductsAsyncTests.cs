@@ -3,7 +3,7 @@ using Catalog.Domain.Entities;
 using FluentAssertions;
 using Moq;
 
-namespace Catalog.Tests.Application.ProductService;
+namespace Catalog.UnitTests.Application.ProductServiceTests;
 
 public class GetProductsAsyncTests : BaseTest
 {

@@ -6,7 +6,7 @@ using Mercibus.Common.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
-namespace Catalog.Tests.Api.ProductController;
+namespace Catalog.UnitTests.Api.ProductControllerTests;
 
 public class UpdateProductAsyncTests : BaseTest
 {
