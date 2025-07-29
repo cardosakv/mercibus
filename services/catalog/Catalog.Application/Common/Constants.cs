@@ -21,5 +21,6 @@ public static class Constants
         public const string SkuRequired = "sku_required";
         public const string PriceRequired = "price_required";
         public const string StockQuantityRequired = "stock_quantity_required";
+        public const string PriceInvalid = "price_invalid";
     }
 }
