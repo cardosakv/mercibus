@@ -3,11 +3,9 @@ using System.Net.Http.Json;
 using Catalog.Application.Common;
 using Catalog.Application.DTOs;
 using Catalog.Domain.Entities;
-using Catalog.Infrastructure;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
 namespace Catalog.IntegrationTests.ProductTests;
@@ -15,18 +13,18 @@ namespace Catalog.IntegrationTests.ProductTests;
 public class GetProductByIdAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
 {
     private const string GetProductByIdUrl = "api/Products/";
-    private readonly AppDbContext _dbContext = factory.Services.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
     private readonly HttpClient _httpClient = factory.CreateClient();
 
     [Fact]
     public async Task ReturnsOk_WhenGetSuccessfully()
     {
         // Arrange 
-        var testCategory = await _dbContext.Categories.AddAsync(new Category { Name = "Category 1" });
-        var testBrand = await _dbContext.Brands.AddAsync(new Brand { Name = "Brand 1" });
-        await _dbContext.SaveChangesAsync();
+        var dbContext = factory.CreateDbContext();
+        var testCategory = await dbContext.Categories.AddAsync(new Category { Name = "Category 1" });
+        var testBrand = await dbContext.Brands.AddAsync(new Brand { Name = "Brand 1" });
+        await dbContext.SaveChangesAsync();
 
-        var testProduct = await _dbContext.Products.AddAsync(
+        var testProduct = await dbContext.Products.AddAsync(
             new Product
             {
                 Name = "Test Product",
@@ -36,7 +34,7 @@ public class GetProductByIdAsyncTests(TestWebAppFactory factory) : IClassFixture
                 CategoryId = testCategory.Entity.Id,
                 BrandId = testBrand.Entity.Id
             });
-        await _dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
 
         // Act
         var response = await _httpClient.GetAsync(GetProductByIdUrl + testProduct.Entity.Id);

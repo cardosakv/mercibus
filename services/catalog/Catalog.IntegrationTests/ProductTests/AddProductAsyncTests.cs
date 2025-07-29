@@ -2,11 +2,9 @@ using System.Net;
 using System.Net.Http.Json;
 using Catalog.Application.DTOs;
 using Catalog.Domain.Entities;
-using Catalog.Infrastructure;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
 namespace Catalog.IntegrationTests.ProductTests;
@@ -17,16 +15,16 @@ namespace Catalog.IntegrationTests.ProductTests;
 public class AddProductAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
 {
     private const string AddProductUrl = "api/Products";
-    private readonly AppDbContext _dbContext = factory.Services.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
     private readonly HttpClient _httpClient = factory.CreateClient();
 
     [Fact]
     public async Task ReturnsOk_WhenAddedSuccessfully()
     {
         // Arrange
-        var testCategory = await _dbContext.Categories.AddAsync(new Category { Name = "Category 1" });
-        var testBrand = await _dbContext.Brands.AddAsync(new Brand { Name = "Brand 1" });
-        await _dbContext.SaveChangesAsync();
+        var dbContext = factory.CreateDbContext();
+        var testCategory = await dbContext.Categories.AddAsync(new Category { Name = "Category 1" });
+        var testBrand = await dbContext.Brands.AddAsync(new Brand { Name = "Brand 1" });
+        await dbContext.SaveChangesAsync();
 
         var request = new AddProductRequest(
             Name: "Product 1",
@@ -56,7 +54,8 @@ public class AddProductAsyncTests(TestWebAppFactory factory) : IClassFixture<Tes
         responseProduct.Price.Should().Be(99.99m);
         responseProduct.StockQuantity.Should().Be(100);
 
-        var savedProduct = await _dbContext.Products.FindAsync(responseProduct.Id);
+        dbContext = factory.CreateDbContext();
+        var savedProduct = await dbContext.Products.FindAsync(responseProduct.Id);
         savedProduct.Should().NotBeNull();
         savedProduct!.Name.Should().Be("Product 1");
         savedProduct.Description.Should().Be("A sample product during testing.");

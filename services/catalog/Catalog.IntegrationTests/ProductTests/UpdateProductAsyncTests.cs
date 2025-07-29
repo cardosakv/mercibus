@@ -2,30 +2,28 @@ using System.Net;
 using System.Net.Http.Json;
 using Catalog.Application.DTOs;
 using Catalog.Domain.Entities;
-using Catalog.Infrastructure;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Catalog.IntegrationTests.ProductTests;
 
 public class UpdateProductAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
 {
     private const string UpdateProductUrl = "api/products/";
-    private readonly AppDbContext _dbContext = factory.Services.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
     private readonly HttpClient _httpClient = factory.CreateClient();
 
     [Fact]
     public async Task ReturnsOk_WhenUpdatedSuccessfully()
     {
         // Arrange
-        var category = await _dbContext.Categories.AddAsync(new Category { Name = "Books" });
-        var brand = await _dbContext.Brands.AddAsync(new Brand { Name = "BrandA" });
-        await _dbContext.SaveChangesAsync();
+        var dbContext = factory.CreateDbContext();
+        var category = await dbContext.Categories.AddAsync(new Category { Name = "Books" });
+        var brand = await dbContext.Brands.AddAsync(new Brand { Name = "BrandA" });
+        await dbContext.SaveChangesAsync();
 
-        var product = await _dbContext.Products.AddAsync(
+        var product = await dbContext.Products.AddAsync(
             new Product
             {
                 Name = "Old Product",
@@ -36,7 +34,7 @@ public class UpdateProductAsyncTests(TestWebAppFactory factory) : IClassFixture<
                 CategoryId = category.Entity.Id,
                 BrandId = brand.Entity.Id
             });
-        await _dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
 
         var updateRequest = new UpdateProductRequest(
             Name: "Updated Product",
@@ -54,7 +52,7 @@ public class UpdateProductAsyncTests(TestWebAppFactory factory) : IClassFixture<
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var dbContext = factory.Services.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
+        dbContext = factory.CreateDbContext();
         var updatedProduct = await dbContext.Products.FirstOrDefaultAsync(p => p.Id == product.Entity.Id);
         updatedProduct.Should().NotBeNull();
         updatedProduct!.Name.Should().Be(updateRequest.Name);

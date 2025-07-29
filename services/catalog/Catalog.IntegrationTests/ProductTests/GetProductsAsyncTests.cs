@@ -2,11 +2,9 @@ using System.Net;
 using System.Net.Http.Json;
 using Catalog.Application.DTOs;
 using Catalog.Domain.Entities;
-using Catalog.Infrastructure;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
 namespace Catalog.IntegrationTests.ProductTests;
@@ -14,18 +12,18 @@ namespace Catalog.IntegrationTests.ProductTests;
 public class GetProductsAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
 {
     private const string GetProductsUrl = "api/products";
-    private readonly AppDbContext _dbContext = factory.Services.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
     private readonly HttpClient _httpClient = factory.CreateClient();
 
     [Fact]
     public async Task ReturnsOk_WhenProductsExist()
     {
         // Arrange
-        var category = await _dbContext.Categories.AddAsync(new Category { Name = "Electronics" });
-        var brand = await _dbContext.Brands.AddAsync(new Brand { Name = "BrandX" });
-        await _dbContext.SaveChangesAsync();
+        var dbContext = factory.CreateDbContext();
+        var category = await dbContext.Categories.AddAsync(new Category { Name = "Electronics" });
+        var brand = await dbContext.Brands.AddAsync(new Brand { Name = "BrandX" });
+        await dbContext.SaveChangesAsync();
 
-        await _dbContext.Products.AddAsync(
+        await dbContext.Products.AddAsync(
             new Product
             {
                 Name = "Phone",
@@ -36,7 +34,7 @@ public class GetProductsAsyncTests(TestWebAppFactory factory) : IClassFixture<Te
                 BrandId = brand.Entity.Id
             });
 
-        await _dbContext.Products.AddAsync(
+        await dbContext.Products.AddAsync(
             new Product
             {
                 Name = "Laptop",
@@ -47,7 +45,7 @@ public class GetProductsAsyncTests(TestWebAppFactory factory) : IClassFixture<Te
                 BrandId = brand.Entity.Id
             });
 
-        await _dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync();
 
         // Act
         var response = await _httpClient.GetAsync(GetProductsUrl);
@@ -68,9 +66,10 @@ public class GetProductsAsyncTests(TestWebAppFactory factory) : IClassFixture<Te
     public async Task ReturnsEmptyList_WhenNoProductsExist()
     {
         // Arrange
-        var allProducts = _dbContext.Products.ToList();
-        _dbContext.Products.RemoveRange(allProducts);
-        await _dbContext.SaveChangesAsync();
+        var dbContext = factory.CreateDbContext();
+        var allProducts = dbContext.Products.ToList();
+        dbContext.Products.RemoveRange(allProducts);
+        await dbContext.SaveChangesAsync();
 
         // Act
         var response = await _httpClient.GetAsync(GetProductsUrl);

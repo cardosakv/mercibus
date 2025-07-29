@@ -26,6 +26,11 @@ public class TestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
         });
     }
 
+    public AppDbContext CreateDbContext()
+    {
+        return Services.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
+    }
+
     public Task InitializeAsync()
     {
         return _postgresContainer.StartAsync();
