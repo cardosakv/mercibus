@@ -18,27 +18,57 @@ services:
       RedirectUrl__EmailConfirmFail: ''
       RedirectUrl__PasswordReset: ''
     depends_on:
-      - auth-postgres
+      - auth-db
     restart: always
     networks:
       - backend-network
 
-  auth-postgres:
-    container_name: auth-postgres-container
+  auth-db:
+    container_name: auth-db-container
     image: postgres
     ports:
       - '5001:5432'
     environment:
-      POSTGRES_USER: ''
-      POSTGRES_PASSWORD: ''
-      POSTGRES_DB: ''
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      POSTGRES_DB: 'mercibus_auth_db'
     volumes:
-      - auth_postgres_data:/var/lib/postgresql/data
+      - auth_db_data:/var/lib/postgresql/data
+    networks:
+      - backend-network
+  
+  catalog-service:
+    container_name: catalog-service-container
+    build:
+      context: ./services/catalog/
+      dockerfile: Catalog.Api/Dockerfile
+    ports:
+      - '6000:8080'
+    environment:
+      ConnectionStrings__DefaultConnection: 'Host=catalog-db;Port=5432;Database=mercibus_catalog_db;User Id=postgres;Password=postgres;'
+    depends_on:
+      - catalog-db
+    restart: always
+    networks:
+      - backend-network
+
+  catalog-db:
+    container_name: catalog-db-container
+    image: postgres
+    ports:
+      - '6001:5432'
+    environment:
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
+      POSTGRES_DB: 'mercibus_catalog_db'
+    volumes:
+      - catalog_db_data:/var/lib/postgresql/data
     networks:
       - backend-network
 
 volumes:
-  auth_postgres_data:
+  auth_db_data:
+  catalog_db_data:
 
 networks:
   backend-network:
