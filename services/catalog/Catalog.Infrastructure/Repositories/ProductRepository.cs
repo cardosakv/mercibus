@@ -7,7 +7,7 @@ namespace Catalog.Infrastructure.Repositories;
 
 public class ProductRepository(AppDbContext dbContext) : IProductRepository
 {
-    public Task<List<Product>> GetProductsAsync(GetProductsQuery query, CancellationToken cancellationToken = default)
+    public Task<List<Product>> GetProductsAsync(ProductQuery query, CancellationToken cancellationToken = default)
     {
         var products = dbContext.Products.AsQueryable();
 

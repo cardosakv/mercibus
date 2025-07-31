@@ -10,7 +10,7 @@ namespace Catalog.UnitTests.Api.ProductControllerTests;
 
 public class UpdateProductAsyncTests : BaseTest
 {
-    private static readonly UpdateProductRequest SampleRequest = new(
+    private static readonly ProductRequest SampleRequest = new(
         Name: "Updated Name",
         Description: "Updated Description",
         Sku: "UPDATED-SKU",

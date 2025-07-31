@@ -24,7 +24,7 @@ try
     builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
     // Add validators.
-    builder.Services.AddValidatorsFromAssembly(typeof(AddProductRequestValidator).Assembly);
+    builder.Services.AddValidatorsFromAssembly(typeof(ProductRequestValidator).Assembly);
     builder.Services.AddFluentValidationAutoValidation(options =>
         options.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
 

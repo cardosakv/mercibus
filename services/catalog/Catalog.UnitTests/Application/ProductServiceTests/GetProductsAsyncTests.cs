@@ -7,7 +7,7 @@ namespace Catalog.UnitTests.Application.ProductServiceTests;
 
 public class GetProductsAsyncTests : BaseTest
 {
-    private readonly GetProductsQuery _query = new(
+    private readonly ProductQuery _query = new(
         CategoryId: null,
         BrandId: null,
         MinPrice: null,
@@ -76,7 +76,7 @@ public class GetProductsAsyncTests : BaseTest
             )
         };
 
-        ProductRepositoryMock.Setup(x => x.GetProductsAsync(It.IsAny<GetProductsQuery>(), It.IsAny<CancellationToken>()))
+        ProductRepositoryMock.Setup(x => x.GetProductsAsync(It.IsAny<ProductQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(productEntities);
         MapperMock.Setup(x => x.Map<List<ProductResponse>>(It.IsAny<List<Product>>()))
             .Returns(productResponseList);
@@ -96,7 +96,7 @@ public class GetProductsAsyncTests : BaseTest
         var emptyProductList = new List<Product>();
         var emptyResponseList = new List<ProductResponse>();
 
-        ProductRepositoryMock.Setup(x => x.GetProductsAsync(It.IsAny<GetProductsQuery>(), It.IsAny<CancellationToken>()))
+        ProductRepositoryMock.Setup(x => x.GetProductsAsync(It.IsAny<ProductQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(emptyProductList);
         MapperMock.Setup(x => x.Map<List<ProductResponse>>(emptyProductList))
             .Returns(emptyResponseList);
@@ -113,7 +113,7 @@ public class GetProductsAsyncTests : BaseTest
     public async Task Throws_WhenRepositoryThrowsException()
     {
         // Arrange
-        ProductRepositoryMock.Setup(x => x.GetProductsAsync(It.IsAny<GetProductsQuery>(), It.IsAny<CancellationToken>()))
+        ProductRepositoryMock.Setup(x => x.GetProductsAsync(It.IsAny<ProductQuery>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new InvalidOperationException("Something went wrong"));
 
         // Act

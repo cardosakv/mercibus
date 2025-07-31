@@ -9,7 +9,7 @@ namespace Catalog.UnitTests.Api.ProductControllerTests;
 
 public class AddProductAsyncTests : BaseTest
 {
-    private static AddProductRequest SampleRequest => new(
+    private static ProductRequest SampleRequest => new(
         Name: "New Product",
         Description: "New Product Description",
         Sku: "SKU-NEW",

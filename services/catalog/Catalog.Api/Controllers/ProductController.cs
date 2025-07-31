@@ -10,14 +10,14 @@ namespace Catalog.Api.Controllers;
 public class ProductController(IProductService productService) : BaseController
 {
     [HttpGet]
-    public async Task<IActionResult> GetProductsAsync([FromQuery] GetProductsQuery query, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetProductsAsync([FromQuery] ProductQuery query, CancellationToken cancellationToken)
     {
         var response = await productService.GetProductsAsync(query, cancellationToken);
         return Ok(response);
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddProductAsync([FromBody] AddProductRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> AddProductAsync([FromBody] ProductRequest request, CancellationToken cancellationToken)
     {
         var response = await productService.AddProductAsync(request, cancellationToken);
         return Ok(response);
@@ -31,7 +31,7 @@ public class ProductController(IProductService productService) : BaseController
     }
 
     [HttpPut("{id:long}")]
-    public async Task<IActionResult> UpdateProductAsync(long id, [FromBody] UpdateProductRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> UpdateProductAsync(long id, [FromBody] ProductRequest request, CancellationToken cancellationToken)
     {
         var response = await productService.UpdateProductAsync(id, request, cancellationToken);
         return Ok(response);

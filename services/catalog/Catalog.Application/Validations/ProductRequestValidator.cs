@@ -4,9 +4,9 @@ using FluentValidation;
 
 namespace Catalog.Application.Validations;
 
-public class AddProductRequestValidator : AbstractValidator<AddProductRequest>
+public class ProductRequestValidator : AbstractValidator<ProductRequest>
 {
-    public AddProductRequestValidator()
+    public ProductRequestValidator()
     {
         RuleFor(x => x.Name)
             .Cascade(CascadeMode.Stop)

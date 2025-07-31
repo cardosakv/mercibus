@@ -9,7 +9,7 @@ namespace Catalog.UnitTests.Api.ProductControllerTests;
 
 public class GetProductsAsyncTests : BaseTest
 {
-    private static GetProductsQuery SampleQuery => new(
+    private static ProductQuery SampleQuery => new(
         CategoryId: null,
         BrandId: null,
         MinPrice: null,

@@ -4,9 +4,9 @@ using FluentValidation;
 
 namespace Catalog.Application.Validations;
 
-public class GetProductsQueryValidator : AbstractValidator<GetProductsQuery>
+public class ProductQueryValidator : AbstractValidator<ProductQuery>
 {
-    public GetProductsQueryValidator()
+    public ProductQueryValidator()
     {
         RuleFor(x => x.MinPrice)
             .Cascade(CascadeMode.Stop)

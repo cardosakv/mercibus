@@ -23,7 +23,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
             .ForMember(dest => dest.Attributes, opt => opt.MapFrom(src => src.Attributes));
 
-        CreateMap<AddProductRequest, Product>()
+        CreateMap<ProductRequest, Product>()
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
@@ -32,7 +32,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.BrandId, opt => opt.MapFrom(src => src.BrandId))
             .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId));
 
-        CreateMap<UpdateProductRequest, Product>()
+        CreateMap<ProductRequest, Product>()
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
