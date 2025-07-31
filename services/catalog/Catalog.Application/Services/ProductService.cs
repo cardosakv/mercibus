@@ -1,10 +1,10 @@
-using AutoMapper;
 using Catalog.Application.Common;
 using Catalog.Application.DTOs;
 using Catalog.Application.Interfaces;
 using Catalog.Application.Interfaces.Repositories;
 using Catalog.Application.Interfaces.Services;
 using Catalog.Domain.Entities;
+using MapsterMapper;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Models;
 using Mercibus.Common.Services;

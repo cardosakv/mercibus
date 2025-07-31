@@ -1,8 +1,8 @@
-using AutoMapper;
 using Catalog.Application.Interfaces;
 using Catalog.Application.Interfaces.Repositories;
 using Catalog.Application.Interfaces.Services;
 using Catalog.Application.Services;
+using MapsterMapper;
 using Moq;
 
 namespace Catalog.UnitTests.Application.ProductServiceTests;
