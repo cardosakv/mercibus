@@ -12,6 +12,12 @@ public static class Constants
         public const int MaxSkuLength = 100;
     }
 
+    public static class CategoryValidation
+    {
+        public const int MaxNameLength = 100;
+        public const int MaxDescriptionLength = 300;
+    }
+
     public static class ErrorCode
     {
         public const string ProductNotFound = "product_not_found";
@@ -22,5 +28,8 @@ public static class Constants
         public const string PriceRequired = "price_required";
         public const string StockQuantityRequired = "stock_quantity_required";
         public const string PriceInvalid = "price_invalid";
+        public const string CategoryNotFound = "category_not_found";
+        public const string ParentCategoryNotFound = "parent_category_not_found";
+        public const string CategoryInUse = "category_in_use";
     }
 }

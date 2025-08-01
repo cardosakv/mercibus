@@ -24,7 +24,7 @@ public class GetProductByIdAsyncTests : BaseTest
             Sku: "SKU1",
             StockQuantity: 100,
             Brand: new BrandResponse(Id: 1, Name: "Brand"),
-            Category: new CategoryResponse(Id: 1, Name: "Category", ParentCategoryId: null),
+            Category: new CategoryResponse(Id: 1, Name: "Category", ParentCategoryId: null, Description: null),
             Images: [],
             Attributes: [],
             DateTime.UtcNow

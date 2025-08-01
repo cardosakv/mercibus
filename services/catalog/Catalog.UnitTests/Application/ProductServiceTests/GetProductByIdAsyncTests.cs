@@ -38,7 +38,11 @@ public class GetProductByIdAsyncTests : BaseTest
             productEntity.Sku,
             productEntity.StockQuantity,
             Brand: new BrandResponse(productEntity.Brand.Id, productEntity.Brand.Name),
-            Category: new CategoryResponse(productEntity.Category.Id, productEntity.Category.Name, ParentCategoryId: null),
+            Category: new CategoryResponse(
+                productEntity.Category.Id,
+                Name: productEntity.Category.Name,
+                ParentCategoryId: null,
+                Description: null),
             Images: [],
             Attributes: [],
             productEntity.CreatedAt

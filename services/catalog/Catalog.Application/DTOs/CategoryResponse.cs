@@ -5,6 +5,7 @@ namespace Catalog.Application.DTOs;
 /// </summary>
 public record CategoryResponse(
     long Id,
+    long? ParentCategoryId,
     string Name,
-    long? ParentCategoryId
+    string? Description
 );
