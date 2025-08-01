@@ -18,10 +18,11 @@ public class ProductMapping
             .Map(dest => dest.Price, src => src.Price)
             .Map(dest => dest.Sku, src => src.Sku)
             .Map(dest => dest.StockQuantity, src => src.StockQuantity)
-            .Map(dest => dest.Brand, src => src.Brand)
-            .Map(dest => dest.Category, src => src.Category)
+            .Map(dest => dest.BrandId, src => src.BrandId)
+            .Map(dest => dest.CategoryId, src => src.CategoryId)
             .Map(dest => dest.Images, src => src.Images)
-            .Map(dest => dest.Attributes, src => src.Attributes);
+            .Map(dest => dest.Attributes, src => src.Attributes)
+            .Map(dest => dest.CreatedAt, src => src.CreatedAt);
 
         TypeAdapterConfig<ProductRequest, Product>.NewConfig()
             .Map(dest => dest.Name, src => src.Name)

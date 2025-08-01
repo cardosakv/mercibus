@@ -55,8 +55,8 @@ public class GetProductsAsyncTests : BaseTest
                 Price: 10.0m,
                 Sku: "SKU1",
                 StockQuantity: 100,
-                Brand: new BrandResponse(Id: 1, Name: "Brand 1"),
-                Category: new CategoryResponse(Id: 1, Name: "Category 1", ParentCategoryId: null, Description: null),
+                BrandId: 1,
+                CategoryId: 1,
                 Images: [],
                 Attributes: [],
                 DateTime.UtcNow
@@ -68,8 +68,8 @@ public class GetProductsAsyncTests : BaseTest
                 Price: 10.0m,
                 Sku: "SKU2",
                 StockQuantity: 100,
-                Brand: new BrandResponse(Id: 1, Name: "Brand 1"),
-                Category: new CategoryResponse(Id: 1, Name: "Category 1", ParentCategoryId: null, Description: null),
+                BrandId: 1,
+                CategoryId: 1,
                 Images: [],
                 Attributes: [],
                 DateTime.UtcNow
