@@ -1,12 +1,13 @@
 using Catalog.Application.Common;
 using Catalog.Application.DTOs;
+using Catalog.Application.Interfaces.Repositories;
 using FluentValidation;
 
 namespace Catalog.Application.Validations;
 
 public class CategoryRequestValidator : AbstractValidator<CategoryRequest>
 {
-    public CategoryRequestValidator()
+    public CategoryRequestValidator(ICategoryRepository categoryRepository)
     {
         RuleFor(x => x.Name)
             .Cascade(CascadeMode.Stop)
@@ -16,5 +17,18 @@ public class CategoryRequestValidator : AbstractValidator<CategoryRequest>
         RuleFor(x => x.Description)
             .Cascade(CascadeMode.Stop)
             .MaximumLength(Constants.CategoryValidation.MaxDescriptionLength).WithMessage(Constants.ErrorCode.DescriptionTooLong);
+
+        RuleFor(x => x.ParentCategoryId)
+            .Cascade(CascadeMode.Stop)
+            .MustAsync(async (id, cancellationToken) =>
+            {
+                if (id is null)
+                {
+                    return true;
+                }
+
+                return await categoryRepository.DoesCategoryExistsAsync(id.Value, cancellationToken);
+            })
+            .WithMessage(Constants.ErrorCode.ParentCategoryNotFound);
     }
 }

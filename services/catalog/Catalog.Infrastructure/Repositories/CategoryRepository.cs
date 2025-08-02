@@ -55,7 +55,7 @@ public class CategoryRepository(AppDbContext dbContext) : ICategoryRepository
             .AnyAsync(c => c.Id == id, cancellationToken);
     }
 
-    public Task<bool> DoesCategoryUsedInProductsAsync(long id, CancellationToken cancellationToken = default)
+    public Task<bool> IsCategoryUsedInProductsAsync(long id, CancellationToken cancellationToken = default)
     {
         return dbContext.Products
             .AsNoTracking()

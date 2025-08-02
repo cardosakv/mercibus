@@ -62,5 +62,5 @@ public interface ICategoryRepository
     /// <param name="id">Category ID.</param>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>Boolean indication whether the category is used or not.</returns>
-    Task<bool> DoesCategoryUsedInProductsAsync(long id, CancellationToken cancellationToken = default);
+    Task<bool> IsCategoryUsedInProductsAsync(long id, CancellationToken cancellationToken = default);
 }

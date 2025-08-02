@@ -23,15 +23,6 @@ public class CategoryService(ICategoryRepository categoryRepository, IMapper map
 
     public async Task<ServiceResult> AddCategoryAsync(CategoryRequest request, CancellationToken cancellationToken = default)
     {
-        if (request.ParentCategoryId is not null)
-        {
-            var parentCategoryExists = await categoryRepository.DoesCategoryExistsAsync(request.ParentCategoryId.Value, cancellationToken);
-            if (!parentCategoryExists)
-            {
-                return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.ParentCategoryNotFound);
-            }
-        }
-
         var entity = mapper.Map<Category>(request);
         var category = await categoryRepository.AddCategoryAsync(entity, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -54,15 +45,6 @@ public class CategoryService(ICategoryRepository categoryRepository, IMapper map
 
     public async Task<ServiceResult> UpdateCategoryAsync(long categoryId, CategoryRequest request, CancellationToken cancellationToken = default)
     {
-        if (request.ParentCategoryId is not null)
-        {
-            var parentCategoryExists = await categoryRepository.DoesCategoryExistsAsync(request.ParentCategoryId.Value, cancellationToken);
-            if (!parentCategoryExists)
-            {
-                return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.ParentCategoryNotFound);
-            }
-        }
-
         var category = await categoryRepository.GetCategoryByIdAsync(categoryId, cancellationToken);
         if (category is null)
         {
@@ -84,7 +66,7 @@ public class CategoryService(ICategoryRepository categoryRepository, IMapper map
             return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.CategoryNotFound);
         }
 
-        var isUsed = await categoryRepository.DoesCategoryUsedInProductsAsync(categoryId, cancellationToken);
+        var isUsed = await categoryRepository.IsCategoryUsedInProductsAsync(categoryId, cancellationToken);
         if (isUsed)
         {
             return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.CategoryInUse);
