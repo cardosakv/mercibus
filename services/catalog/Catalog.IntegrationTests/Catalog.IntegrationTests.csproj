@@ -24,7 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Common\"/>
+        <Folder Include="CategoryTests\"/>
     </ItemGroup>
 
     <ItemGroup>
