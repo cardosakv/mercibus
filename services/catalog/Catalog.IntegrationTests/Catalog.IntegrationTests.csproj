@@ -24,10 +24,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Common\"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\Catalog.Api\Catalog.Api.csproj"/>
         <ProjectReference Include="..\Catalog.Infrastructure\Catalog.Infrastructure.csproj"/>
     </ItemGroup>

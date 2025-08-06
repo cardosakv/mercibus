@@ -25,7 +25,7 @@ public class AddProductAsyncTests(TestWebAppFactory factory) : IClassFixture<Tes
         var testBrand = await dbContext.Brands.AddAsync(new Brand { Name = "Brand 1" });
         await dbContext.SaveChangesAsync();
 
-        var request = new AddProductRequest(
+        var request = new ProductRequest(
             Name: "Product 1",
             Description: "A sample product during testing.",
             Sku: "SKU01",
@@ -67,7 +67,7 @@ public class AddProductAsyncTests(TestWebAppFactory factory) : IClassFixture<Tes
     public async Task ReturnsBadRequest_WhenValidationFails()
     {
         // Arrange
-        var request = new AddProductRequest(
+        var request = new ProductRequest(
             Name: "", // Invalid name
             Description: "A sample product during testing.",
             Sku: "SKU01",

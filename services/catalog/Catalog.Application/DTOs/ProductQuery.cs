@@ -3,7 +3,7 @@ namespace Catalog.Application.DTOs;
 /// <summary>
 /// Represents a query for retrieving products.
 /// </summary>
-public record GetProductsQuery(
+public record ProductQuery(
     long? CategoryId,
     long? BrandId,
     decimal? MinPrice,
