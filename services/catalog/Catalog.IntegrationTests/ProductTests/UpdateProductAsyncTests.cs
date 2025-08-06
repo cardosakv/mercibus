@@ -35,7 +35,7 @@ public class UpdateProductAsyncTests(TestWebAppFactory factory) : IClassFixture<
             });
         await dbContext.SaveChangesAsync();
 
-        var updateRequest = new UpdateProductRequest(
+        var updateRequest = new ProductRequest(
             Name: "Updated Product",
             Description: "Updated description",
             Sku: "SKU-NEW",
@@ -66,7 +66,7 @@ public class UpdateProductAsyncTests(TestWebAppFactory factory) : IClassFixture<
     public async Task ReturnsBadRequest_WhenProductDoesNotExist()
     {
         // Arrange
-        var updateRequest = new UpdateProductRequest(
+        var updateRequest = new ProductRequest(
             Name: "Non-existent Product",
             Description: "Does not exist",
             Sku: "SKU404",
@@ -94,7 +94,7 @@ public class UpdateProductAsyncTests(TestWebAppFactory factory) : IClassFixture<
     public async Task ReturnsBadRequest_WhenUpdateRequestIsInvalid()
     {
         // Arrange
-        var invalidRequest = new UpdateProductRequest(
+        var invalidRequest = new ProductRequest(
             Name: "", // Invalid
             Description: "Desc",
             Sku: "", // Invalid

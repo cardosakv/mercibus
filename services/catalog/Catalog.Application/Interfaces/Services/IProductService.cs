@@ -14,7 +14,7 @@ public interface IProductService
     /// <param name="query">The query parameters for retrieving products.</param>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>Result with a list of <see cref="ProductResponse"/> objects.</returns>
-    Task<ServiceResult> GetProductsAsync(GetProductsQuery query, CancellationToken cancellationToken = default);
+    Task<ServiceResult> GetProductsAsync(ProductQuery query, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Asynchronously adds a new product.
@@ -22,7 +22,7 @@ public interface IProductService
     /// <param name="request">The product data to add.</param>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>Result indicating the outcome of the add operation.</returns>
-    Task<ServiceResult> AddProductAsync(AddProductRequest request, CancellationToken cancellationToken = default);
+    Task<ServiceResult> AddProductAsync(ProductRequest request, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Asynchronously retrieves a product by its unique identifier.
@@ -39,7 +39,7 @@ public interface IProductService
     /// <param name="request">The updated product data.</param>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>Result indicating the outcome of the update operation.</returns>
-    Task<ServiceResult> UpdateProductAsync(long productId, UpdateProductRequest request, CancellationToken cancellationToken = default);
+    Task<ServiceResult> UpdateProductAsync(long productId, ProductRequest request, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Asynchronously deletes an existing product.

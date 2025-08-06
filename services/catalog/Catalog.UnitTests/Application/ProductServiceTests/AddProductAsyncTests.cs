@@ -11,7 +11,7 @@ public class AddProductAsyncTests : BaseTest
     public async Task Success_WhenProductIsAdded()
     {
         // Arrange
-        var request = new AddProductRequest(
+        var request = new ProductRequest(
             Name: "Test Product",
             Description: "Test Description",
             Sku: "TP-001",
@@ -56,7 +56,7 @@ public class AddProductAsyncTests : BaseTest
     public async Task Success_WhenSaveChangesReturnsZero()
     {
         // Arrange
-        var request = new AddProductRequest(
+        var request = new ProductRequest(
             Name: "No Save Product",
             Description: "Test Desc",
             Sku: "NOSAVE-01",
@@ -100,7 +100,7 @@ public class AddProductAsyncTests : BaseTest
     public async Task Throws_WhenAddFails()
     {
         // Arrange
-        var request = new AddProductRequest(
+        var request = new ProductRequest(
             Name: "Broken Product",
             Description: "Fails",
             Sku: "ERR-001",

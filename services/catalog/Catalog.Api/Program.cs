@@ -2,7 +2,6 @@ using Catalog.Api.Extensions;
 using Catalog.Application.Interfaces;
 using Catalog.Application.Interfaces.Repositories;
 using Catalog.Application.Interfaces.Services;
-using Catalog.Application.Mappers;
 using Catalog.Application.Services;
 using Catalog.Application.Validations;
 using Catalog.Infrastructure;
@@ -19,17 +18,19 @@ try
 
     // Add services.
     builder.Services.AddScoped<IProductService, ProductService>();
+    builder.Services.AddScoped<ICategoryService, CategoryService>();
 
     // Add repositories.
     builder.Services.AddScoped<IProductRepository, ProductRepository>();
+    builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
     // Add validators.
-    builder.Services.AddValidatorsFromAssembly(typeof(AddProductRequestValidator).Assembly);
+    builder.Services.AddValidatorsFromAssembly(typeof(ProductRequestValidator).Assembly);
     builder.Services.AddFluentValidationAutoValidation(options =>
         options.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
 
-    // Add auto mapper.
-    builder.Services.AddAutoMapper(config => config.AddProfile<MappingProfile>());
+    // Add mapping.
+    builder.Services.AddMapping();
 
     // Add database context.
     builder.Services.AddDbContext<AppDbContext>(options =>

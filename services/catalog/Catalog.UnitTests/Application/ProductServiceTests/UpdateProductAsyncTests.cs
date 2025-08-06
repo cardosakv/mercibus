@@ -14,7 +14,7 @@ public class UpdateProductAsyncTests : BaseTest
     {
         // Arrange
         long productId = 1;
-        var request = new UpdateProductRequest(
+        var request = new ProductRequest(
             Name: "Updated Product",
             Description: "Updated Desc",
             Sku: "SKU-UPD",
@@ -60,7 +60,7 @@ public class UpdateProductAsyncTests : BaseTest
     {
         // Arrange
         long productId = 999;
-        var request = new UpdateProductRequest(
+        var request = new ProductRequest(
             Name: "Does Not Exist",
             Description: null,
             Sku: "NONE",
@@ -88,7 +88,7 @@ public class UpdateProductAsyncTests : BaseTest
     {
         // Arrange
         long productId = 123;
-        var request = new UpdateProductRequest(
+        var request = new ProductRequest(
             Name: "Error Product",
             Description: "Something bad",
             Sku: "ERR",

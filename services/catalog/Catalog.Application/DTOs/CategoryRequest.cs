@@ -1,10 +1,9 @@
 namespace Catalog.Application.DTOs;
 
 /// <summary>
-/// Represents a category response.
+/// Represents a request to update an existing category.
 /// </summary>
-public record CategoryResponse(
-    long Id,
+public record CategoryRequest(
     long? ParentCategoryId,
     string Name,
     string? Description

@@ -10,8 +10,8 @@ public record ProductResponse(
     decimal Price,
     string Sku,
     int StockQuantity,
-    BrandResponse Brand,
-    CategoryResponse Category,
+    long BrandId,
+    long CategoryId,
     List<ProductImageResponse> Images,
     List<ProductAttributeResponse> Attributes,
     DateTime CreatedAt

@@ -14,7 +14,7 @@ public interface IProductRepository
     /// <param name="query">The query parameters for filtering products.</param>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>A list of matching <see cref="Product"/> entities.</returns>
-    Task<List<Product>> GetProductsAsync(GetProductsQuery query, CancellationToken cancellationToken = default);
+    Task<List<Product>> GetProductsAsync(ProductQuery query, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Adds a new <see cref="Product"/> entity to the repository.

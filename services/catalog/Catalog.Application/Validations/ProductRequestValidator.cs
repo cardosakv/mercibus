@@ -1,12 +1,13 @@
 using Catalog.Application.Common;
 using Catalog.Application.DTOs;
+using Catalog.Application.Interfaces.Repositories;
 using FluentValidation;
 
 namespace Catalog.Application.Validations;
 
-public class AddProductRequestValidator : AbstractValidator<AddProductRequest>
+public class ProductRequestValidator : AbstractValidator<ProductRequest>
 {
-    public AddProductRequestValidator()
+    public ProductRequestValidator(ICategoryRepository categoryRepository)
     {
         RuleFor(x => x.Name)
             .Cascade(CascadeMode.Stop)
@@ -28,5 +29,10 @@ public class AddProductRequestValidator : AbstractValidator<AddProductRequest>
         RuleFor(x => x.StockQuantity)
             .Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage(Constants.ErrorCode.StockQuantityRequired);
+
+        RuleFor(x => x.CategoryId)
+            .Cascade(CascadeMode.Stop)
+            .MustAsync(async (id, cancellationToken) => await categoryRepository.DoesCategoryExistsAsync(id, cancellationToken))
+            .WithMessage(Constants.ErrorCode.CategoryNotFound);
     }
 }
