@@ -1,49 +1,85 @@
 # Mercibus
 
-This is a **practice project** for building an e-commerce backend using a **microservices architecture**. Each service
-is responsible for a distinct domain and communicates via asynchronous messaging and/or HTTP where appropriate.
+**Mercibus** is a **personal practice project** for building an **e-commerce backend** using a **microservices
+architecture**.
 
 ---
 
-## Overview
+## 🗂 Services Overview
 
 ### 🔐 Auth Service
-
 [![Auth Service CI](https://github.com/cardosakv/mercibus/actions/workflows/auth-ci.yml/badge.svg)](https://github.com/cardosakv/mercibus/actions/workflows/auth-ci.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mercibus_auth&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mercibus_auth)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=mercibus_auth&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=mercibus_auth)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=mercibus_auth&metric=coverage)](https://sonarcloud.io/summary/new_code?id=mercibus_auth)
 
-Handles user registration, login, roles, and JWT-based authentication.
+Manages:
+
+- User registration & login
+- Role-based access control
+- JWT authentication & token refresh
+- Email confirmation & password resets
 
 ---
 
-### 🛍️ Product Service
+### 🛍️ Catalog Service
 
-Manages product catalog, categories, and inventory.
+[![Catalog Service CI](https://github.com/cardosakv/mercibus/actions/workflows/catalog-ci.yml/badge.svg)](https://github.com/cardosakv/mercibus/actions/workflows/catalog-ci.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mercibus_catalog&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mercibus_catalog)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=mercibus_catalog&metric=coverage)](https://sonarcloud.io/summary/new_code?id=mercibus_catalog)
 
----
+Handles:
 
-### 📦 Order Service
-
-Handles order placement, tracking, and order history.
-
----
-
-### 💳 Payment Service
-
-Integrates with mock payment processing and manages transactions.
+- Product, brand & category management
+- Product image and attribute definitions
+- Product reviews
 
 ---
 
-### 🛒 Cart Service
+## 📌 Goals of the Project
 
-Manages users' shopping carts and cart items.
+- Learn and apply **microservice design patterns**.
+- Practice **test-driven development** with unit and integration tests.
+- Explore **asynchronous communication** using message brokers.
+- Integrate **CI/CD pipelines** and **code quality checks**.
+
+---
+
+## 📦 Tech Stack
+
+- **.NET 8** (C#) for service implementation
+- **Entity Framework Core** for data access
+- **PostgreSQL** as the main database
+- **RabbitMQ** for message-based communication
+- **Docker & Docker Compose** for containerization
+- **xUnit + Moq + Testcontainers** for testing
+- **SonarCloud** for static analysis & code coverage
+- **GitHub Actions** for CI/CD
 
 ---
 
-### 📣 Notification Service
+## 🚀 Getting Started
 
-Sends email/SMS notifications (e.g., order confirmation).
+### 1️⃣ Clone the repository
 
----
+```bash
+git clone https://github.com/cardosakv/mercibus.git
+```
+
+### 2️⃣ Navigate to a service directory
+
+Example:
+
+```bash
+cd mercibus/services/auth
+```
+
+### 3️⃣ Build and run using Docker Compose in root directory
+
+```bash
+docker-compose up -d
+```
+
+### 4️⃣ Access service APIs
+
+- Auth Service: `http://localhost:<auth_port>/swagger`
+- Catalog Service: `http://localhost:<catalog_port>/swagger`

@@ -31,5 +31,7 @@ public static class Constants
         public const string CategoryNotFound = "category_not_found";
         public const string ParentCategoryNotFound = "parent_category_not_found";
         public const string CategoryInUse = "category_in_use";
+        public const string BrandNotFound = "brand_not_found";
+        public const string BrandInUse = "brand_in_use";
     }
 }

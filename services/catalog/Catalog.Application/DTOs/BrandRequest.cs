@@ -1,10 +1,9 @@
 namespace Catalog.Application.DTOs;
 
 /// <summary>
-/// Represents a brand response.
+/// Represents a request to create or update a brand.
 /// </summary>
-public record BrandResponse(
-    long Id,
+public record BrandRequest(
     string Name,
     string? Description = null,
     string? LogoUrl = null,

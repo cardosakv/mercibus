@@ -1,7 +1,7 @@
 namespace Catalog.Application.DTOs;
 
 /// <summary>
-/// Represents a request to update an existing category.
+/// Represents a request to create or update a category.
 /// </summary>
 public record CategoryRequest(
     long? ParentCategoryId,

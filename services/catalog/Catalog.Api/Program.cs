@@ -19,10 +19,12 @@ try
     // Add services.
     builder.Services.AddScoped<IProductService, ProductService>();
     builder.Services.AddScoped<ICategoryService, CategoryService>();
+    builder.Services.AddScoped<IBrandService, BrandService>();
 
     // Add repositories.
     builder.Services.AddScoped<IProductRepository, ProductRepository>();
     builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+    builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 
     // Add validators.
     builder.Services.AddValidatorsFromAssembly(typeof(ProductRequestValidator).Assembly);
