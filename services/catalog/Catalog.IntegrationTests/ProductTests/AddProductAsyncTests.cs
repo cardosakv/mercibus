@@ -31,6 +31,7 @@ public class AddProductAsyncTests(TestWebAppFactory factory) : IClassFixture<Tes
             Sku: "SKU01",
             Price: 99.99m,
             StockQuantity: 100,
+            Attributes: [],
             testCategory.Entity.Id,
             testBrand.Entity.Id
         );
@@ -73,6 +74,7 @@ public class AddProductAsyncTests(TestWebAppFactory factory) : IClassFixture<Tes
             Sku: "SKU01",
             Price: 99.99m,
             StockQuantity: 100,
+            Attributes: [],
             CategoryId: 1,
             BrandId: 1
         );

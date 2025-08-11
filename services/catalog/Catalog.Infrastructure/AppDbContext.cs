@@ -13,7 +13,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Brand> Brands { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Product> Products { get; set; }
-    public DbSet<ProductAttribute> Attributes { get; set; }
     public DbSet<ProductImage> ProductImages { get; set; }
     public DbSet<ProductReview> Reviews { get; set; }
 
@@ -24,7 +23,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         builder.ApplyConfiguration(new BrandConfiguration());
         builder.ApplyConfiguration(new CategoryConfiguration());
         builder.ApplyConfiguration(new ProductConfiguration());
-        builder.ApplyConfiguration(new ProductAttributeConfiguration());
         builder.ApplyConfiguration(new ProductImageConfiguration());
         builder.ApplyConfiguration(new ProductReviewConfiguration());
     }

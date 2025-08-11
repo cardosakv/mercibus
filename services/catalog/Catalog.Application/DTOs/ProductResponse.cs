@@ -13,6 +13,6 @@ public record ProductResponse(
     long BrandId,
     long CategoryId,
     List<ProductImageResponse> Images,
-    List<ProductAttributeResponse> Attributes,
+    Dictionary<string, string> Attributes,
     DateTime CreatedAt
 );

@@ -11,6 +11,7 @@ using Mercibus.Common.Middlewares;
 using Mercibus.Common.Validations;
 using Microsoft.EntityFrameworkCore;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
+using static Npgsql.NpgsqlConnection;
 
 try
 {
@@ -39,6 +40,7 @@ try
         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
     builder.Services.AddScoped<IAppDbContext>(provider =>
         provider.GetRequiredService<AppDbContext>());
+    GlobalTypeMapper.EnableDynamicJson();
 
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();

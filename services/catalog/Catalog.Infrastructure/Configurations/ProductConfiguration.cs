@@ -30,6 +30,10 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             .IsRequired()
             .HasColumnType("decimal(18,2)");
 
+        builder.Property(x => x.Attributes)
+            .IsRequired()
+            .HasColumnType("jsonb");
+
         builder.HasOne(p => p.Brand)
             .WithMany(b => b.Products)
             .HasForeignKey(p => p.BrandId)
@@ -43,11 +47,6 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.HasMany(p => p.Images)
             .WithOne(i => i.Product)
             .HasForeignKey(i => i.ProductId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasMany(p => p.Attributes)
-            .WithOne(a => a.Product)
-            .HasForeignKey(a => a.ProductId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

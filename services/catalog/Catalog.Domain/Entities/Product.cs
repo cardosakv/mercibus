@@ -58,7 +58,7 @@ public class Product
     /// <summary>
     /// Date and time when the product was created.
     /// </summary>
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>
     /// Collection of images associated with the product.
@@ -68,5 +68,5 @@ public class Product
     /// <summary>
     /// Collection of attributes describing the product.
     /// </summary>
-    public ICollection<ProductAttribute> Attributes { get; set; } = new List<ProductAttribute>();
+    public Dictionary<string, string> Attributes { get; set; } = new();
 }
