@@ -8,7 +8,6 @@ services:
       - '5000:8080'
     environment:
       ConnectionStrings__DefaultConnection: ''
-      ConnectionStrings__BlobStorageConnection: ''
       Jwt__Key: ''
       Email__Server: ''
       Email__Port: ''
@@ -19,13 +18,13 @@ services:
       RedirectUrl__EmailConfirmFail: ''
       RedirectUrl__PasswordReset: ''
     depends_on:
-      - auth-postgres
+      - auth-db
     restart: always
     networks:
       - backend-network
-  
-  auth-postgres:
-    container_name: auth-postgres-container
+
+  auth-db:
+    container_name: auth-db-container
     image: postgres
     ports:
       - '5001:5432'
@@ -34,22 +33,42 @@ services:
       POSTGRES_PASSWORD: ''
       POSTGRES_DB: ''
     volumes:
-      - auth_postgres_data:/var/lib/postgresql/data
+      - auth_db_data:/var/lib/postgresql/data
     networks:
       - backend-network
   
-  blob-storage:
-    container_name: blob-storage-container
-    image: mcr.microsoft.com/azure-storage/azurite
+  catalog-service:
+    container_name: catalog-service-container
+    build:
+      context: ./services/catalog/
+      dockerfile: Catalog.Api/Dockerfile
     ports:
-      - '10000:10000'
-    command: azurite-blob --blobHost 0.0.0.0 --skipApiVersionCheck
+      - '6000:8080'
+    environment:
+      ConnectionStrings__DefaultConnection: ''
+    depends_on:
+      - catalog-db
+    restart: always
+    networks:
+      - backend-network
+
+  catalog-db:
+    container_name: catalog-db-container
+    image: postgres
+    ports:
+      - '6001:5432'
+    environment:
+      POSTGRES_USER: ''
+      POSTGRES_PASSWORD: ''
+      POSTGRES_DB: ''
     volumes:
-      - blob_storage_data:/data
+      - catalog_db_data:/var/lib/postgresql/data
+    networks:
+      - backend-network
 
 volumes:
-  auth_postgres_data:
-  blob_storage_data:
+  auth_db_data:
+  catalog_db_data:
 
 networks:
   backend-network:

@@ -13,12 +13,12 @@
     <PackageOutputPath>.</PackageOutputPath>
     <PackageId>Mercibus.Common</PackageId>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
     <Product>Mercibus.Common</Product>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="8.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="SharpGrip.FluentValidation.AutoValidation.Mvc" Version="1.5.0" />
   </ItemGroup>
 
