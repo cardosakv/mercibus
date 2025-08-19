@@ -8,6 +8,7 @@ services:
       - '5000:8080'
     environment:
       ConnectionStrings__DefaultConnection: ''
+      ConnectionStrings__BlobStorageConnection: ''
       Jwt__Key: ''
       Email__Server: ''
       Email__Port: ''
@@ -36,9 +37,19 @@ services:
       - auth_postgres_data:/var/lib/postgresql/data
     networks:
       - backend-network
+  
+  blob-storage:
+    container_name: blob-storage-container
+    image: mcr.microsoft.com/azure-storage/azurite
+    ports:
+      - '10000:10000'
+    command: azurite-blob --blobHost 0.0.0.0 --skipApiVersionCheck
+    volumes:
+      - blob_storage_data:/data
 
 volumes:
   auth_postgres_data:
+  blob_storage_data:
 
 networks:
   backend-network:
