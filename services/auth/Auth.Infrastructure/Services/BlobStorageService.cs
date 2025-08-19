@@ -1,6 +1,5 @@
 using Auth.Application.Common;
 using Auth.Application.Interfaces.Services;
-using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
 using Microsoft.Extensions.Configuration;
@@ -37,13 +36,7 @@ public class BlobStorageService(IConfiguration configuration) : IBlobStorageServ
 
         builder.SetPermissions(BlobSasPermissions.Read);
 
-        var storageSharedKeyCredential = new StorageSharedKeyCredential(
-            configuration["BlobStorage:AccountName"],
-            configuration["BlobStorage:AccountKey"]
-        );
-
-        var sasToken = builder.ToSasQueryParameters(storageSharedKeyCredential).ToString();
-        var sasUrl = $"{blobClient.Uri}?{sasToken}";
+        var sasUrl = blobClient.GenerateSasUri(builder).ToString();
 
         return Task.FromResult(sasUrl);
     }
