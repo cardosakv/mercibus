@@ -24,6 +24,7 @@ public abstract class BaseTest
         ProductRepositoryMock = new Mock<IProductRepository>();
         MapperMock = new Mock<IMapper>();
         DbContextMock = new Mock<IAppDbContext>();
+        BlobStorageServiceMock = new Mock<IBlobStorageService>();
 
         ProductService = new ProductService(ProductRepositoryMock.Object, BlobStorageServiceMock.Object, MapperMock.Object, DbContextMock.Object);
     }
