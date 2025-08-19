@@ -6,6 +6,7 @@ using Catalog.Application.Services;
 using Catalog.Application.Validations;
 using Catalog.Infrastructure;
 using Catalog.Infrastructure.Repositories;
+using Catalog.Infrastructure.Services;
 using FluentValidation;
 using Mercibus.Common.Middlewares;
 using Mercibus.Common.Validations;
@@ -21,6 +22,7 @@ try
     builder.Services.AddScoped<IProductService, ProductService>();
     builder.Services.AddScoped<ICategoryService, CategoryService>();
     builder.Services.AddScoped<IBrandService, BrandService>();
+    builder.Services.AddScoped<IBlobStorageService, BlobStorageService>();
 
     // Add repositories.
     builder.Services.AddScoped<IProductRepository, ProductRepository>();
