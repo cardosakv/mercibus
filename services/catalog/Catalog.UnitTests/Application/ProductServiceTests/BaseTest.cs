@@ -15,6 +15,7 @@ public abstract class BaseTest
     protected readonly IProductService ProductService;
 
     protected readonly Mock<IProductRepository> ProductRepositoryMock;
+    protected readonly Mock<IBlobStorageService> BlobStorageServiceMock;
     protected readonly Mock<IMapper> MapperMock;
     protected readonly Mock<IAppDbContext> DbContextMock;
 
@@ -24,6 +25,6 @@ public abstract class BaseTest
         MapperMock = new Mock<IMapper>();
         DbContextMock = new Mock<IAppDbContext>();
 
-        ProductService = new ProductService(ProductRepositoryMock.Object, MapperMock.Object, DbContextMock.Object);
+        ProductService = new ProductService(ProductRepositoryMock.Object, BlobStorageServiceMock.Object, MapperMock.Object, DbContextMock.Object);
     }
 }

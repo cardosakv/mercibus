@@ -5,18 +5,19 @@ services:
       context: ./services/auth/
       dockerfile: Auth.Api/Dockerfile
     ports:
-      - '5000:8080'
+      - '9090:8080'
     environment:
-      ConnectionStrings__DefaultConnection: ''
-      Jwt__Key: ''
-      Email__Server: ''
-      Email__Port: ''
-      Email__Sender: ''
-      Email__Username: ''
-      Email__Password: ''
-      RedirectUrl__EmailConfirmSuccess: ''
-      RedirectUrl__EmailConfirmFail: ''
-      RedirectUrl__PasswordReset: ''
+      ConnectionStrings__DefaultConnection: ${AUTH_DB_CONN}
+      ConnectionStrings__BlobStorageConnection: ${BLOB_CONN}
+      Jwt__Key: ${JWT_KEY}
+      Email__Server: ${EMAIL_SERVER}
+      Email__Port: ${EMAIL_PORT}
+      Email__Sender: ${EMAIL_SENDER}
+      Email__Username: ${EMAIL_USERNAME}
+      Email__Password: ${EMAIL_PASSWORD}
+      RedirectUrl__EmailConfirmSuccess: ${EMAIL_CONFIRM_SUCCESS}
+      RedirectUrl__EmailConfirmFail: ${EMAIL_CONFIRM_FAIL}
+      RedirectUrl__PasswordReset: ${PASSWORD_RESET_URL}
     depends_on:
       - auth-db
     restart: always
@@ -29,9 +30,9 @@ services:
     ports:
       - '5001:5432'
     environment:
-      POSTGRES_USER: ''
-      POSTGRES_PASSWORD: ''
-      POSTGRES_DB: ''
+      POSTGRES_USER: ${AUTH_DB_USER}
+      POSTGRES_PASSWORD: ${AUTH_DB_PASS}
+      POSTGRES_DB: ${AUTH_DB_NAME}
     volumes:
       - auth_db_data:/var/lib/postgresql/data
     networks:
@@ -43,9 +44,10 @@ services:
       context: ./services/catalog/
       dockerfile: Catalog.Api/Dockerfile
     ports:
-      - '6000:8080'
+      - '9091:8080'
     environment:
-      ConnectionStrings__DefaultConnection: ''
+      ConnectionStrings__DefaultConnection: ${CATALOG_DB_CONN}
+      ConnectionStrings__BlobStorageConnection: ${BLOB_CONN}
     depends_on:
       - catalog-db
     restart: always
@@ -56,19 +58,29 @@ services:
     container_name: catalog-db-container
     image: postgres
     ports:
-      - '6001:5432'
+      - '5002:5432'
     environment:
-      POSTGRES_USER: ''
-      POSTGRES_PASSWORD: ''
-      POSTGRES_DB: ''
+      POSTGRES_USER: ${CATALOG_DB_USER}
+      POSTGRES_PASSWORD: ${CATALOG_DB_PASS}
+      POSTGRES_DB: ${CATALOG_DB_NAME}
     volumes:
       - catalog_db_data:/var/lib/postgresql/data
     networks:
       - backend-network
+  
+  blob-storage:
+    container_name: blob-storage-container
+    image: mcr.microsoft.com/azure-storage/azurite
+    ports:
+      - '10000:10000'
+    command: azurite-blob --blobHost 0.0.0.0 --skipApiVersionCheck
+    volumes:
+      - blob_storage_data:/data
 
 volumes:
   auth_db_data:
   catalog_db_data:
+  blob_storage_data:
 
 networks:
   backend-network:
