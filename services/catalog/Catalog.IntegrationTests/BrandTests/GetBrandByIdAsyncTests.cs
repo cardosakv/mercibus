@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Catalog.Application.Common;
 using Catalog.Application.DTOs;
 using Catalog.Domain.Entities;
+using Catalog.IntegrationTests.Common;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
@@ -13,7 +14,7 @@ namespace Catalog.IntegrationTests.BrandTests;
 /// <summary>
 /// Integration tests for retrieving a brand by ID.
 /// </summary>
-public class GetBrandByIdAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
+public class GetBrandByIdAsyncTests(DbWebAppFactory factory) : IClassFixture<DbWebAppFactory>
 {
     private const string GetBrandByIdUrl = "api/brands/";
 

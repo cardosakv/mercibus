@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Catalog.Application.DTOs;
 using Catalog.Domain.Entities;
+using Catalog.IntegrationTests.Common;
 using FluentAssertions;
 using Mercibus.Common.Responses;
 using Newtonsoft.Json;
@@ -11,7 +12,7 @@ namespace Catalog.IntegrationTests.BrandTests;
 /// <summary>
 /// Integration tests for retrieving brands.
 /// </summary>
-public class GetBrandsAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
+public class GetBrandsAsyncTests(DbWebAppFactory factory) : IClassFixture<DbWebAppFactory>
 {
     private const string GetBrandsUrl = "api/brands";
 

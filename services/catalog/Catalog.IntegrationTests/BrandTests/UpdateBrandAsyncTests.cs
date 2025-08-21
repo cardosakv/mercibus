@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Catalog.Application.Common;
 using Catalog.Application.DTOs;
 using Catalog.Domain.Entities;
+using Catalog.IntegrationTests.Common;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.IntegrationTests.BrandTests;
 
-public class UpdateBrandAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
+public class UpdateBrandAsyncTests(DbWebAppFactory factory) : IClassFixture<DbWebAppFactory>
 {
     private const string UpdateBrandUrl = "api/brands/";
 

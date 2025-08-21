@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Catalog.Application.Common;
 using Catalog.Domain.Entities;
+using Catalog.IntegrationTests.Common;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
@@ -11,7 +12,7 @@ namespace Catalog.IntegrationTests.BrandTests;
 /// <summary>
 /// Integration tests for deleting a brand.
 /// </summary>
-public class DeleteBrandAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
+public class DeleteBrandAsyncTests(DbWebAppFactory factory) : IClassFixture<DbWebAppFactory>
 {
     private const string DeleteBrandUrl = "api/brands/";
 

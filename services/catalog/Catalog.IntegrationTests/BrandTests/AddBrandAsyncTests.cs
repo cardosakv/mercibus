@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Catalog.Application.DTOs;
+using Catalog.IntegrationTests.Common;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
@@ -11,7 +12,7 @@ namespace Catalog.IntegrationTests.BrandTests;
 /// <summary>
 /// Integration tests for adding a brand.
 /// </summary>
-public class AddBrandAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
+public class AddBrandAsyncTests(DbWebAppFactory factory) : IClassFixture<DbWebAppFactory>
 {
     private const string AddBrandUrl = "api/Brands";
 

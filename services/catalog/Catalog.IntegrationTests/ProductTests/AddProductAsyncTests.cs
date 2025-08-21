@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Catalog.Application.DTOs;
 using Catalog.Domain.Entities;
+using Catalog.IntegrationTests.Common;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
@@ -12,7 +13,7 @@ namespace Catalog.IntegrationTests.ProductTests;
 /// <summary>
 /// Integration tests for adding a product.
 /// </summary>
-public class AddProductAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
+public class AddProductAsyncTests(DbWebAppFactory factory) : IClassFixture<DbWebAppFactory>
 {
     private const string AddProductUrl = "api/Products";
 
