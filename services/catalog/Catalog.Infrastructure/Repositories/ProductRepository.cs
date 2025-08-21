@@ -49,6 +49,7 @@ public class ProductRepository(AppDbContext dbContext) : IProductRepository
         return products
             .Skip((query.Page - 1) * query.PageSize)
             .Take(query.PageSize)
+            .Include(p => p.Images)
             .ToListAsync(cancellationToken);
     }
 
@@ -62,6 +63,7 @@ public class ProductRepository(AppDbContext dbContext) : IProductRepository
     {
         return dbContext.Products
             .AsNoTracking()
+            .Include(p => p.Images)
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
 
@@ -74,6 +76,25 @@ public class ProductRepository(AppDbContext dbContext) : IProductRepository
     public Task DeleteProductAsync(Product product, CancellationToken cancellationToken = default)
     {
         dbContext.Products.Remove(product);
+        return Task.CompletedTask;
+    }
+
+    public Task<ProductImage?> GetProductImageByIdAsync(long id, CancellationToken cancellationToken = default)
+    {
+        return dbContext.ProductImages
+            .AsNoTracking()
+            .FirstOrDefaultAsync(pi => pi.Id == id, cancellationToken);
+    }
+
+    public Task<ProductImage> AddProductImageAsync(ProductImage productImage, CancellationToken cancellationToken = default)
+    {
+        var entry = dbContext.ProductImages.Add(productImage);
+        return Task.FromResult(entry.Entity);
+    }
+
+    public Task DeleteProductImageAsync(ProductImage productImage, CancellationToken cancellationToken = default)
+    {
+        dbContext.ProductImages.Remove(productImage);
         return Task.CompletedTask;
     }
 }

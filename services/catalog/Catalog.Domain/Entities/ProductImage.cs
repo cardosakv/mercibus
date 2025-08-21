@@ -8,7 +8,7 @@ public class ProductImage
     /// <summary>
     /// Unique identifier for the image.
     /// </summary>
-    public required long Id { get; set; }
+    public long Id { get; set; }
 
     /// <summary>
     /// Foreign key for the related product.

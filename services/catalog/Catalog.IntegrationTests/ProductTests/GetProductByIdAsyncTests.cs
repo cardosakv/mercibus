@@ -1,16 +1,19 @@
-using System.Net;
-using System.Net.Http.Json;
 using Catalog.Application.Common;
 using Catalog.Application.DTOs;
+using Catalog.Application.Interfaces.Services;
 using Catalog.Domain.Entities;
+using Catalog.IntegrationTests.Common;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using System.Net;
+using System.Net.Http.Json;
 
 namespace Catalog.IntegrationTests.ProductTests;
 
-public class GetProductByIdAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
+public class GetProductByIdAsyncTests(BlobWebAppFactory factory) : IClassFixture<BlobWebAppFactory>
 {
     private const string GetProductByIdUrl = "api/Products/";
 
@@ -32,6 +35,19 @@ public class GetProductByIdAsyncTests(TestWebAppFactory factory) : IClassFixture
                 StockQuantity = 100,
                 CategoryId = testCategory.Entity.Id,
                 BrandId = testBrand.Entity.Id
+            });
+        await dbContext.SaveChangesAsync();
+
+        const string blobName = "product.png";
+        var blobStorageService = factory.Services.CreateScope().ServiceProvider.GetRequiredService<IBlobStorageService>();
+        await blobStorageService.UploadFileAsync(blobName, fileStream: new MemoryStream([0xFF, 0xD8, 0xFF, 0xE0]));
+
+        await dbContext.ProductImages.AddAsync(
+            new ProductImage
+            {
+                ProductId = testProduct.Entity.Id,
+                ImageUrl = Path.Combine(Constants.BlobStorage.ProductImagesContainer, blobName),
+                IsPrimary = true
             });
         await dbContext.SaveChangesAsync();
 

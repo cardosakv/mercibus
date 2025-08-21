@@ -2,13 +2,14 @@ using System.Net;
 using System.Net.Http.Json;
 using Catalog.Application.Common;
 using Catalog.Domain.Entities;
+using Catalog.IntegrationTests.Common;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
 
 namespace Catalog.IntegrationTests.ProductTests;
 
-public class DeleteProductAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
+public class DeleteProductAsyncTests(DbWebAppFactory factory) : IClassFixture<DbWebAppFactory>
 {
     private const string DeleteProductUrl = "api/products/";
 

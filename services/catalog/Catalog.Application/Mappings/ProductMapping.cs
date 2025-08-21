@@ -30,6 +30,7 @@ public class ProductMapping
             .Map(dest => dest.Price, src => src.Price)
             .Map(dest => dest.Sku, src => src.Sku)
             .Map(dest => dest.StockQuantity, src => src.StockQuantity)
+            .Map(dest => dest.Attributes, src => src.Attributes)
             .Map(dest => dest.BrandId, src => src.BrandId)
             .Map(dest => dest.CategoryId, src => src.CategoryId);
     }

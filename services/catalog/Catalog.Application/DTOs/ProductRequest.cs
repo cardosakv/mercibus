@@ -9,6 +9,7 @@ public record ProductRequest(
     string Sku,
     decimal Price,
     int StockQuantity,
+    Dictionary<string, string> Attributes,
     long CategoryId,
     long BrandId
 );

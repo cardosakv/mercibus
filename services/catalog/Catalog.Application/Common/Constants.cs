@@ -33,5 +33,13 @@ public static class Constants
         public const string CategoryInUse = "category_in_use";
         public const string BrandNotFound = "brand_not_found";
         public const string BrandInUse = "brand_in_use";
+        public const string ImageNotFound = "image_not_found";
+        public const string ImageNotInProduct = "image_not_in_product";
+    }
+
+    public static class BlobStorage
+    {
+        public const string ProductImagesContainer = "product-images";
+        public const int BlobTokenExpirationHours = 2;
     }
 }

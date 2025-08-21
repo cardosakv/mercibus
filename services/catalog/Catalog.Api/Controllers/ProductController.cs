@@ -43,4 +43,19 @@ public class ProductController(IProductService productService) : BaseController
         var response = await productService.DeleteProductAsync(id, cancellationToken);
         return Ok(response);
     }
+
+    [HttpPost("{productId:long}/images")]
+    public async Task<IActionResult> AddProductImageAsync(long productId, [FromForm] ProductImageRequest request,
+        CancellationToken cancellationToken)
+    {
+        var response = await productService.AddProductImageAsync(productId, request, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpDelete("{productId:long}/images/{imageId:long}")]
+    public async Task<IActionResult> DeleteProductImageAsync(long productId, long imageId, CancellationToken cancellationToken)
+    {
+        var response = await productService.DeleteProductImageAsync(productId, imageId, cancellationToken);
+        return Ok(response);
+    }
 }

@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Catalog.Application.Common;
 using Catalog.Application.DTOs;
 using Catalog.Domain.Entities;
+using Catalog.IntegrationTests.Common;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
@@ -13,7 +14,7 @@ namespace Catalog.IntegrationTests.CategoryTests;
 /// <summary>
 /// Integration tests for retrieving a category by ID.
 /// </summary>
-public class GetCategoryByIdAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
+public class GetCategoryByIdAsyncTests(DbWebAppFactory factory) : IClassFixture<DbWebAppFactory>
 {
     private const string GetCategoryByIdUrl = "api/categories/";
 

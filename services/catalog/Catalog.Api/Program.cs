@@ -6,11 +6,13 @@ using Catalog.Application.Services;
 using Catalog.Application.Validations;
 using Catalog.Infrastructure;
 using Catalog.Infrastructure.Repositories;
+using Catalog.Infrastructure.Services;
 using FluentValidation;
 using Mercibus.Common.Middlewares;
 using Mercibus.Common.Validations;
 using Microsoft.EntityFrameworkCore;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
+using static Npgsql.NpgsqlConnection;
 
 try
 {
@@ -20,6 +22,7 @@ try
     builder.Services.AddScoped<IProductService, ProductService>();
     builder.Services.AddScoped<ICategoryService, CategoryService>();
     builder.Services.AddScoped<IBrandService, BrandService>();
+    builder.Services.AddScoped<IBlobStorageService, BlobStorageService>();
 
     // Add repositories.
     builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -39,6 +42,7 @@ try
         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
     builder.Services.AddScoped<IAppDbContext>(provider =>
         provider.GetRequiredService<AppDbContext>());
+    GlobalTypeMapper.EnableDynamicJson();
 
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();

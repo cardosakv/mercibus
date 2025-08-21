@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Catalog.Application.DTOs;
 using Catalog.Domain.Entities;
+using Catalog.IntegrationTests.Common;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.IntegrationTests.ProductTests;
 
-public class UpdateProductAsyncTests(TestWebAppFactory factory) : IClassFixture<TestWebAppFactory>
+public class UpdateProductAsyncTests(DbWebAppFactory factory) : IClassFixture<DbWebAppFactory>
 {
     private const string UpdateProductUrl = "api/products/";
 
@@ -41,6 +42,7 @@ public class UpdateProductAsyncTests(TestWebAppFactory factory) : IClassFixture<
             Sku: "SKU-NEW",
             Price: 75,
             StockQuantity: 20,
+            Attributes: [],
             category.Entity.Id,
             brand.Entity.Id
         );
@@ -72,6 +74,7 @@ public class UpdateProductAsyncTests(TestWebAppFactory factory) : IClassFixture<
             Sku: "SKU404",
             Price: 10,
             StockQuantity: 0,
+            Attributes: [],
             CategoryId: 1,
             BrandId: 1
         );
@@ -100,6 +103,7 @@ public class UpdateProductAsyncTests(TestWebAppFactory factory) : IClassFixture<
             Sku: "", // Invalid
             Price: -99.99m, // Invalid
             StockQuantity: -5, // Invalid
+            Attributes: [],
             CategoryId: 0, // Invalid
             BrandId: 0 // Invalid
         );

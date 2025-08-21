@@ -5,12 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.PostgreSql;
 
-namespace Catalog.IntegrationTests;
+namespace Catalog.IntegrationTests.Common;
 
 /// <summary>
-/// A custom WebApplicationFactory for integration tests.
+/// A custom WebApplicationFactory for integration tests with database only.
 /// </summary>
-public class TestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
+public class DbWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly PostgreSqlContainer _postgresContainer = new PostgreSqlBuilder()
         .WithImage("postgres:latest")
