@@ -112,7 +112,7 @@ public class ProductService(IProductRepository productRepository, IBlobStorageSe
         var fileName = Guid.NewGuid().ToString();
         var fileExtension = Path.GetExtension(request.Image.FileName);
         var blobName = $"{fileName}{fileExtension}";
-        await blobStorageService.UploadFileAsync(fileName, fileStream: request.Image.OpenReadStream());
+        await blobStorageService.UploadFileAsync(blobName, fileStream: request.Image.OpenReadStream());
 
         var productImage = mapper.Map<ProductImage>(request);
         productImage.ImageUrl = Path.Combine(Constants.BlobStorage.ProductImagesContainer, blobName);
