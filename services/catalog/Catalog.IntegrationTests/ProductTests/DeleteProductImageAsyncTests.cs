@@ -1,15 +1,17 @@
 using System.Net;
 using System.Net.Http.Json;
 using Catalog.Application.Common;
+using Catalog.Application.Interfaces.Services;
 using Catalog.Domain.Entities;
 using Catalog.IntegrationTests.Common;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Catalog.IntegrationTests.ProductTests;
 
-public class DeleteProductImageAsyncTests(DbWebAppFactory factory) : IClassFixture<DbWebAppFactory>
+public class DeleteProductImageAsyncTests(BlobWebAppFactory factory) : IClassFixture<BlobWebAppFactory>
 {
     private const string DeleteProductImageUrl = "api/products/";
 
@@ -36,11 +38,15 @@ public class DeleteProductImageAsyncTests(DbWebAppFactory factory) : IClassFixtu
             });
         await dbContext.SaveChangesAsync();
 
+        const string blobName = "delete.png";
+        var blobStorageService = factory.Services.CreateScope().ServiceProvider.GetRequiredService<IBlobStorageService>();
+        await blobStorageService.UploadFileAsync(blobName, fileStream: new MemoryStream([0xFF, 0xD8, 0xFF, 0xE0]));
+
         var productImage = await dbContext.ProductImages.AddAsync(
             new ProductImage
             {
                 ProductId = product.Entity.Id,
-                ImageUrl = $"{Constants.BlobStorage.ProductImagesContainer}/delete.png",
+                ImageUrl = blobName,
                 AltText = "to delete",
                 IsPrimary = true
             });
