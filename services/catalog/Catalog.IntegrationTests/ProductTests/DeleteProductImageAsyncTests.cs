@@ -46,7 +46,7 @@ public class DeleteProductImageAsyncTests(BlobWebAppFactory factory) : IClassFix
             new ProductImage
             {
                 ProductId = product.Entity.Id,
-                ImageUrl = blobName,
+                ImageUrl = Path.Combine(Constants.BlobStorage.ProductImagesContainer, blobName),
                 AltText = "to delete",
                 IsPrimary = true
             });

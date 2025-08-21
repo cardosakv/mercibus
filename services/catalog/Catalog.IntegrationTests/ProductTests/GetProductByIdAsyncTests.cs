@@ -46,7 +46,7 @@ public class GetProductByIdAsyncTests(BlobWebAppFactory factory) : IClassFixture
             new ProductImage
             {
                 ProductId = testProduct.Entity.Id,
-                ImageUrl = blobName,
+                ImageUrl = Path.Combine(Constants.BlobStorage.ProductImagesContainer, blobName),
                 IsPrimary = true
             });
         await dbContext.SaveChangesAsync();
