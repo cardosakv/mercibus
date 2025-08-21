@@ -37,17 +37,15 @@ public class BlobWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
             }
 
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(_postgresContainer.GetConnectionString()));
+        });
 
-            builder.ConfigureAppConfiguration((_, config) =>
-            {
-                config.AddInMemoryCollection(
-                    new Dictionary<string, string>
-                    {
-                        { "ConnectionStrings:BlobStorageConnection", _azuriteContainer.GetConnectionString() },
-                        { "BlobStorage:AccountName", "devstoreaccount1" },
-                        { "BlobStorage:AccountKey", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==" }
-                    }!);
-            });
+        builder.ConfigureAppConfiguration((_, config) =>
+        {
+            config.AddInMemoryCollection(
+                new Dictionary<string, string>
+                {
+                    { "ConnectionStrings:BlobStorageConnection", _azuriteContainer.GetConnectionString() }
+                }!);
         });
     }
 
