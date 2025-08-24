@@ -24,12 +24,14 @@ try
     builder.Services.AddScoped<IBrandService, BrandService>();
     builder.Services.AddScoped<IBlobStorageService, BlobStorageService>();
     builder.Services.AddScoped<IProductImageService, ProductImageService>();
+    builder.Services.AddScoped<IProductReviewService, ProductReviewService>();
 
     // Add repositories.
     builder.Services.AddScoped<IProductRepository, ProductRepository>();
     builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
     builder.Services.AddScoped<IBrandRepository, BrandRepository>();
     builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
+    builder.Services.AddScoped<IProductReviewRepository, ProductReviewRepository>();
 
     // Add validators.
     builder.Services.AddValidatorsFromAssembly(typeof(ProductRequestValidator).Assembly);
