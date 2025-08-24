@@ -11,7 +11,7 @@ using Mercibus.Common.Services;
 
 namespace Catalog.Application.Services;
 
-public class ProductService(IProductRepository productRepository, IProductImageRepository productImageRepository, IBlobStorageService blobStorageService, IMapper mapper, IAppDbContext dbContext)
+public class ProductService(IProductRepository productRepository, IBlobStorageService blobStorageService, IMapper mapper, IAppDbContext dbContext)
     : BaseService, IProductService
 {
     public async Task<ServiceResult> GetProductsAsync(ProductQuery query, CancellationToken cancellationToken = default)
