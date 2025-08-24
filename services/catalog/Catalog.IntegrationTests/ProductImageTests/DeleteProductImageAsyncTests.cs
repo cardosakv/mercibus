@@ -9,7 +9,7 @@ using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Catalog.IntegrationTests.ProductTests;
+namespace Catalog.IntegrationTests.ProductImageTests;
 
 public class DeleteProductImageAsyncTests(BlobWebAppFactory factory) : IClassFixture<BlobWebAppFactory>
 {

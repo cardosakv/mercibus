@@ -7,7 +7,7 @@ namespace Catalog.Api.Controllers;
 
 [Route("api/products")]
 [ApiController]
-public class ProductController(IProductService productService) : BaseController
+public class ProductController(IProductService productService, IProductImageService productImageService) : BaseController
 {
     [HttpGet]
     public async Task<IActionResult> GetProductsAsync([FromQuery] ProductQuery query, CancellationToken cancellationToken)
@@ -48,14 +48,14 @@ public class ProductController(IProductService productService) : BaseController
     public async Task<IActionResult> AddProductImageAsync(long productId, [FromForm] ProductImageRequest request,
         CancellationToken cancellationToken)
     {
-        var response = await productService.AddProductImageAsync(productId, request, cancellationToken);
+        var response = await productImageService.AddProductImageAsync(productId, request, cancellationToken);
         return Ok(response);
     }
 
     [HttpDelete("{productId:long}/images/{imageId:long}")]
     public async Task<IActionResult> DeleteProductImageAsync(long productId, long imageId, CancellationToken cancellationToken)
     {
-        var response = await productService.DeleteProductImageAsync(productId, imageId, cancellationToken);
+        var response = await productImageService.DeleteProductImageAsync(productId, imageId, cancellationToken);
         return Ok(response);
     }
 }

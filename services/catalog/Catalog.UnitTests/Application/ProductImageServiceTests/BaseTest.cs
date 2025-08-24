@@ -5,14 +5,14 @@ using Catalog.Application.Services;
 using MapsterMapper;
 using Moq;
 
-namespace Catalog.UnitTests.Application.ProductServiceTests;
+namespace Catalog.UnitTests.Application.ProductImageServiceTests;
 
 /// <summary>
-/// Base class for unit tests in the product service.
+///     Base class for unit tests in the product image service.
 /// </summary>
 public abstract class BaseTest
 {
-    protected readonly IProductService ProductService;
+    protected readonly IProductImageService ProductImageService;
 
     protected readonly Mock<IProductRepository> ProductRepositoryMock;
     protected readonly Mock<IProductImageRepository> ProductImageRepositoryMock;
@@ -28,6 +28,6 @@ public abstract class BaseTest
         DbContextMock = new Mock<IAppDbContext>();
         BlobStorageServiceMock = new Mock<IBlobStorageService>();
 
-        ProductService = new ProductService(ProductRepositoryMock.Object, ProductImageRepositoryMock.Object, BlobStorageServiceMock.Object, MapperMock.Object, DbContextMock.Object);
+        ProductImageService = new ProductImageService(ProductRepositoryMock.Object, ProductImageRepositoryMock.Object, DbContextMock.Object, BlobStorageServiceMock.Object, MapperMock.Object);
     }
 }
