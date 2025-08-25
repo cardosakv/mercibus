@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Catalog.Domain.Entities;
 
 /// <summary>
@@ -18,6 +20,7 @@ public class ProductImage
     /// <summary>
     /// Product that this image belongs to.
     /// </summary>
+    [JsonIgnore]
     public Product Product { get; set; } = null!;
 
     /// <summary>

@@ -11,24 +11,16 @@ using Mercibus.Common.Services;
 
 namespace Catalog.Application.Services;
 
-public class ProductService(IProductRepository productRepository, IBlobStorageService blobStorageService, IMapper mapper, IAppDbContext dbContext)
+public class ProductService(IProductRepository productRepository, IBlobStorageService blobStorageService, IMapper mapper, IAppDbContext dbContext, ICacheService cacheService)
     : BaseService, IProductService
 {
     public async Task<ServiceResult> GetProductsAsync(ProductQuery query, CancellationToken cancellationToken = default)
     {
         var productList = await productRepository.GetProductsAsync(query, cancellationToken);
 
-        foreach (var product in productList)
+        foreach (var image in productList.SelectMany(product => product.Images))
         {
-            foreach (var image in product.Images)
-            {
-                if (image.ImageUrl.StartsWith(Constants.BlobStorage.ProductImagesContainer))
-                {
-                    var blobName = image.ImageUrl[(Constants.BlobStorage.ProductImagesContainer.Length + 1)..];
-                    var sasTokenExpiryOffset = DateTimeOffset.UtcNow.AddHours(Constants.BlobStorage.BlobTokenExpirationHours);
-                    image.ImageUrl = await blobStorageService.GenerateBlobUrlAsync(blobName, sasTokenExpiryOffset);
-                }
-            }
+            await ReplaceImageUrlWithToken(image);
         }
 
         var response = mapper.Map<List<ProductResponse>>(productList);
@@ -49,20 +41,21 @@ public class ProductService(IProductRepository productRepository, IBlobStorageSe
 
     public async Task<ServiceResult> GetProductByIdAsync(long productId, CancellationToken cancellationToken = default)
     {
-        var product = await productRepository.GetProductByIdAsync(productId, cancellationToken);
+        var product = await cacheService.GetAsync<Product>(Constants.Redis.ProductPrefix + productId);
         if (product is null)
         {
-            return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.ProductNotFound);
+            product = await productRepository.GetProductByIdAsync(productId, cancellationToken);
+            if (product is null)
+            {
+                return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.ProductNotFound);
+            }
+
+            await cacheService.SetAsync(key: Constants.Redis.ProductPrefix + productId, product, Constants.Redis.CacheExpiration);
         }
 
         foreach (var image in product.Images)
         {
-            if (image.ImageUrl.StartsWith(Constants.BlobStorage.ProductImagesContainer))
-            {
-                var blobName = image.ImageUrl[(Constants.BlobStorage.ProductImagesContainer.Length + 1)..];
-                var sasTokenExpiryOffset = DateTimeOffset.UtcNow.AddHours(Constants.BlobStorage.BlobTokenExpirationHours);
-                image.ImageUrl = await blobStorageService.GenerateBlobUrlAsync(blobName, sasTokenExpiryOffset);
-            }
+            await ReplaceImageUrlWithToken(image);
         }
 
         var response = mapper.Map<ProductResponse>(product);
@@ -82,6 +75,7 @@ public class ProductService(IProductRepository productRepository, IBlobStorageSe
 
         await productRepository.UpdateProductAsync(product, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
+        await cacheService.RemoveAsync(Constants.Redis.ProductPrefix + productId);
 
         return Success();
     }
@@ -96,7 +90,18 @@ public class ProductService(IProductRepository productRepository, IBlobStorageSe
 
         await productRepository.DeleteProductAsync(product, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
+        await cacheService.RemoveAsync(Constants.Redis.ProductPrefix + productId);
 
         return Success();
+    }
+
+    private async Task ReplaceImageUrlWithToken(ProductImage image)
+    {
+        if (image.ImageUrl.StartsWith(Constants.BlobStorage.ProductImagesContainer))
+        {
+            var blobName = image.ImageUrl[(Constants.BlobStorage.ProductImagesContainer.Length + 1)..];
+            var sasTokenExpiryOffset = DateTimeOffset.UtcNow.AddHours(Constants.BlobStorage.BlobTokenExpirationHours);
+            image.ImageUrl = await blobStorageService.GenerateBlobUrlAsync(blobName, sasTokenExpiryOffset);
+        }
     }
 }

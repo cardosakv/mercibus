@@ -14,7 +14,7 @@ namespace Catalog.Application.Services;
 /// <summary>
 ///     Service for managing product reviews.
 /// </summary>
-public class ProductReviewService(IProductReviewRepository reviewRepository, IProductRepository productRepository, IMapper mapper, IAppDbContext dbContext)
+public class ProductReviewService(IProductReviewRepository reviewRepository, IProductRepository productRepository, IMapper mapper, IAppDbContext dbContext, ICacheService cacheService)
     : BaseService, IProductReviewService
 {
     public async Task<ServiceResult> GetProductReviewsAsync(long productId, ProductReviewQuery query, CancellationToken cancellationToken = default)
@@ -33,10 +33,16 @@ public class ProductReviewService(IProductReviewRepository reviewRepository, IPr
 
     public async Task<ServiceResult> GetProductReviewByIdAsync(long productId, long reviewId, CancellationToken cancellationToken = default)
     {
-        var review = await reviewRepository.GetProductReviewByIdAsync(reviewId, cancellationToken);
-        if (review is null || review.ProductId != productId)
+        var review = await cacheService.GetAsync<ProductReview>(Constants.Redis.ProductPrefix + productId + Constants.Redis.ReviewPrefix + reviewId);
+        if (review is null)
         {
-            return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.ReviewNotFound);
+            review = await reviewRepository.GetProductReviewByIdAsync(reviewId, cancellationToken);
+            if (review is null || review.ProductId != productId)
+            {
+                return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.ReviewNotFound);
+            }
+
+            await cacheService.SetAsync(key: Constants.Redis.ProductPrefix + productId + Constants.Redis.ReviewPrefix + reviewId, review, Constants.Redis.CacheExpiration);
         }
 
         var response = mapper.Map<ProductReviewResponse>(review);
@@ -79,6 +85,7 @@ public class ProductReviewService(IProductReviewRepository reviewRepository, IPr
 
         await reviewRepository.UpdateProductReviewAsync(review, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
+        await cacheService.RemoveAsync(Constants.Redis.ProductPrefix + productId + Constants.Redis.ReviewPrefix + reviewId);
 
         var response = mapper.Map<ProductReviewResponse>(review);
         return Success(response);
@@ -94,6 +101,7 @@ public class ProductReviewService(IProductReviewRepository reviewRepository, IPr
 
         await reviewRepository.DeleteProductReviewAsync(review, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
+        await cacheService.RemoveAsync(Constants.Redis.ProductPrefix + productId + Constants.Redis.ReviewPrefix + reviewId);
 
         return Success();
     }
