@@ -3,7 +3,7 @@ using Catalog.Domain.Entities;
 using FluentAssertions;
 using Moq;
 
-namespace Catalog.UnitTests.Application.ProductServiceTests;
+namespace Catalog.UnitTests.Application.ProductImageServiceTests;
 
 public class DeleteProductImageAsyncTests : BaseTest
 {
@@ -25,13 +25,13 @@ public class DeleteProductImageAsyncTests : BaseTest
         ProductRepositoryMock
             .Setup(r => r.GetProductByIdAsync(productId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(product);
-        ProductRepositoryMock
+        ProductImageRepositoryMock
             .Setup(r => r.GetProductImageByIdAsync(imageId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(productImage);
         BlobStorageServiceMock
             .Setup(b => b.DeleteBlobAsync(productImage.ImageUrl))
             .ReturnsAsync(true);
-        ProductRepositoryMock
+        ProductImageRepositoryMock
             .Setup(r => r.DeleteProductImageAsync(productImage, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
@@ -40,12 +40,12 @@ public class DeleteProductImageAsyncTests : BaseTest
             .ReturnsAsync(1);
 
         // Act
-        var result = await ProductService.DeleteProductImageAsync(productId, imageId);
+        var result = await ProductImageService.DeleteProductImageAsync(productId, imageId);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
         BlobStorageServiceMock.Verify(b => b.DeleteBlobAsync(productImage.ImageUrl), Times.Once);
-        ProductRepositoryMock.Verify(r => r.DeleteProductImageAsync(productImage, It.IsAny<CancellationToken>()), Times.Once);
+        ProductImageRepositoryMock.Verify(r => r.DeleteProductImageAsync(productImage, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public class DeleteProductImageAsyncTests : BaseTest
             .ReturnsAsync((Product?)null);
 
         // Act
-        var result = await ProductService.DeleteProductImageAsync(productId, imageId);
+        var result = await ProductImageService.DeleteProductImageAsync(productId, imageId);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -80,12 +80,12 @@ public class DeleteProductImageAsyncTests : BaseTest
             .Setup(r => r.GetProductByIdAsync(productId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(product);
 
-        ProductRepositoryMock
+        ProductImageRepositoryMock
             .Setup(r => r.GetProductImageByIdAsync(imageId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((ProductImage?)null);
 
         // Act
-        var result = await ProductService.DeleteProductImageAsync(productId, imageId);
+        var result = await ProductImageService.DeleteProductImageAsync(productId, imageId);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -111,12 +111,12 @@ public class DeleteProductImageAsyncTests : BaseTest
             .Setup(r => r.GetProductByIdAsync(productId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(product);
 
-        ProductRepositoryMock
+        ProductImageRepositoryMock
             .Setup(r => r.GetProductImageByIdAsync(imageId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(productImage);
 
         // Act
-        var result = await ProductService.DeleteProductImageAsync(productId, imageId);
+        var result = await ProductImageService.DeleteProductImageAsync(productId, imageId);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -142,7 +142,7 @@ public class DeleteProductImageAsyncTests : BaseTest
             .Setup(r => r.GetProductByIdAsync(productId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(product);
 
-        ProductRepositoryMock
+        ProductImageRepositoryMock
             .Setup(r => r.GetProductImageByIdAsync(imageId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(productImage);
 
@@ -151,7 +151,7 @@ public class DeleteProductImageAsyncTests : BaseTest
             .ThrowsAsync(new InvalidOperationException("Blob delete failed"));
 
         // Act
-        Func<Task> act = async () => await ProductService.DeleteProductImageAsync(productId, imageId);
+        Func<Task> act = async () => await ProductImageService.DeleteProductImageAsync(productId, imageId);
 
         // Assert
         await act.Should().ThrowAsync<InvalidOperationException>()
@@ -176,13 +176,13 @@ public class DeleteProductImageAsyncTests : BaseTest
         ProductRepositoryMock
             .Setup(r => r.GetProductByIdAsync(productId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(product);
-        ProductRepositoryMock
+        ProductImageRepositoryMock
             .Setup(r => r.GetProductImageByIdAsync(imageId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(productImage);
         BlobStorageServiceMock
             .Setup(b => b.DeleteBlobAsync(productImage.ImageUrl))
             .ReturnsAsync(It.IsAny<bool>());
-        ProductRepositoryMock
+        ProductImageRepositoryMock
             .Setup(r => r.DeleteProductImageAsync(productImage, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
@@ -191,7 +191,7 @@ public class DeleteProductImageAsyncTests : BaseTest
             .ReturnsAsync(0); // edge case
 
         // Act
-        var result = await ProductService.DeleteProductImageAsync(productId, imageId);
+        var result = await ProductImageService.DeleteProductImageAsync(productId, imageId);
 
         // Assert
         result.IsSuccess.Should().BeTrue();

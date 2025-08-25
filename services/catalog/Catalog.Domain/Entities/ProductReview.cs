@@ -23,7 +23,7 @@ public class ProductReview
     /// <summary>
     /// Identifier of the user who submitted the review.
     /// </summary>
-    public long UserId { get; set; }
+    public required string UserId { get; set; }
 
     /// <summary>
     /// Rating given to the product.

@@ -39,7 +39,8 @@ public interface IProductService
     /// <param name="request">The updated product data.</param>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>Result indicating the outcome of the update operation.</returns>
-    Task<ServiceResult> UpdateProductAsync(long productId, ProductRequest request, CancellationToken cancellationToken = default);
+    Task<ServiceResult> UpdateProductAsync(long productId, ProductRequest request,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Asynchronously deletes an existing product.
@@ -48,22 +49,4 @@ public interface IProductService
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>Result indicating the outcome of the delete operation.</returns>
     Task<ServiceResult> DeleteProductAsync(long productId, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Asynchronously adds an image to a product.
-    /// </summary>
-    /// <param name="productId">The unique identifier of the product to which the image will be added.</param>
-    /// <param name="request">The request containing the image data and metadata.</param>
-    /// <param name="cancellationToken">A token to cancel the operation.</param>
-    /// <returns>Result indicating the outcome of the add image operation.</returns>
-    Task<ServiceResult> AddProductImageAsync(long productId, ProductImageRequest request, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Asynchronously deletes an image from a product.
-    /// </summary>
-    /// <param name="productId">The unique identifier of the product.</param>
-    /// <param name="productImageId">The unique identifier of the product image.</param>
-    /// <param name="cancellationToken">A token to cancel the operation.</param>
-    /// <returns>Result indicating the outcome of the delete image operation.</returns>
-    Task<ServiceResult> DeleteProductImageAsync(long productId, long productImageId, CancellationToken cancellationToken = default);
 }

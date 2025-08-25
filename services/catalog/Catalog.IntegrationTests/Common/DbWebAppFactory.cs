@@ -1,4 +1,5 @@
 using Catalog.Infrastructure;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ public class DbWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
             }
 
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(_postgresContainer.GetConnectionString()));
+            services.AddAuthentication("Test").AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(authenticationScheme: "Test", options => { });
         });
     }
 
