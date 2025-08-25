@@ -17,13 +17,15 @@ public abstract class BaseTest
     protected readonly Mock<ICategoryRepository> CategoryRepositoryMock;
     protected readonly Mock<IMapper> MapperMock;
     protected readonly Mock<IAppDbContext> DbContextMock;
+    protected readonly Mock<ICacheService> CacheServiceMock;
 
     protected BaseTest()
     {
         CategoryRepositoryMock = new Mock<ICategoryRepository>();
         MapperMock = new Mock<IMapper>();
         DbContextMock = new Mock<IAppDbContext>();
+        CacheServiceMock = new Mock<ICacheService>();
 
-        CategoryService = new CategoryService(CategoryRepositoryMock.Object, MapperMock.Object, DbContextMock.Object);
+        CategoryService = new CategoryService(CategoryRepositoryMock.Object, MapperMock.Object, DbContextMock.Object, CacheServiceMock.Object);
     }
 }

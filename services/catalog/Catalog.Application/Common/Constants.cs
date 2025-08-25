@@ -48,4 +48,14 @@ public static class Constants
         public const string ProductImagesContainer = "product-images";
         public const int BlobTokenExpirationHours = 2;
     }
+
+    public static class Redis
+    {
+        public static TimeSpan CacheExpiration = TimeSpan.FromMinutes(10);
+        public const string BrandPrefix = "brand-";
+        public const string CategoryPrefix = "category-";
+        public const string ProductPrefix = "product-";
+        public const string ReviewPrefix = "-review-";
+        public const string ImagePrefix = "-image-";
+    }
 }
