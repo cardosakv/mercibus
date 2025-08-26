@@ -356,3 +356,6 @@ MigrationBackup/
 # JetBrains Rider
 .idea/
 .env
+
+# Security keys
+*.pem
