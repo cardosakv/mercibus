@@ -26,7 +26,7 @@ public class AuthController(IAuthService authService, IConfiguration configurati
     }
 
     [HttpPost("logout")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public async Task<IActionResult> Logout([FromBody] LogoutRequest request)
     {
         var response = await authService.LogoutAsync(request);
@@ -41,7 +41,7 @@ public class AuthController(IAuthService authService, IConfiguration configurati
     }
 
     [HttpPost("send-confirmation-email")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public async Task<IActionResult> SendConfirmationEmail([FromBody] SendConfirmationEmailRequest request)
     {
         var response = await authService.SendConfirmationEmailAsync(request);
@@ -73,7 +73,7 @@ public class AuthController(IAuthService authService, IConfiguration configurati
     }
 
     [HttpPost("change-password")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
     {
         var response = await authService.ChangePasswordAsync(request);
@@ -81,7 +81,7 @@ public class AuthController(IAuthService authService, IConfiguration configurati
     }
 
     [HttpGet("info")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public async Task<IActionResult> GetInfo()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -90,7 +90,7 @@ public class AuthController(IAuthService authService, IConfiguration configurati
     }
 
     [HttpPost("info")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public async Task<IActionResult> UpdateInfo([FromBody] UpdateUserInfoRequest request)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -99,7 +99,7 @@ public class AuthController(IAuthService authService, IConfiguration configurati
     }
 
     [HttpPost("upload-profile-picture")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public async Task<IActionResult> UploadProfilePicture(IFormFile image)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
