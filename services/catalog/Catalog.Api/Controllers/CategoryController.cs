@@ -1,11 +1,14 @@
 using Catalog.Application.DTOs;
 using Catalog.Application.Interfaces.Services;
 using Mercibus.Common.Controllers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.Api.Controllers;
 
 [Route("api/categories")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [ApiController]
 public class CategoryController(ICategoryService categoryService) : BaseController
 {
