@@ -109,6 +109,17 @@ public class AuthController(IAuthService authService, IConfiguration configurati
         return Ok(response);
     }
 
+    [HttpGet("/.well-known/openid-configuration")]
+    public IActionResult GetOpenIdConfiguration()
+    {
+        return Ok(
+            new
+            {
+                issuer = configuration["Jwt:Issuer"],
+                jwks_uri = $"{Request.Scheme}://{Request.Host}/.well-known/jwks.json"
+            });
+    }
+
     [HttpGet("/.well-known/jwks.json")]
     public IActionResult GetJwks()
     {
