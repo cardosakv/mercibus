@@ -22,8 +22,8 @@ public class JwtTokenService(IConfiguration configuration) : ITokenService
             new(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
         };
 
-        var expireMillis = Convert.ToInt64(configuration["Jwt:ExpireMillis"]);
-        var expireTime = DateTime.UtcNow.AddMilliseconds(expireMillis);
+        var expireSeconds = Convert.ToInt64(configuration["Jwt:ExpireSeconds"] ?? "300");
+        var expireTime = DateTime.UtcNow.AddSeconds(expireSeconds);
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
@@ -38,7 +38,7 @@ public class JwtTokenService(IConfiguration configuration) : ITokenService
         var token = tokenHandler.CreateToken(tokenDescriptor);
         var tokenString = tokenHandler.WriteToken(token);
 
-        return (tokenString, expireMillis);
+        return (tokenString, expireSeconds);
     }
 
     private static RsaSecurityKey GetRsaSecurityKey(string privateKeyPath)
