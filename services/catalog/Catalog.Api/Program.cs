@@ -50,7 +50,14 @@ try
         .AddJwtBearer(options =>
         {
             options.Authority = builder.Configuration["Jwt:Authority"];
-            options.Audience = builder.Configuration["Jwt:Audience"];
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidateAudience = true,
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                ValidateLifetime = true
+            };
         });
         
 
