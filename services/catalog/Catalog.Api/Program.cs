@@ -13,6 +13,7 @@ using Mercibus.Common.Validations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
+using StackExchange.Redis;
 using static Npgsql.NpgsqlConnection;
 
 try
@@ -24,11 +25,16 @@ try
     builder.Services.AddScoped<ICategoryService, CategoryService>();
     builder.Services.AddScoped<IBrandService, BrandService>();
     builder.Services.AddScoped<IBlobStorageService, BlobStorageService>();
+    builder.Services.AddScoped<IProductImageService, ProductImageService>();
+    builder.Services.AddScoped<IProductReviewService, ProductReviewService>();
+    builder.Services.AddScoped<ICacheService, RedisCacheService>();
 
     // Add repositories.
     builder.Services.AddScoped<IProductRepository, ProductRepository>();
     builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
     builder.Services.AddScoped<IBrandRepository, BrandRepository>();
+    builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
+    builder.Services.AddScoped<IProductReviewRepository, ProductReviewRepository>();
 
     // Add validators.
     builder.Services.AddValidatorsFromAssembly(typeof(ProductRequestValidator).Assembly);
@@ -60,6 +66,13 @@ try
             };
         });
         
+
+    // Add caching.
+    builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
+    {
+        var connectionString = builder.Configuration.GetConnectionString("RedisConnection");
+        return ConnectionMultiplexer.Connect(connectionString ?? string.Empty);
+    });
 
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();

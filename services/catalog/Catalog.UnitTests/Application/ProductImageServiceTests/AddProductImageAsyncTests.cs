@@ -5,7 +5,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
 
-namespace Catalog.UnitTests.Application.ProductServiceTests;
+namespace Catalog.UnitTests.Application.ProductImageServiceTests;
 
 public class AddProductImageAsyncTests : BaseTest
 {
@@ -34,7 +34,7 @@ public class AddProductImageAsyncTests : BaseTest
         };
 
         MapperMock.Setup(m => m.Map<ProductImage>(request)).Returns(mappedImage);
-        ProductRepositoryMock.Setup(r => r.AddProductImageAsync(mappedImage, It.IsAny<CancellationToken>()))
+        ProductImageRepositoryMock.Setup(r => r.AddProductImageAsync(mappedImage, It.IsAny<CancellationToken>()))
             .ReturnsAsync(mappedImage);
         DbContextMock.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
@@ -42,11 +42,11 @@ public class AddProductImageAsyncTests : BaseTest
             .ReturnsAsync(It.IsAny<string>());
 
         // Act
-        var result = await ProductService.AddProductImageAsync(productId, request);
+        var result = await ProductImageService.AddProductImageAsync(productId, request);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        ProductRepositoryMock.Verify(r => r.AddProductImageAsync(mappedImage, It.IsAny<CancellationToken>()), Times.Once);
+        ProductImageRepositoryMock.Verify(r => r.AddProductImageAsync(mappedImage, It.IsAny<CancellationToken>()), Times.Once);
         BlobStorageServiceMock.Verify(b => b.UploadFileAsync(It.IsAny<string>(), It.IsAny<Stream>()), Times.Once);
     }
 
@@ -65,7 +65,7 @@ public class AddProductImageAsyncTests : BaseTest
         var request = new ProductImageRequest(mockFile.Object, IsPrimary: false, AltText: "Alt text");
 
         // Act
-        var result = await ProductService.AddProductImageAsync(productId, request);
+        var result = await ProductImageService.AddProductImageAsync(productId, request);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -91,7 +91,7 @@ public class AddProductImageAsyncTests : BaseTest
             .ThrowsAsync(new InvalidOperationException("Upload failed"));
 
         // Act
-        Func<Task> act = async () => await ProductService.AddProductImageAsync(productId, request);
+        Func<Task> act = async () => await ProductImageService.AddProductImageAsync(productId, request);
 
         // Assert
         await act.Should().ThrowAsync<InvalidOperationException>()
@@ -123,7 +123,7 @@ public class AddProductImageAsyncTests : BaseTest
         };
 
         MapperMock.Setup(m => m.Map<ProductImage>(request)).Returns(mappedImage);
-        ProductRepositoryMock.Setup(r => r.AddProductImageAsync(mappedImage, It.IsAny<CancellationToken>()))
+        ProductImageRepositoryMock.Setup(r => r.AddProductImageAsync(mappedImage, It.IsAny<CancellationToken>()))
             .ReturnsAsync(It.IsAny<ProductImage>());
         DbContextMock.Setup(db => db.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(0);
@@ -131,7 +131,7 @@ public class AddProductImageAsyncTests : BaseTest
             .ReturnsAsync(It.IsAny<string>());
 
         // Act
-        var result = await ProductService.AddProductImageAsync(productId, request);
+        var result = await ProductImageService.AddProductImageAsync(productId, request);
 
         // Assert
         result.IsSuccess.Should().BeTrue();

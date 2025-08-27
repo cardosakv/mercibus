@@ -17,13 +17,15 @@ public abstract class BaseTest
     protected readonly Mock<IBrandRepository> BrandRepositoryMock;
     protected readonly Mock<IMapper> MapperMock;
     protected readonly Mock<IAppDbContext> DbContextMock;
+    protected readonly Mock<ICacheService> CacheServiceMock;
 
     protected BaseTest()
     {
         BrandRepositoryMock = new Mock<IBrandRepository>();
         MapperMock = new Mock<IMapper>();
         DbContextMock = new Mock<IAppDbContext>();
+        CacheServiceMock = new Mock<ICacheService>();
 
-        BrandService = new BrandService(BrandRepositoryMock.Object, MapperMock.Object, DbContextMock.Object);
+        BrandService = new BrandService(BrandRepositoryMock.Object, MapperMock.Object, DbContextMock.Object, CacheServiceMock.Object);
     }
 }

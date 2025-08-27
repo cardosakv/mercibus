@@ -78,23 +78,4 @@ public class ProductRepository(AppDbContext dbContext) : IProductRepository
         dbContext.Products.Remove(product);
         return Task.CompletedTask;
     }
-
-    public Task<ProductImage?> GetProductImageByIdAsync(long id, CancellationToken cancellationToken = default)
-    {
-        return dbContext.ProductImages
-            .AsNoTracking()
-            .FirstOrDefaultAsync(pi => pi.Id == id, cancellationToken);
-    }
-
-    public Task<ProductImage> AddProductImageAsync(ProductImage productImage, CancellationToken cancellationToken = default)
-    {
-        var entry = dbContext.ProductImages.Add(productImage);
-        return Task.FromResult(entry.Entity);
-    }
-
-    public Task DeleteProductImageAsync(ProductImage productImage, CancellationToken cancellationToken = default)
-    {
-        dbContext.ProductImages.Remove(productImage);
-        return Task.CompletedTask;
-    }
 }

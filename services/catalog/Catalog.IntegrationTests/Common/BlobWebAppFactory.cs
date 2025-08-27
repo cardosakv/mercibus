@@ -1,11 +1,14 @@
 using Catalog.Infrastructure;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 using Testcontainers.Azurite;
 using Testcontainers.PostgreSql;
+using Testcontainers.Redis;
 
 namespace Catalog.IntegrationTests.Common;
 
@@ -25,6 +28,11 @@ public class BlobWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
         .WithCommand("--skipApiVersionCheck")
         .Build();
 
+    private readonly RedisContainer _redisContainer = new RedisBuilder()
+        .WithImage("redis/redis-stack")
+        .WithPortBinding(port: 6379, assignRandomHostPort: true)
+        .Build();
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>
@@ -37,6 +45,10 @@ public class BlobWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
             }
 
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(_postgresContainer.GetConnectionString()));
+            services.AddAuthentication("Test").AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(authenticationScheme: "Test", _ => { });
+
+            // Add Redis configuration
+            services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(_redisContainer.GetConnectionString()));
         });
 
         builder.ConfigureAppConfiguration((_, config) =>
@@ -44,7 +56,9 @@ public class BlobWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
             config.AddInMemoryCollection(
                 new Dictionary<string, string>
                 {
-                    { "ConnectionStrings:BlobStorageConnection", _azuriteContainer.GetConnectionString() }
+                    {
+                        "ConnectionStrings:BlobStorageConnection", _azuriteContainer.GetConnectionString()
+                    }
                 }!);
         });
     }
@@ -58,11 +72,13 @@ public class BlobWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
         await _postgresContainer.StartAsync();
         await _azuriteContainer.StartAsync();
+        await _redisContainer.StartAsync();
     }
 
     public new async Task DisposeAsync()
     {
         await _postgresContainer.StopAsync();
         await _azuriteContainer.StopAsync();
+        await _redisContainer.StopAsync();
     }
 }

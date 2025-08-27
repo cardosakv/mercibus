@@ -9,7 +9,7 @@ using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
 
-namespace Catalog.IntegrationTests.ProductTests;
+namespace Catalog.IntegrationTests.ProductImageTests;
 
 /// <summary>
 /// Integration tests for adding a product image.

@@ -10,6 +10,9 @@ public static class Constants
         public const int MaxNameLength = 100;
         public const int MaxDescriptionLength = 300;
         public const int MaxSkuLength = 100;
+        public const int ReviewMinRating = 1;
+        public const int ReviewMaxRating = 5;
+        public const int ReviewMaxCommentLength = 500;
     }
 
     public static class CategoryValidation
@@ -35,11 +38,24 @@ public static class Constants
         public const string BrandInUse = "brand_in_use";
         public const string ImageNotFound = "image_not_found";
         public const string ImageNotInProduct = "image_not_in_product";
+        public const string CommentTooLong = "comment_too_long";
+        public const string InvalidRating = "invalid_rating";
+        public const string ReviewNotFound = "review_not_found";
     }
 
     public static class BlobStorage
     {
         public const string ProductImagesContainer = "product-images";
         public const int BlobTokenExpirationHours = 2;
+    }
+
+    public static class Redis
+    {
+        public static TimeSpan CacheExpiration = TimeSpan.FromMinutes(10);
+        public const string BrandPrefix = "brand-";
+        public const string CategoryPrefix = "category-";
+        public const string ProductPrefix = "product-";
+        public const string ReviewPrefix = "-review-";
+        public const string ImagePrefix = "-image-";
     }
 }

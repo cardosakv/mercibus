@@ -1,9 +1,12 @@
 using Catalog.Infrastructure;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 using Testcontainers.PostgreSql;
+using Testcontainers.Redis;
 
 namespace Catalog.IntegrationTests.Common;
 
@@ -18,6 +21,11 @@ public class DbWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
         .WithPassword("test_password")
         .Build();
 
+    private readonly RedisContainer _redisContainer = new RedisBuilder()
+        .WithImage("redis/redis-stack")
+        .WithPortBinding(port: 6379, assignRandomHostPort: true)
+        .Build();
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>
@@ -30,6 +38,10 @@ public class DbWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
             }
 
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(_postgresContainer.GetConnectionString()));
+            services.AddAuthentication("Test").AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(authenticationScheme: "Test", _ => { });
+
+            // Add Redis configuration
+            services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(_redisContainer.GetConnectionString()));
         });
     }
 
@@ -38,13 +50,15 @@ public class DbWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
         return Services.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
     }
 
-    public Task InitializeAsync()
+    public async Task InitializeAsync()
     {
-        return _postgresContainer.StartAsync();
+        await _postgresContainer.StartAsync();
+        await _redisContainer.StartAsync();
     }
 
-    public new Task DisposeAsync()
+    public new async Task DisposeAsync()
     {
-        return _postgresContainer.StopAsync();
+        await _postgresContainer.StopAsync();
+        await _redisContainer.StopAsync();
     }
 }

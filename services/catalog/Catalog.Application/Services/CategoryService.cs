@@ -11,7 +11,7 @@ using Mercibus.Common.Services;
 
 namespace Catalog.Application.Services;
 
-public class CategoryService(ICategoryRepository categoryRepository, IMapper mapper, IAppDbContext dbContext) : BaseService, ICategoryService
+public class CategoryService(ICategoryRepository categoryRepository, IMapper mapper, IAppDbContext dbContext, ICacheService cacheService) : BaseService, ICategoryService
 {
     public async Task<ServiceResult> GetCategoriesAsync(CategoryQuery query, CancellationToken cancellationToken = default)
     {
@@ -33,6 +33,12 @@ public class CategoryService(ICategoryRepository categoryRepository, IMapper map
 
     public async Task<ServiceResult> GetCategoryByIdAsync(long categoryId, CancellationToken cancellationToken = default)
     {
+        var cachedResponse = await cacheService.GetAsync<CategoryResponse>(Constants.Redis.CategoryPrefix + categoryId);
+        if (cachedResponse is not null)
+        {
+            return Success(cachedResponse);
+        }
+
         var category = await categoryRepository.GetCategoryByIdAsync(categoryId, cancellationToken);
         if (category is null)
         {
@@ -40,6 +46,8 @@ public class CategoryService(ICategoryRepository categoryRepository, IMapper map
         }
 
         var response = mapper.Map<CategoryResponse>(category);
+        await cacheService.SetAsync(key: Constants.Redis.CategoryPrefix + categoryId, response, Constants.Redis.CacheExpiration);
+
         return Success(response);
     }
 
@@ -54,6 +62,7 @@ public class CategoryService(ICategoryRepository categoryRepository, IMapper map
         mapper.Map(request, category);
         await categoryRepository.UpdateCategoryAsync(category, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
+        await cacheService.RemoveAsync(Constants.Redis.CategoryPrefix + categoryId);
 
         return Success();
     }
@@ -74,6 +83,7 @@ public class CategoryService(ICategoryRepository categoryRepository, IMapper map
 
         await categoryRepository.DeleteCategoryAsync(category, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
+        await cacheService.RemoveAsync(Constants.Redis.CategoryPrefix + categoryId);
 
         return Success();
     }
