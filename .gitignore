@@ -359,3 +359,5 @@ MigrationBackup/
 
 # Security keys
 *.pem
+!test_priv_key.pem
+!test_pub_key.pem
