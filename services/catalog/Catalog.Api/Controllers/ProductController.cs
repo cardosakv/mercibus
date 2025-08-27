@@ -2,11 +2,13 @@ using System.Security.Claims;
 using Catalog.Application.DTOs;
 using Catalog.Application.Interfaces.Services;
 using Mercibus.Common.Controllers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.Api.Controllers;
 
 [Route("api/products")]
+[Authorize]
 [ApiController]
 public class ProductController(IProductService productService, IProductImageService productImageService, IProductReviewService productReviewService) : BaseController
 {

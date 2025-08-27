@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Mail;
-using System.Text;
+using System.Security.Cryptography;
 using Auth.Api.Extensions;
 using Auth.Application.Interfaces.Repositories;
 using Auth.Application.Interfaces.Services;
@@ -56,28 +56,32 @@ try
     // Add email provider.
     builder.Services.AddFluentEmail(builder.Configuration["Email:Sender"])
         .AddRazorRenderer()
-        .AddSmtpSender(new SmtpClient(builder.Configuration["Email:Server"])
-        {
-            EnableSsl = true,
-            Port = Convert.ToInt32(builder.Configuration["Email:Port"]),
-            Credentials = new NetworkCredential(builder.Configuration["Email:Username"],
-                builder.Configuration["Email:Password"])
-        });
+        .AddSmtpSender(
+            new SmtpClient(builder.Configuration["Email:Server"])
+            {
+                EnableSsl = true,
+                Port = Convert.ToInt32(builder.Configuration["Email:Port"]),
+                Credentials = new NetworkCredential(
+                    builder.Configuration["Email:Username"],
+                    builder.Configuration["Email:Password"])
+            });
 
     // Add authentication.
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {
+            var rsa = RSA.Create();
+            rsa.ImportFromPem(File.ReadAllText(builder.Configuration["Jwt:PublicKeyPath"] ?? "jwt_priv_key.pem"));
+
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
                 ValidateAudience = true,
+                ValidAudience = builder.Configuration["Jwt:Audience"],
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                ValidAudience = builder.Configuration["Jwt:Audience"],
-                IssuerSigningKey =
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? string.Empty))
+                IssuerSigningKey = new RsaSecurityKey(rsa)
             };
         });
 

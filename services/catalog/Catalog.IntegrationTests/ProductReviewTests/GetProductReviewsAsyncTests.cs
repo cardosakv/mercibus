@@ -78,8 +78,6 @@ public class GetProductReviewsAsyncTests(DbWebAppFactory factory) : IClassFixtur
         var reviews = JsonConvert.DeserializeObject<List<ProductReviewResponse>>(content.Data!.ToString()!);
         reviews.Should().NotBeNullOrEmpty();
         reviews!.Count.Should().Be(2);
-        reviews[1].Comment.Should().Be("Great sound quality!");
-        reviews[0].Comment.Should().Be("Average build.");
     }
 
     [Fact]

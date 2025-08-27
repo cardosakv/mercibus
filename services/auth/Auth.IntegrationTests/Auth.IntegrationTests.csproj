@@ -31,4 +31,13 @@
         <ProjectReference Include="..\Auth.Application\Auth.Application.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <None Update="test_priv_key.pem">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="test_pub_key.pem">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
 </Project>

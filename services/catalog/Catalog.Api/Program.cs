@@ -11,6 +11,7 @@ using FluentValidation;
 using Mercibus.Common.Middlewares;
 using Mercibus.Common.Validations;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using StackExchange.Redis;
 using static Npgsql.NpgsqlConnection;
@@ -49,6 +50,22 @@ try
     builder.Services.AddScoped<IAppDbContext>(provider =>
         provider.GetRequiredService<AppDbContext>());
     GlobalTypeMapper.EnableDynamicJson();
+    
+    // Add authentication.
+    builder.Services.AddAuthentication()
+        .AddJwtBearer(options =>
+        {
+            options.Authority = builder.Configuration["Jwt:Authority"];
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidateAudience = true,
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                ValidateLifetime = true
+            };
+        });
+        
 
     // Add caching.
     builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
@@ -72,6 +89,7 @@ try
 
     app.UseExceptionMiddleware();
     app.UseLoggingMiddleware();
+    app.UseCustomAuthMiddleware();
     app.UseAuthorization();
     app.MapControllers();
 
