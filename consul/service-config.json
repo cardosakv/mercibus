@@ -4,23 +4,13 @@
       "ID": "auth-service",
       "Name": "auth-service",
       "Address": "auth-service",
-      "Port": 8080,
-      "Check": {
-        "HTTP": "http://auth-service:8080/health",
-        "Interval": "10s",
-        "Timeout": "1s"
-      }
+      "Port": 8080
     },
     {
       "ID": "catalog-service",
       "Name": "catalog-service",
       "Address": "catalog-service",
-      "Port": 8080,
-      "Check": {
-        "HTTP": "http://catalog-service:8080/health",
-        "Interval": "10s",
-        "Timeout": "1s"
-      }
+      "Port": 8080
     }
   ]
 }
