@@ -13,6 +13,8 @@ services:
       context: ./services/auth/
       dockerfile: Auth.Api/Dockerfile
     container_name: auth-service-container
+    ports:
+      - "9001:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__DefaultConnection: ${AUTH_DB_CONN}
@@ -61,6 +63,9 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__DefaultConnection: ${CATALOG_DB_CONN}
       ConnectionStrings__BlobStorageConnection: ${BLOB_CONN}
+      Jwt__Issuer: ${JWT_ISSUER}
+      Jwt__Audience: ${JWT_AUDIENCE}
+      Jwt__Authority: auth-service
     depends_on:
       - catalog-db
     restart: always
