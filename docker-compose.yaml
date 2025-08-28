@@ -65,7 +65,7 @@ services:
       ConnectionStrings__BlobStorageConnection: ${BLOB_CONN}
       Jwt__Issuer: ${JWT_ISSUER}
       Jwt__Audience: ${JWT_AUDIENCE}
-      Jwt__Authority: auth-service
+      Jwt__Authority: http://auth-service:8080
     depends_on:
       - catalog-db
     restart: always
