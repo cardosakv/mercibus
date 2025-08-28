@@ -1,15 +1,27 @@
 services:
+  gateway:
+    build:
+      context: ./gateway/
+      dockerfile: Gateway/Dockerfile
+    container_name: gateway-container
+    ports:
+      - "9000:8080"
+    restart: always
+
   auth-service:
-    container_name: auth-service-container
     build:
       context: ./services/auth/
       dockerfile: Auth.Api/Dockerfile
-    ports:
-      - '9090:8080'
+    container_name: auth-service-container
     environment:
+      ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__DefaultConnection: ${AUTH_DB_CONN}
       ConnectionStrings__BlobStorageConnection: ${BLOB_CONN}
-      Jwt__Key: ${JWT_KEY}
+      Jwt__PrivateKeyPath: ${JWT_PRIV_KEY_PATH}
+      Jwt__PublicKeyPath: ${JWT_PUB_KEY_PATH}
+      Jwt__Issuer: ${JWT_ISSUER}
+      Jwt__Audience: ${JWT_AUDIENCE}
+      Jwt__ExpireSeconds: ${JWT_EXPIRY_SECONDS}
       Email__Server: ${EMAIL_SERVER}
       Email__Port: ${EMAIL_PORT}
       Email__Sender: ${EMAIL_SENDER}
@@ -18,69 +30,74 @@ services:
       RedirectUrl__EmailConfirmSuccess: ${EMAIL_CONFIRM_SUCCESS}
       RedirectUrl__EmailConfirmFail: ${EMAIL_CONFIRM_FAIL}
       RedirectUrl__PasswordReset: ${PASSWORD_RESET_URL}
+    volumes:
+      - ./services/auth/Auth.Api/jwt_priv_key.pem:/app/jwt_priv_key.pem
+      - ./services/auth/Auth.Api/jwt_pub_key.pem:/app/jwt_pub_key.pem
     depends_on:
       - auth-db
     restart: always
-    networks:
-      - backend-network
 
   auth-db:
+    image: postgres:latest
     container_name: auth-db-container
-    image: postgres
     ports:
-      - '5001:5432'
+      - "8001:5432"
     environment:
       POSTGRES_USER: ${AUTH_DB_USER}
       POSTGRES_PASSWORD: ${AUTH_DB_PASS}
       POSTGRES_DB: ${AUTH_DB_NAME}
     volumes:
       - auth_db_data:/var/lib/postgresql/data
-    networks:
-      - backend-network
-  
+    restart: always
+
   catalog-service:
-    container_name: catalog-service-container
     build:
       context: ./services/catalog/
       dockerfile: Catalog.Api/Dockerfile
+    container_name: catalog-service-container
     ports:
-      - '9091:8080'
+      - "9002:8080"
     environment:
+      ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__DefaultConnection: ${CATALOG_DB_CONN}
       ConnectionStrings__BlobStorageConnection: ${BLOB_CONN}
     depends_on:
       - catalog-db
     restart: always
-    networks:
-      - backend-network
 
   catalog-db:
+    image: postgres:latest
     container_name: catalog-db-container
-    image: postgres
     ports:
-      - '5002:5432'
+      - "8002:5432"
     environment:
       POSTGRES_USER: ${CATALOG_DB_USER}
       POSTGRES_PASSWORD: ${CATALOG_DB_PASS}
       POSTGRES_DB: ${CATALOG_DB_NAME}
     volumes:
       - catalog_db_data:/var/lib/postgresql/data
-    networks:
-      - backend-network
-  
+    restart: always
+
   blob-storage:
-    container_name: blob-storage-container
     image: mcr.microsoft.com/azure-storage/azurite
-    ports:
-      - '10000:10000'
+    container_name: blob-storage-container
     command: azurite-blob --blobHost 0.0.0.0 --skipApiVersionCheck
+    ports:
+      - "10000:10000"
     volumes:
       - blob_storage_data:/data
+    restart: always
+
+  consul:
+    image: hashicorp/consul:latest
+    container_name: consul-container
+    ports:
+      - "8500:8500"
+    volumes:
+      - ./consul:/consul/config
+    restart: always
 
 volumes:
   auth_db_data:
   catalog_db_data:
   blob_storage_data:
-
-networks:
-  backend-network:
