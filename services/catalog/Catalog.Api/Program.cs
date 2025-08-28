@@ -50,7 +50,7 @@ try
     builder.Services.AddScoped<IAppDbContext>(provider =>
         provider.GetRequiredService<AppDbContext>());
     GlobalTypeMapper.EnableDynamicJson();
-    
+
     // Add authentication.
     builder.Services.AddAuthentication()
         .AddJwtBearer(options =>
@@ -64,8 +64,13 @@ try
                 ValidAudience = builder.Configuration["Jwt:Audience"],
                 ValidateLifetime = true
             };
+
+            if (builder.Environment.IsDevelopment())
+            {
+                options.RequireHttpsMetadata = false;
+            }
         });
-        
+
 
     // Add caching.
     builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>

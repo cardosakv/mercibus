@@ -1,0 +1,16 @@
+{
+  "services": [
+    {
+      "ID": "auth-service",
+      "Name": "auth-service",
+      "Address": "auth-service",
+      "Port": 8080
+    },
+    {
+      "ID": "catalog-service",
+      "Name": "catalog-service",
+      "Address": "catalog-service",
+      "Port": 8080
+    }
+  ]
+}

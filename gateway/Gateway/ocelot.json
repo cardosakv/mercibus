@@ -1,0 +1,61 @@
+﻿{
+  "Routes": [
+    {
+      "UseServiceDiscovery": true,
+      "ServiceName": "auth-service",
+      "DownstreamPathTemplate": "/api/auth/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/api/auth/{everything}",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post"
+      ]
+    },
+    {
+      "UseServiceDiscovery": true,
+      "ServiceName": "catalog-service",
+      "DownstreamPathTemplate": "/api/brands/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/api/brands/{everything}",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ]
+    },
+    {
+      "UseServiceDiscovery": true,
+      "ServiceName": "catalog-service",
+      "DownstreamPathTemplate": "/api/categories/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/api/categories/{everything}",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ]
+    },
+    {
+      "UseServiceDiscovery": true,
+      "ServiceName": "catalog-service",
+      "DownstreamPathTemplate": "/api/products/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/api/products/{everything}",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "ServiceDiscoveryProvider": {
+      "Host": "consul",
+      "Port": 8500,
+      "Type": "Consul"
+    }
+  }
+}
