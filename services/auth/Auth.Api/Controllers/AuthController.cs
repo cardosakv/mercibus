@@ -2,7 +2,6 @@
 using Auth.Application.DTOs;
 using Auth.Application.Interfaces.Services;
 using Mercibus.Common.Controllers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
