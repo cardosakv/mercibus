@@ -133,6 +133,9 @@ jobs:
           RedirectUrl__EmailConfirmSuccess: ${{ secrets.redirect_email_confirm_success }}
           RedirectUrl__EmailConfirmFail: ${{ secrets.redirect_email_confirm_fail }}
           RedirectUrl__PasswordReset: ${{ secrets.redirect_password_reset }}
+          
+      - name: List TestResults folder
+        run: ls -R ./TestResults
 
       - name: Code coverage summary
         if: always()
