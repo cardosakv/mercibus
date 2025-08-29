@@ -84,7 +84,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 // Add health check.
-builder.Services.AddCustomHealthChecks(builder.Configuration);
+builder.Services.AddCustomHealthChecks(builder);
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();

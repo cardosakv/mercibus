@@ -21,7 +21,7 @@ public class TestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
         .WithImage("mcr.microsoft.com/azure-storage/azurite:latest")
         .WithCommand("--skipApiVersionCheck")
         .Build();
-    
+
     public TestWebAppFactory()
     {
         _dbContainer.StartAsync().GetAwaiter().GetResult();
@@ -30,6 +30,8 @@ public class TestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.UseEnvironment("Staging");
+
         builder.ConfigureAppConfiguration((_, config) =>
         {
             config.AddInMemoryCollection(
@@ -50,7 +52,7 @@ public class TestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
                 }!);
         });
     }
-    
+
     public async Task InitializeAsync()
     {
         await Task.CompletedTask;

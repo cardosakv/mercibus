@@ -32,15 +32,10 @@ public class BlobWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
         .WithPortBinding(port: 6379, assignRandomHostPort: true)
         .Build();
 
-    public BlobWebAppFactory()
-    {
-        _postgresContainer.StartAsync().GetAwaiter().GetResult();
-        _azuriteContainer.StartAsync().GetAwaiter().GetResult();
-        _redisContainer.StartAsync().GetAwaiter().GetResult();
-    }
-
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.UseEnvironment("Staging");
+        
         builder.ConfigureAppConfiguration((_, config) =>
         {
             config.AddInMemoryCollection(
@@ -79,7 +74,9 @@ public class BlobWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        await Task.CompletedTask;
+        await _postgresContainer.StartAsync();
+        await _azuriteContainer.StartAsync();
+        await _redisContainer.StartAsync();
     }
 
     public new async Task DisposeAsync()

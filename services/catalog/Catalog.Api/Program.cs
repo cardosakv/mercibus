@@ -18,7 +18,7 @@ builder.Services.AddFluentValidationAutoValidation(options =>
 
 builder.Services.AddJwtAuthentication(builder);
 builder.Services.AddCaching(builder.Configuration);
-builder.Services.AddCustomHealthChecks(builder.Configuration);
+builder.Services.AddCustomHealthChecks(builder);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
