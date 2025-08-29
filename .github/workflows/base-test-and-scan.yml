@@ -136,13 +136,13 @@ jobs:
 
       - name: List coverage files
         if: always()
-        run: ls -R ./services || true
+        run: ls -R ./TestResults/
 
       - name: Code coverage summary
         if: always()
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
-          filename: ./services/**/TestResults/*.cobertura.xml
+          filename: ./TestResults/*.cobertura.xml
           badge: true
           fail_below_min: true
           format: markdown
