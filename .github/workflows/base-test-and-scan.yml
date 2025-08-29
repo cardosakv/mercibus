@@ -47,7 +47,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 17
-          distribution: 'zulu'
+          distribution: "zulu"
 
       - name: Checkout code
         uses: actions/checkout@v4
@@ -124,7 +124,8 @@ jobs:
           RedirectUrl__EmailConfirmFail: ${{ secrets.redirect_email_confirm_fail }}
           RedirectUrl__PasswordReset: ${{ secrets.redirect_password_reset }}
 
-      - name: Code Coverage Summary Report
+      - name: Code coverage summary
+        if: always()
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
           filename: ./TestResults/*.cobertura.xml
@@ -135,15 +136,15 @@ jobs:
           hide_complexity: true
           indicators: true
           output: both
-          thresholds: '60 80'
+          thresholds: "60 80"
 
-      - name: Add Coverage PR Comment
+      - name: Add coverage PR comment
         uses: marocchino/sticky-pull-request-comment@v2
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && always()
         with:
           recreate: true
           path: code-coverage-results.md
-      
+
       - name: End SonarCloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
