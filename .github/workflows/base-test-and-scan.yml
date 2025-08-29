@@ -103,7 +103,7 @@ jobs:
           dotnet test ./${{ inputs.project_dll }}.UnitTests/${{ inputs.project_dll }}.UnitTests.csproj \
             --no-build --configuration Release \
             /p:CollectCoverage=true \
-            /p:CoverletOutput=$(pwd)/TestResults/unit.coverage \
+            /p:CoverletOutput=./TestResults/unit.coverage \
             /p:CoverletOutputFormat=\"opencover,cobertura\"
         env:
           Jwt__Key: ${{ secrets.jwt_key }}
@@ -121,7 +121,7 @@ jobs:
           dotnet test ./${{ inputs.project_dll }}.IntegrationTests/${{ inputs.project_dll }}.IntegrationTests.csproj \
             --no-build --configuration Release \
             /p:CollectCoverage=true \
-            /p:CoverletOutput=$(pwd)/TestResults/integration.coverage \
+            /p:CoverletOutput=./TestResults/integration.coverage \
             /p:CoverletOutputFormat=\"opencover,cobertura\"
         env:
           Jwt__Key: ${{ secrets.jwt_key }}
@@ -133,16 +133,12 @@ jobs:
           RedirectUrl__EmailConfirmSuccess: ${{ secrets.redirect_email_confirm_success }}
           RedirectUrl__EmailConfirmFail: ${{ secrets.redirect_email_confirm_fail }}
           RedirectUrl__PasswordReset: ${{ secrets.redirect_password_reset }}
-          
-      - name: List TestResults folder
-        if: always()
-        run: ls -R $(pwd)/TestResults
 
       - name: Code coverage summary
         if: always()
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
-          filename: $(pwd)/TestResults/*.cobertura.xml
+          filename: ./services/**/**/TestResults/*.cobertura.xml
           badge: true
           fail_below_min: true
           format: markdown
