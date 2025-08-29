@@ -103,7 +103,7 @@ jobs:
           dotnet test ./${{ inputs.project_dll }}.UnitTests/${{ inputs.project_dll }}.UnitTests.csproj \
             --no-build --configuration Release \
             /p:CollectCoverage=true \
-            /p:CoverletOutput=./TestResults/unit.coverage \
+            /p:CoverletOutput=$(pwd)/TestResults/unit.coverage \
             /p:CoverletOutputFormat=\"opencover,cobertura\"
         env:
           Jwt__Key: ${{ secrets.jwt_key }}
@@ -121,7 +121,7 @@ jobs:
           dotnet test ./${{ inputs.project_dll }}.IntegrationTests/${{ inputs.project_dll }}.IntegrationTests.csproj \
             --no-build --configuration Release \
             /p:CollectCoverage=true \
-            /p:CoverletOutput=./TestResults/integration.coverage \
+            /p:CoverletOutput=$(pwd)/TestResults/integration.coverage \
             /p:CoverletOutputFormat=\"opencover,cobertura\"
         env:
           Jwt__Key: ${{ secrets.jwt_key }}
@@ -136,13 +136,13 @@ jobs:
           
       - name: List TestResults folder
         if: always()
-        run: ls -R ./TestResults
+        run: ls -R $(pwd)/TestResults
 
       - name: Code coverage summary
         if: always()
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
-          filename: ./TestResults/*.cobertura.xml
+          filename: $(pwd)/TestResults/*.cobertura.xml
           badge: true
           fail_below_min: true
           format: markdown
