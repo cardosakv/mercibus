@@ -85,6 +85,9 @@ try
             };
         });
 
+    // Add health check.
+    builder.Services.AddCustomHealthChecks(builder.Configuration);
+
     builder.Services.AddAuthorization();
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
@@ -100,6 +103,7 @@ try
         app.ApplyMigrations();
     }
 
+    app.MapCustomHealthChecks();
     app.UseExceptionMiddleware();
     app.UseLoggingMiddleware();
     app.UseCustomAuthMiddleware();
