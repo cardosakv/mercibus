@@ -21,102 +21,95 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
-try
-{
-    var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
-    // Add services to the container.
-    builder.Services.AddScoped<IAuthService, AuthService>();
-    builder.Services.AddScoped<ITokenService, JwtTokenService>();
-    builder.Services.AddScoped<IEmailService, EmailService>();
-    builder.Services.AddScoped<ITransactionService, TransactionService>();
-    builder.Services.AddScoped<IBlobStorageService, BlobStorageService>();
-    builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+// Add services to the container.
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ITokenService, JwtTokenService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IBlobStorageService, BlobStorageService>();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
-    // Add validators.
-    builder.Services.AddValidatorsFromAssembly(typeof(RegisterRequestValidator).Assembly);
-    builder.Services.AddFluentValidationAutoValidation(config =>
-        config.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
+// Add validators.
+builder.Services.AddValidatorsFromAssembly(typeof(RegisterRequestValidator).Assembly);
+builder.Services.AddFluentValidationAutoValidation(config =>
+    config.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
 
-    // Add mapping.
-    builder.Services.AddMapster();
-    MappingConfig.Configure();
+// Add mapping.
+builder.Services.AddMapster();
+MappingConfig.Configure();
 
-    // Add identity services.
-    builder.Services.AddIdentityCore<User>()
-        .AddRoles<IdentityRole>()
-        .AddEntityFrameworkStores<AppDbContext>()
-        .AddTokenProvider<DataProtectorTokenProvider<User>>("Default")
-        .AddDefaultTokenProviders();
+// Add identity services.
+builder.Services.AddIdentityCore<User>()
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddTokenProvider<DataProtectorTokenProvider<User>>("Default")
+    .AddDefaultTokenProviders();
 
-    // Add database context.
-    builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Add database context.
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-    // Add email provider.
-    builder.Services.AddFluentEmail(builder.Configuration["Email:Sender"])
-        .AddRazorRenderer()
-        .AddSmtpSender(
-            new SmtpClient(builder.Configuration["Email:Server"])
-            {
-                EnableSsl = true,
-                Port = Convert.ToInt32(builder.Configuration["Email:Port"]),
-                Credentials = new NetworkCredential(
-                    builder.Configuration["Email:Username"],
-                    builder.Configuration["Email:Password"])
-            });
-
-    // Add authentication.
-    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(options =>
+// Add email provider.
+builder.Services.AddFluentEmail(builder.Configuration["Email:Sender"])
+    .AddRazorRenderer()
+    .AddSmtpSender(
+        new SmtpClient(builder.Configuration["Email:Server"])
         {
-            var rsa = RSA.Create();
-            rsa.ImportFromPem(File.ReadAllText(builder.Configuration["Jwt:PublicKeyPath"] ?? "jwt_priv_key.pem"));
-
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                ValidateAudience = true,
-                ValidAudience = builder.Configuration["Jwt:Audience"],
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new RsaSecurityKey(rsa)
-            };
+            EnableSsl = true,
+            Port = Convert.ToInt32(builder.Configuration["Email:Port"]),
+            Credentials = new NetworkCredential(
+                builder.Configuration["Email:Username"],
+                builder.Configuration["Email:Password"])
         });
 
-    // Add health check.
-    builder.Services.AddCustomHealthChecks(builder.Configuration);
-
-    builder.Services.AddAuthorization();
-    builder.Services.AddControllers();
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddHttpContextAccessor();
-    builder.Services.AddSwaggerGen();
-
-    var app = builder.Build();
-
-    if (app.Environment.IsDevelopment())
+// Add authentication.
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-        app.ApplyMigrations();
-    }
+        var rsa = RSA.Create();
+        rsa.ImportFromPem(File.ReadAllText(builder.Configuration["Jwt:PublicKeyPath"] ?? "jwt_priv_key.pem"));
 
-    app.MapCustomHealthChecks();
-    app.UseExceptionMiddleware();
-    app.UseLoggingMiddleware();
-    app.UseCustomAuthMiddleware();
-    app.UseAuthentication();
-    app.UseAuthorization();
-    app.MapControllers();
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new RsaSecurityKey(rsa)
+        };
+    });
 
-    await app.RunAsync();
-}
-catch (Exception ex)
+// Add health check.
+builder.Services.AddCustomHealthChecks(builder.Configuration);
+
+builder.Services.AddAuthorization();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSwaggerGen();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
 {
-    Console.WriteLine(ex.Message);
+    app.UseSwagger();
+    app.UseSwaggerUI();
+    app.ApplyMigrations();
 }
+
+app.MapCustomHealthChecks();
+app.UseExceptionMiddleware();
+app.UseLoggingMiddleware();
+app.UseCustomAuthMiddleware();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
+
+await app.RunAsync();
 
 public partial class Program
 {
