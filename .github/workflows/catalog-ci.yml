@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - develop
     paths:
       - 'services/catalog/**'
   pull_request:
