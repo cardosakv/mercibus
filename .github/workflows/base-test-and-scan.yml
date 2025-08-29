@@ -136,7 +136,7 @@ jobs:
 
       - name: List coverage files
         if: always()
-        run: ls -R ./TestResults/
+        run: ls -R .
 
       - name: Code coverage summary
         if: always()
