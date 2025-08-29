@@ -14,6 +14,12 @@ namespace Auth.IntegrationTests;
 /// </summary>
 public class TestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
+    public TestWebAppFactory()
+    {
+        _dbContainer.StartAsync().GetAwaiter().GetResult();
+        _azuriteContainer.StartAsync().GetAwaiter().GetResult();
+    }
+
     private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()
         .WithImage("postgres:latest")
         .WithUsername("test_user")
@@ -57,10 +63,9 @@ public class TestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
         });
     }
 
-    public async Task InitializeAsync()
+    public Task InitializeAsync()
     {
-        await _dbContainer.StartAsync();
-        await _azuriteContainer.StartAsync();
+        return Task.CompletedTask;
     }
 
     public new async Task DisposeAsync()
