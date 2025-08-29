@@ -5,13 +5,13 @@ on:
     branches:
       - main
     paths:
-      - 'services/catalog/**'
+      - "services/catalog/**"
   pull_request:
     branches:
       - main
       - develop
     paths:
-      - 'services/catalog/**'
+      - "services/catalog/**"
 
 permissions:
   contents: read
@@ -22,21 +22,16 @@ jobs:
     uses: ./.github/workflows/base-build.yml
     with:
       service: catalog
-  
-  test:
-    uses: ./.github/workflows/base-test.yml
-    with:
-      service: catalog
-  
-  analyze:
-    uses: ./.github/workflows/base-sonarqube.yml
+
+  test-and-scan:
+    uses: ./.github/workflows/base-test-and-scan.yml
     with:
       service: catalog
       project_key: mercibus_catalog
       project_dll: Catalog
     secrets:
       sonar_token: ${{ secrets.SONAR_TOKEN_CATALOG }}
-  
+
   dockerize:
     uses: ./.github/workflows/base-dockerize.yml
     with:
