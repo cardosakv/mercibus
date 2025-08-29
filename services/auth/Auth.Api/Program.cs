@@ -101,7 +101,7 @@ if (app.Environment.IsDevelopment())
     app.ApplyMigrations();
 }
 
-app.MapCustomHealthChecks();
+app.MapCustomHealthChecks(builder);
 app.UseExceptionMiddleware();
 app.UseLoggingMiddleware();
 app.UseCustomAuthMiddleware();

@@ -17,10 +17,13 @@ public static class HealthCheckExtension
             .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection") ?? string.Empty);
     }
 
-    public static void MapCustomHealthChecks(this IEndpointRouteBuilder endpoints, string healthCheckEndpoint = "/health")
+    public static void MapCustomHealthChecks(this IEndpointRouteBuilder endpoints, WebApplicationBuilder builder)
     {
+        if (builder.Environment.IsStaging())
+                    return;
+        
         endpoints.MapHealthChecks(
-            healthCheckEndpoint,
+            "/health",
             new HealthCheckOptions
             {
                 ResponseWriter = async (context, report) =>

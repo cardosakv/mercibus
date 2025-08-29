@@ -12,16 +12,21 @@ public static class HealthCheckExtension
     {
         if (builder.Environment.IsStaging())
             return;
-        
+
         services.AddHealthChecks()
             .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection") ?? string.Empty)
             .AddRedis(builder.Configuration.GetConnectionString("RedisConnection") ?? string.Empty);
     }
 
-    public static void MapCustomHealthChecks(this IEndpointRouteBuilder endpoints, string healthCheckEndpoint = "/health")
+    public static void MapCustomHealthChecks(this IEndpointRouteBuilder endpoints, WebApplicationBuilder builder)
     {
+        if (builder.Environment.IsStaging())
+        {
+            return;
+        }
+
         endpoints.MapHealthChecks(
-            healthCheckEndpoint,
+            pattern: "/health",
             options: new HealthCheckOptions
             {
                 ResponseWriter = async (context, report) =>
