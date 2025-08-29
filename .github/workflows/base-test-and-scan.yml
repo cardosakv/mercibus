@@ -104,7 +104,7 @@ jobs:
             --no-build --configuration Release \
             /p:CollectCoverage=true \
             /p:CoverletOutput=./TestResults/unit.coverage \
-            /p:CoverletOutputFormat=opencover,cobertura
+            /p:CoverletOutputFormat=\"opencover,cobertura\"
         env:
           Jwt__Key: ${{ secrets.jwt_key }}
           Email__Server: ${{ secrets.email_server }}
@@ -122,7 +122,7 @@ jobs:
             --no-build --configuration Release \
             /p:CollectCoverage=true \
             /p:CoverletOutput=./TestResults/integration.coverage \
-            /p:CoverletOutputFormat=opencover,cobertura
+            /p:CoverletOutputFormat=\"opencover,cobertura\"
         env:
           Jwt__Key: ${{ secrets.jwt_key }}
           Email__Server: ${{ secrets.email_server }}
