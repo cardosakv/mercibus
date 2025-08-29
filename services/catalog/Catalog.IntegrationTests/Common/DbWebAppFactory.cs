@@ -15,6 +15,12 @@ namespace Catalog.IntegrationTests.Common;
 /// </summary>
 public class DbWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
+    public DbWebAppFactory()
+    {
+        _postgresContainer.StartAsync().GetAwaiter().GetResult();
+        _redisContainer.StartAsync().GetAwaiter().GetResult();
+    }
+
     private readonly PostgreSqlContainer _postgresContainer = new PostgreSqlBuilder()
         .WithImage("postgres:latest")
         .WithUsername("test_user")
@@ -50,10 +56,9 @@ public class DbWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
         return Services.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
     }
 
-    public async Task InitializeAsync()
+    public Task InitializeAsync()
     {
-        await _postgresContainer.StartAsync();
-        await _redisContainer.StartAsync();
+        return Task.CompletedTask;
     }
 
     public new async Task DisposeAsync()

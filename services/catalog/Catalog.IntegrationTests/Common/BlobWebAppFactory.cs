@@ -17,6 +17,13 @@ namespace Catalog.IntegrationTests.Common;
 /// </summary>
 public class BlobWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
+    public BlobWebAppFactory()
+    {
+        _postgresContainer.StartAsync().GetAwaiter().GetResult();
+        _azuriteContainer.StartAsync().GetAwaiter().GetResult();
+        _redisContainer.StartAsync().GetAwaiter().GetResult();
+    }
+
     private readonly PostgreSqlContainer _postgresContainer = new PostgreSqlBuilder()
         .WithImage("postgres:latest")
         .WithUsername("test_user")
@@ -68,11 +75,9 @@ public class BlobWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
         return Services.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
     }
 
-    public async Task InitializeAsync()
+    public Task InitializeAsync()
     {
-        await _postgresContainer.StartAsync();
-        await _azuriteContainer.StartAsync();
-        await _redisContainer.StartAsync();
+        return Task.CompletedTask;
     }
 
     public new async Task DisposeAsync()
