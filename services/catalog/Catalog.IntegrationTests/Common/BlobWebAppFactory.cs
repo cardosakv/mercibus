@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using StackExchange.Redis;
 using Testcontainers.Azurite;
 using Testcontainers.PostgreSql;
 using Testcontainers.Redis;
@@ -33,8 +32,32 @@ public class BlobWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
         .WithPortBinding(port: 6379, assignRandomHostPort: true)
         .Build();
 
+    public BlobWebAppFactory()
+    {
+        _postgresContainer.StartAsync().GetAwaiter().GetResult();
+        _azuriteContainer.StartAsync().GetAwaiter().GetResult();
+        _redisContainer.StartAsync().GetAwaiter().GetResult();
+    }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.ConfigureAppConfiguration((_, config) =>
+        {
+            config.AddInMemoryCollection(
+                new Dictionary<string, string>
+                {
+                    {
+                        "ConnectionStrings:DefaultConnection", _postgresContainer.GetConnectionString()
+                    },
+                    {
+                        "ConnectionStrings:RedisConnection", _redisContainer.GetConnectionString()
+                    },
+                    {
+                        "ConnectionStrings:BlobStorageConnection", _azuriteContainer.GetConnectionString()
+                    }
+                }!);
+        });
+
         builder.ConfigureServices(services =>
         {
             // Remove existing AppDbContext registration since this is injected in IAppDbContext
@@ -46,20 +69,6 @@ public class BlobWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(_postgresContainer.GetConnectionString()));
             services.AddAuthentication("Test").AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(authenticationScheme: "Test", _ => { });
-
-            // Add Redis configuration
-            services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(_redisContainer.GetConnectionString()));
-        });
-
-        builder.ConfigureAppConfiguration((_, config) =>
-        {
-            config.AddInMemoryCollection(
-                new Dictionary<string, string>
-                {
-                    {
-                        "ConnectionStrings:BlobStorageConnection", _azuriteContainer.GetConnectionString()
-                    }
-                }!);
         });
     }
 
@@ -70,9 +79,7 @@ public class BlobWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        await _postgresContainer.StartAsync();
-        await _azuriteContainer.StartAsync();
-        await _redisContainer.StartAsync();
+        await Task.CompletedTask;
     }
 
     public new async Task DisposeAsync()

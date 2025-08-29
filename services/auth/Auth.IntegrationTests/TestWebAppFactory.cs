@@ -1,9 +1,6 @@
-using Auth.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.Azurite;
 using Testcontainers.PostgreSql;
 
@@ -24,28 +21,25 @@ public class TestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
         .WithImage("mcr.microsoft.com/azure-storage/azurite:latest")
         .WithCommand("--skipApiVersionCheck")
         .Build();
+    
+    public TestWebAppFactory()
+    {
+        _dbContainer.StartAsync().GetAwaiter().GetResult();
+        _azuriteContainer.StartAsync().GetAwaiter().GetResult();
+    }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.ConfigureServices(services =>
-        {
-            var connectionString = _dbContainer.GetConnectionString();
-            services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
-        });
-
         builder.ConfigureAppConfiguration((_, config) =>
         {
             config.AddInMemoryCollection(
                 new Dictionary<string, string>
                 {
                     {
+                        "ConnectionStrings:DefaultConnection", _dbContainer.GetConnectionString()
+                    },
+                    {
                         "ConnectionStrings:BlobStorageConnection", _azuriteContainer.GetConnectionString()
-                    },
-                    {
-                        "BlobStorage:AccountName", "devstoreaccount1"
-                    },
-                    {
-                        "BlobStorage:AccountKey", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
                     },
                     {
                         "Jwt:PublicKeyPath", "test_pub_key.pem"
@@ -56,11 +50,10 @@ public class TestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
                 }!);
         });
     }
-
+    
     public async Task InitializeAsync()
     {
-        await _dbContainer.StartAsync();
-        await _azuriteContainer.StartAsync();
+        await Task.CompletedTask;
     }
 
     public new async Task DisposeAsync()
