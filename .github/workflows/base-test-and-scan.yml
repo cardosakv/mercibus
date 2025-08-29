@@ -135,6 +135,7 @@ jobs:
           RedirectUrl__PasswordReset: ${{ secrets.redirect_password_reset }}
           
       - name: List TestResults folder
+        if: always()
         run: ls -R ./TestResults
 
       - name: Code coverage summary
