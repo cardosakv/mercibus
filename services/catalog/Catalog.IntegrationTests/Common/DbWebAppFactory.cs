@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using StackExchange.Redis;
 using Testcontainers.PostgreSql;
 using Testcontainers.Redis;
 
@@ -28,6 +28,20 @@ public class DbWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.ConfigureAppConfiguration((_, config) =>
+        {
+            config.AddInMemoryCollection(
+                new Dictionary<string, string>
+                {
+                    {
+                        "ConnectionStrings:DefaultConnection", _postgresContainer.GetConnectionString()
+                    },
+                    {
+                        "ConnectionStrings:RedisConnection", _redisContainer.GetConnectionString()
+                    }
+                }!);
+        });
+
         builder.ConfigureServices(services =>
         {
             // Remove existing AppDbContext registration since this is injected in IAppDbContext
@@ -39,9 +53,6 @@ public class DbWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(_postgresContainer.GetConnectionString()));
             services.AddAuthentication("Test").AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(authenticationScheme: "Test", _ => { });
-
-            // Add Redis configuration
-            services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(_redisContainer.GetConnectionString()));
         });
     }
 
