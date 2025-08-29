@@ -12,5 +12,9 @@ public static class MappingExtension
     {
         services.AddMapster();
         ProductMapping.Configure();
+        ProductReviewMapping.Configure();
+        ProductImageMapping.Configure();
+        BrandMapping.Configure();
+        CategoryMapping.Configure();
     }
 }
