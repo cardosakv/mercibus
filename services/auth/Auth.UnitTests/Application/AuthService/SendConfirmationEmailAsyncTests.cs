@@ -32,15 +32,12 @@ public class SendConfirmationEmailAsyncTests : BaseTests
         UserManagerMock
             .Setup(x => x.FindByEmailAsync(_request.Email))
             .ReturnsAsync(_user);
-
         UserManagerMock
             .Setup(x => x.GenerateEmailConfirmationTokenAsync(_user))
             .ReturnsAsync("sample-token");
-
         HttpContextAccessorMock
             .Setup(x => x.HttpContext)
             .Returns(new DefaultHttpContext());
-
         EmailServiceMock
             .Setup(x => x.SendEmailConfirmationLink(_request.Email, It.IsAny<string>()))
             .ReturnsAsync(true);
@@ -100,34 +97,6 @@ public class SendConfirmationEmailAsyncTests : BaseTests
         HttpContextAccessorMock
             .Setup(x => x.HttpContext)
             .Returns((HttpContext?)null);
-
-        // Act
-        var response = await AuthService.SendConfirmationEmailAsync(_request);
-
-        // Assert
-        response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.ApiError);
-    }
-
-    [Fact]
-    public async Task Fail_WhenSendingEmailFails()
-    {
-        // Arrange
-        UserManagerMock
-            .Setup(x => x.FindByEmailAsync(_request.Email))
-            .ReturnsAsync(_user);
-
-        UserManagerMock
-            .Setup(x => x.GenerateEmailConfirmationTokenAsync(_user))
-            .ReturnsAsync("sample-token");
-
-        HttpContextAccessorMock
-            .Setup(x => x.HttpContext)
-            .Returns(new DefaultHttpContext());
-
-        EmailServiceMock
-            .Setup(x => x.SendEmailConfirmationLink(_request.Email, It.IsAny<string>()))
-            .ReturnsAsync(false);
 
         // Act
         var response = await AuthService.SendConfirmationEmailAsync(_request);

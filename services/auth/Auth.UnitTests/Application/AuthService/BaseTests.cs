@@ -1,6 +1,8 @@
 using Auth.Application.Interfaces.Repositories;
 using Auth.Application.Interfaces.Services;
 using Auth.Domain.Entities;
+using Hangfire;
+using Hangfire.MemoryStorage;
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -64,6 +66,7 @@ public abstract class BaseTests
         LinkGeneratorMock = new Mock<LinkGenerator>();
         ConfigurationMock = new Mock<IConfiguration>();
         MapperMock = new Mock<IMapper>();
+        GlobalConfiguration.Configuration.UseMemoryStorage();
 
         AuthService = new Auth.Application.Services.AuthService(
             UserManagerMock.Object,
