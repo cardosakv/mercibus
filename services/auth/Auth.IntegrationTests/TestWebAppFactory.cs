@@ -1,5 +1,4 @@
 using DotNet.Testcontainers.Builders;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Testcontainers.Azurite;
 using Testcontainers.PostgreSql;
@@ -24,18 +23,16 @@ public class TestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
         .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(10000))
         .Build();
 
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
-    {
-        Environment.SetEnvironmentVariable("ConnectionStrings:DefaultConnection", _dbContainer.GetConnectionString());
-        Environment.SetEnvironmentVariable("ConnectionStrings:BlobStorageConnection", _azuriteContainer.GetConnectionString());
-        Environment.SetEnvironmentVariable("Jwt:PublicKeyPath", "test_pub_key.pem");
-        Environment.SetEnvironmentVariable("Jwt:PrivateKeyPath", "test_priv_key.pem");
-    }
-
     public async Task InitializeAsync()
     {
         await _dbContainer.StartAsync();
         await _azuriteContainer.StartAsync();
+
+        // Set environment variables
+        Environment.SetEnvironmentVariable("ConnectionStrings:DefaultConnection", _dbContainer.GetConnectionString());
+        Environment.SetEnvironmentVariable("ConnectionStrings:BlobStorageConnection", _azuriteContainer.GetConnectionString());
+        Environment.SetEnvironmentVariable("Jwt:PublicKeyPath", "test_pub_key.pem");
+        Environment.SetEnvironmentVariable("Jwt:PrivateKeyPath", "test_priv_key.pem");
     }
 
     public new async Task DisposeAsync()
