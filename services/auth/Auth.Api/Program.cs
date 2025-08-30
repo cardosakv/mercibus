@@ -83,9 +83,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Add health check.
-builder.Services.AddCustomHealthChecks(builder.Configuration);
-
+builder.Services.AddHealthChecks();
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -101,7 +99,7 @@ if (app.Environment.IsDevelopment())
     app.ApplyMigrations();
 }
 
-app.MapCustomHealthChecks();
+app.MapHealthChecks("/health");
 app.UseExceptionMiddleware();
 app.UseLoggingMiddleware();
 app.UseCustomAuthMiddleware();
