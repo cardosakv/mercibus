@@ -7,6 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Hangfire.AspNetCore" Version="1.8.21"/>
+        <PackageReference Include="Hangfire.MemoryStorage" Version="1.8.1.2"/>
         <PackageReference Include="Mapster" Version="7.4.0"/>
         <PackageReference Include="Mercibus.Common" Version="1.0.5" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>

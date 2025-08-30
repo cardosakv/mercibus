@@ -5,6 +5,7 @@ using Auth.Application.Interfaces.Repositories;
 using Auth.Application.Interfaces.Services;
 using Auth.Domain.Common;
 using Auth.Domain.Entities;
+using Hangfire;
 using MapsterMapper;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Models;
@@ -28,7 +29,8 @@ public class AuthService(
     IHttpContextAccessor httpContextAccessor,
     LinkGenerator linkGenerator,
     IConfiguration configuration,
-    IMapper mapper) : BaseService, IAuthService
+    IMapper mapper
+) : BaseService, IAuthService
 {
     public async Task<ServiceResult> RegisterAsync(RegisterRequest request)
     {
@@ -195,11 +197,7 @@ public class AuthService(
         var confirmEndpoint = linkGenerator.GetUriByAction(httpContextAccessor.HttpContext, "ConfirmEmail", "Auth");
         var confirmLink = confirmEndpoint + "?userId=" + user.Id + "&token=" + encodedToken;
 
-        var emailSent = await emailService.SendEmailConfirmationLink(request.Email, confirmLink);
-        if (!emailSent)
-        {
-            return Error(ErrorType.ApiError, ErrorCode.Internal);
-        }
+        BackgroundJob.Enqueue(() => emailService.SendEmailConfirmationLink(request.Email, confirmLink));
 
         return Success();
     }
@@ -241,11 +239,7 @@ public class AuthService(
         var passwordResetRedirectUrl = configuration["RedirectUrl:PasswordReset"];
         var resetLink = passwordResetRedirectUrl + "?userId=" + user.Id + "&token=" + encodedToken;
 
-        var emailSent = await emailService.SendPasswordResetLink(request.Email, resetLink);
-        if (!emailSent)
-        {
-            return Error(ErrorType.ApiError, ErrorCode.Internal);
-        }
+        BackgroundJob.Enqueue(() => emailService.SendPasswordResetLink(request.Email, resetLink));
 
         return Success();
     }

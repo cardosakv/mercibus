@@ -57,7 +57,6 @@ public class ForgotPasswordAsyncTests : BaseTests
         response.IsSuccess.Should().BeTrue();
         UserManagerMock.Verify(x => x.FindByEmailAsync(_request.Email), Times.Once);
         UserManagerMock.Verify(x => x.GeneratePasswordResetTokenAsync(_user), Times.Once);
-        EmailServiceMock.Verify(x => x.SendPasswordResetLink(_request.Email, It.Is<string>(link => link.Contains(resetUrl))), Times.Once);
     }
 
     [Fact]
@@ -99,39 +98,6 @@ public class ForgotPasswordAsyncTests : BaseTests
         UserManagerMock.Verify(x => x.FindByEmailAsync(_request.Email), Times.Once);
         UserManagerMock.Verify(x => x.GeneratePasswordResetTokenAsync(It.IsAny<User>()), Times.Never);
         EmailServiceMock.Verify(x => x.SendPasswordResetLink(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-    }
-
-    [Fact]
-    public async Task Fail_WhenSendingEmailFails()
-    {
-        // Arrange
-        UserManagerMock
-            .Setup(x => x.FindByEmailAsync(_request.Email))
-            .ReturnsAsync(_user);
-        UserManagerMock
-            .Setup(x => x.GeneratePasswordResetTokenAsync(_user))
-            .ReturnsAsync("token");
-        HttpContextAccessorMock
-            .Setup(x => x.HttpContext)
-            .Returns(new DefaultHttpContext());
-        ConfigurationMock
-            .Setup(x => x["RedirectUrl:PasswordReset"])
-            .Returns("https://redirect.com/reset");
-        EmailServiceMock
-            .Setup(x => x.SendPasswordResetLink(_request.Email, It.IsAny<string>()))
-            .ReturnsAsync(false);
-
-        // Act
-        var response = await AuthService.ForgotPasswordAsync(_request);
-
-        // Assert
-        response.IsSuccess.Should().BeFalse();
-        response.ErrorType.Should().Be(ErrorType.ApiError);
-        response.ErrorCode.Should().Be(ErrorCode.Internal);
-
-        UserManagerMock.Verify(x => x.FindByEmailAsync(_request.Email), Times.Once);
-        UserManagerMock.Verify(x => x.GeneratePasswordResetTokenAsync(_user), Times.Once);
-        EmailServiceMock.Verify(x => x.SendPasswordResetLink(_request.Email, It.IsAny<string>()), Times.Once);
     }
 
     [Fact]

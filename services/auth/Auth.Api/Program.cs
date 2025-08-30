@@ -12,6 +12,8 @@ using Auth.Infrastructure;
 using Auth.Infrastructure.Repositories;
 using Auth.Infrastructure.Services;
 using FluentValidation;
+using Hangfire;
+using Hangfire.MemoryStorage;
 using Mapster;
 using Mercibus.Common.Middlewares;
 using Mercibus.Common.Validations;
@@ -63,6 +65,10 @@ builder.Services.AddFluentEmail(builder.Configuration["Email:Sender"])
                 builder.Configuration["Email:Username"],
                 builder.Configuration["Email:Password"])
         });
+
+// Add background service.
+builder.Services.AddHangfire(config => config.UseMemoryStorage());
+builder.Services.AddHangfireServer();
 
 // Add authentication.
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
