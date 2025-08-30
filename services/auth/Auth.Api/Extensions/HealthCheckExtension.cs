@@ -8,20 +8,14 @@ namespace Auth.Api.Extensions;
 /// </summary>
 public static class HealthCheckExtension
 {
-    public static void AddCustomHealthChecks(this IServiceCollection services, WebApplicationBuilder builder)
+    public static void AddCustomHealthChecks(this IServiceCollection services, IConfiguration configuration)
     {
-        if (builder.Environment.IsStaging())
-            return;
-
         services.AddHealthChecks()
-            .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection") ?? string.Empty);
+            .AddNpgSql(configuration.GetConnectionString("DefaultConnection") ?? string.Empty);
     }
 
-    public static void MapCustomHealthChecks(this IEndpointRouteBuilder endpoints, WebApplicationBuilder builder)
+    public static void MapCustomHealthChecks(this IEndpointRouteBuilder endpoints)
     {
-        if (builder.Environment.IsStaging())
-                    return;
-        
         endpoints.MapHealthChecks(
             "/health",
             new HealthCheckOptions

@@ -1,6 +1,6 @@
+using DotNet.Testcontainers.Builders;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
 using Testcontainers.Azurite;
 using Testcontainers.PostgreSql;
 
@@ -15,47 +15,27 @@ public class TestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
         .WithImage("postgres:latest")
         .WithUsername("test_user")
         .WithPassword("test_password")
+        .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(5432))
         .Build();
 
     private readonly AzuriteContainer _azuriteContainer = new AzuriteBuilder()
         .WithImage("mcr.microsoft.com/azure-storage/azurite:latest")
         .WithCommand("--skipApiVersionCheck")
+        .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(10000))
         .Build();
-
-    public TestWebAppFactory()
-    {
-        _dbContainer.StartAsync().GetAwaiter().GetResult();
-        _azuriteContainer.StartAsync().GetAwaiter().GetResult();
-    }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseEnvironment("Staging");
-
-        builder.ConfigureAppConfiguration((_, config) =>
-        {
-            config.AddInMemoryCollection(
-                new Dictionary<string, string>
-                {
-                    {
-                        "ConnectionStrings:DefaultConnection", _dbContainer.GetConnectionString()
-                    },
-                    {
-                        "ConnectionStrings:BlobStorageConnection", _azuriteContainer.GetConnectionString()
-                    },
-                    {
-                        "Jwt:PublicKeyPath", "test_pub_key.pem"
-                    },
-                    {
-                        "Jwt:PrivateKeyPath", "test_priv_key.pem"
-                    }
-                }!);
-        });
+        Environment.SetEnvironmentVariable("ConnectionStrings:DefaultConnection", _dbContainer.GetConnectionString());
+        Environment.SetEnvironmentVariable("ConnectionStrings:BlobStorageConnection", _azuriteContainer.GetConnectionString());
+        Environment.SetEnvironmentVariable("Jwt:PublicKeyPath", "test_pub_key.pem");
+        Environment.SetEnvironmentVariable("Jwt:PrivateKeyPath", "test_priv_key.pem");
     }
 
     public async Task InitializeAsync()
     {
-        await Task.CompletedTask;
+        await _dbContainer.StartAsync();
+        await _azuriteContainer.StartAsync();
     }
 
     public new async Task DisposeAsync()
