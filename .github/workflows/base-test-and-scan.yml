@@ -98,14 +98,26 @@ jobs:
       - name: Add .NET tools to PATH
         run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
-      - name: Run unit and integration tests with OpenCover coverage
+      - name: Run unit tests with OpenCover coverage
         run: |
           coverlet ./${{ inputs.project_dll }}.UnitTests/bin/Release/net8.0/${{ inputs.project_dll }}.UnitTests.dll \
             --target "dotnet" \
             --targetargs "test ./${{ inputs.project_dll }}.UnitTests/${{ inputs.project_dll }}.UnitTests.csproj --no-build --configuration Release" \
             --format opencover \
             --output "./TestResults/unit.coverage.opencover.xml"
+        env:
+          Jwt__Key: ${{ secrets.jwt_key }}
+          Email__Server: ${{ secrets.email_server }}
+          Email__Port: ${{ secrets.email_port }}
+          Email__Sender: ${{ secrets.email_sender }}
+          Email__Username: ${{ secrets.email_username }}
+          Email__Password: ${{ secrets.email_password }}
+          RedirectUrl__EmailConfirmSuccess: ${{ secrets.redirect_email_confirm_success }}
+          RedirectUrl__EmailConfirmFail: ${{ secrets.redirect_email_confirm_fail }}
+          RedirectUrl__PasswordReset: ${{ secrets.redirect_password_reset }}
 
+      - name: Run integration tests with OpenCover coverage
+        run: |
           coverlet ./${{ inputs.project_dll }}.IntegrationTests/bin/Release/net8.0/${{ inputs.project_dll }}.IntegrationTests.dll \
             --target "dotnet" \
             --targetargs "test ./${{ inputs.project_dll }}.IntegrationTests/${{ inputs.project_dll }}.IntegrationTests.csproj --no-build --configuration Release" \
@@ -121,7 +133,7 @@ jobs:
           RedirectUrl__EmailConfirmSuccess: ${{ secrets.redirect_email_confirm_success }}
           RedirectUrl__EmailConfirmFail: ${{ secrets.redirect_email_confirm_fail }}
           RedirectUrl__PasswordReset: ${{ secrets.redirect_password_reset }}
-      
+
       - name: End SonarCloud analysis
         env:
           SONAR_TOKEN: ${{ secrets.sonar_token }}
