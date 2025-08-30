@@ -4,15 +4,14 @@ on:
   push:
     branches:
       - main
-      - develop
     paths:
-      - 'services/auth/**'
+      - "services/auth/**"
   pull_request:
     branches:
       - main
       - develop
     paths:
-      - 'services/auth/**'
+      - "services/auth/**"
 
 permissions:
   contents: read
@@ -23,24 +22,9 @@ jobs:
     uses: ./.github/workflows/base-build.yml
     with:
       service: auth
-  
-  test:
-    uses: ./.github/workflows/base-test.yml
-    with:
-      service: auth
-    secrets:
-      jwt_key: ${{ secrets.JWT_KEY }}
-      email_server: ${{ secrets.EMAIL_SERVER }}
-      email_port: ${{ secrets.EMAIL_PORT }}
-      email_sender: ${{ secrets.EMAIL_SENDER }}
-      email_username: ${{ secrets.EMAIL_USERNAME }}
-      email_password: ${{ secrets.EMAIL_PASSWORD }}
-      redirect_email_confirm_success: ${{ secrets.REDIRECT_EMAILCONFIRM_SUCCESS}}
-      redirect_email_confirm_fail: ${{ secrets.REDIRECT_EMAILCONFIRM_FAIL }}
-      redirect_password_reset: ${{ secrets.REDIRECT_PASSWORD_RESET }}
-  
-  analyze:
-    uses: ./.github/workflows/base-sonarqube.yml
+
+  test-and-scan:
+    uses: ./.github/workflows/base-test-and-scan.yml
     with:
       service: auth
       project_key: mercibus_auth
@@ -56,7 +40,7 @@ jobs:
       redirect_email_confirm_success: ${{ secrets.REDIRECT_EMAILCONFIRM_SUCCESS}}
       redirect_email_confirm_fail: ${{ secrets.REDIRECT_EMAILCONFIRM_FAIL }}
       redirect_password_reset: ${{ secrets.REDIRECT_PASSWORD_RESET }}
-  
+
   dockerize:
     uses: ./.github/workflows/base-dockerize.yml
     with:

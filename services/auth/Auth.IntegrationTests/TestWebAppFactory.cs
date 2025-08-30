@@ -42,12 +42,6 @@ public class TestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
                         "ConnectionStrings:BlobStorageConnection", _azuriteContainer.GetConnectionString()
                     },
                     {
-                        "BlobStorage:AccountName", "devstoreaccount1"
-                    },
-                    {
-                        "BlobStorage:AccountKey", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
-                    },
-                    {
                         "Jwt:PublicKeyPath", "test_pub_key.pem"
                     },
                     {
