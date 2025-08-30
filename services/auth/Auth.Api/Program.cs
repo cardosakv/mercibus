@@ -49,7 +49,7 @@ builder.Services.AddIdentityCore<User>()
 
 // Add database context.
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), opt => opt.EnableRetryOnFailure()));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add email provider.
 builder.Services.AddFluentEmail(builder.Configuration["Email:Sender"])
