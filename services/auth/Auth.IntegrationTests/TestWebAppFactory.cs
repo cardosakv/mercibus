@@ -15,7 +15,7 @@ public class TestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
         .WithImage("postgres:latest")
         .WithUsername("test_user")
         .WithPassword("test_password")
-        .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(5432))
+        .WithWaitStrategy(Wait.ForUnixContainer().UntilCommandIsCompleted("pg_isready -U test_user"))
         .Build();
 
     private readonly AzuriteContainer _azuriteContainer = new AzuriteBuilder()
