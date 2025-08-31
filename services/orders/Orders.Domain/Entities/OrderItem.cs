@@ -39,9 +39,4 @@ public class OrderItem
     /// Quantity of the product ordered.
     /// </summary>
     public int Quantity { get; set; }
-    
-    /// <summary>
-    /// Total price for this order item (Price * Quantity).
-    /// </summary>
-    public decimal Total => Price * Quantity;
 }

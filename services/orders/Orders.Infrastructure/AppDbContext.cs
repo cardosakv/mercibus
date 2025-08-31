@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Orders.Application.Interfaces.Repositories;
 using Orders.Domain.Entities;
 using Orders.Infrastructure.Configurations;
 
@@ -7,7 +8,7 @@ namespace Orders.Infrastructure;
 /// <summary>
 /// Represents the application's database context.
 /// </summary>
-public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options), IAppDbContext
 {
     public DbSet<Order> Orders { get; set; }
 

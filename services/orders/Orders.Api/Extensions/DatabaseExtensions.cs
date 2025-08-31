@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Orders.Application.Interfaces.Repositories;
 using Orders.Infrastructure;
 
 namespace Orders.Api.Extensions;
@@ -12,7 +13,7 @@ public static class DatabaseExtensions
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
-        services.AddScoped<AppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
+        services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
     }
 
     public static void ApplyMigrations(this WebApplication app)
