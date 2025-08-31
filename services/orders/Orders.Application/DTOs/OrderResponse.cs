@@ -1,4 +1,6 @@
-﻿namespace Orders.Application.DTOs;
+﻿using Orders.Domain.Enums;
+
+namespace Orders.Application.DTOs;
 
 /// <summary>
 /// Represents a response containing order details.
@@ -6,6 +8,7 @@
 public record OrderResponse(
     long Id,
     string UserId,
-    DateTime OrderDate,
+    DateTime CreatedAt,
+    OrderStatus Status,
     List<OrderItemResponse> Items
 );

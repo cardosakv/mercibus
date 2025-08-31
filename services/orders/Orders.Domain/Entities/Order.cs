@@ -25,7 +25,7 @@ public class Order
     /// <summary>
     /// Date and time when the order was placed.
     /// </summary>
-    public DateTime OrderDate { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>
     /// Items included in the order.
