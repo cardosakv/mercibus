@@ -9,6 +9,6 @@ public record OrderResponse(
     long Id,
     string UserId,
     DateTime CreatedAt,
-    OrderStatus Status,
+    string Status,
     List<OrderItemResponse> Items
 );

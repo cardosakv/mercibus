@@ -8,8 +8,9 @@ public interface IOrderService
     /// <summary>
     /// Adds a new order.
     /// </summary>
+    /// <param name="userId">ID of the user placing the order.</param>
     /// <param name="request">Order request containing order details.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Service result indicating success or failure.</returns>
-    Task<ServiceResult> AddAsync(OrderRequest request, CancellationToken cancellationToken = default);
+    Task<ServiceResult> AddAsync(string? userId, OrderRequest request, CancellationToken cancellationToken = default);
 }

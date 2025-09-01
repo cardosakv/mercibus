@@ -1,4 +1,5 @@
-﻿using Mercibus.Common.Controllers;
+﻿using System.Security.Claims;
+using Mercibus.Common.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Orders.Application.DTOs;
 using Orders.Application.Interfaces.Services;
@@ -11,7 +12,8 @@ public class OrderController(IOrderService orderService) : BaseController
     [HttpPost]
     public async Task<IActionResult> AddOrderAsync([FromBody] OrderRequest request, CancellationToken cancellationToken)
     {
-        var response = await orderService.AddAsync(request, cancellationToken);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var response = await orderService.AddAsync(userId, request, cancellationToken);
         return Ok(response);
     }
 }

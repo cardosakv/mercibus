@@ -2,6 +2,7 @@ using Mapster;
 using Orders.Api.Extensions;
 using Orders.Application.Interfaces.Repositories;
 using Orders.Application.Interfaces.Services;
+using Orders.Application.Mappings;
 using Orders.Application.Services;
 using Orders.Infrastructure.Repositories;
 
@@ -12,6 +13,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddMapster();
+OrderMapping.Configure();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
