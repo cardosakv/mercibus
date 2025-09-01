@@ -1,10 +1,14 @@
+using FluentValidation;
 using Mapster;
+using Mercibus.Common.Validations;
 using Orders.Api.Extensions;
 using Orders.Application.Interfaces.Repositories;
 using Orders.Application.Interfaces.Services;
 using Orders.Application.Mappings;
 using Orders.Application.Services;
+using Orders.Application.Validations;
 using Orders.Infrastructure.Repositories;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +16,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddDatabase(builder.Configuration);
+
+// Add validation.
+builder.Services.AddValidatorsFromAssembly(typeof(OrderRequestValidator).Assembly);
+builder.Services.AddFluentValidationAutoValidation(options => options.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
+
+// Add mapping.
 builder.Services.AddMapster();
 OrderMapping.Configure();
 
