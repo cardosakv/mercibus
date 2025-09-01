@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using Orders.Application.Interfaces.Repositories;
 using Orders.Infrastructure;
 
@@ -11,9 +12,17 @@ public static class DatabaseExtensions
 {
     public static void AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnection");
-        services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
+        var defaultConnectionString = configuration.GetConnectionString("DefaultConnection");
+        services.AddDbContext<AppDbContext>(options => options.UseNpgsql(defaultConnectionString));
         services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
+        
+        var mongoConnectionString = configuration.GetConnectionString("MongoConnection");
+        services.AddSingleton<IMongoClient, MongoClient>(_ => new MongoClient(mongoConnectionString));
+        services.AddScoped<IMongoDatabase>(provider =>
+        {
+            var client = provider.GetRequiredService<IMongoClient>();
+            return client.GetDatabase("Orders");
+        });
     }
 
     public static void ApplyMigrations(this WebApplication app)

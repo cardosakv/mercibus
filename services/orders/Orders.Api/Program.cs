@@ -8,6 +8,7 @@ using Orders.Application.Mappings;
 using Orders.Application.Services;
 using Orders.Application.Validations;
 using Orders.Infrastructure.Repositories;
+using Orders.Infrastructure.Services;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,10 +16,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IProductReadService, ProductReadService>();
 builder.Services.AddDatabase(builder.Configuration);
 
 // Add validation.
-builder.Services.AddValidatorsFromAssembly(typeof(OrderRequestValidator).Assembly);
+builder.Services.AddValidatorsFromAssemblyContaining<OrderRequestValidator>();
 builder.Services.AddFluentValidationAutoValidation(options => options.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
 
 // Add mapping.

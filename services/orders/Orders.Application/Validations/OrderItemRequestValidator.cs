@@ -1,18 +1,23 @@
 ﻿using FluentValidation;
 using Orders.Application.Common;
 using Orders.Application.DTOs;
+using Orders.Application.Interfaces.Services;
 
 namespace Orders.Application.Validations;
 
+/// <summary>
+/// Validates the <see cref="OrderItemRequest"/> model.
+/// </summary>
 public class OrderItemRequestValidator : AbstractValidator<OrderItemRequest>
 {
-    public OrderItemRequestValidator()
+    public OrderItemRequestValidator(IProductReadService productReadService)
     {
         RuleFor(x => x.ProductId)
             .Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage(Constants.ErrorCode.ProductIdRequired)
-            .Must((id) => true).WithMessage(Constants.ErrorCode.ProductNotFound);
-        
+            .MustAsync(async (id, cancellationToken) => await productReadService.ExistsAsync(id, cancellationToken))
+            .WithMessage(Constants.ErrorCode.ProductNotFound);
+
         RuleFor(x => x.ProductName)
             .Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage(Constants.ErrorCode.ProductNameRequired);
