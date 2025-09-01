@@ -14,13 +14,12 @@ public class OrderMapping
         TypeAdapterConfig<OrderRequest, Order>
             .NewConfig()
             .Map(dest => dest.Items, src => src.Items);
-        
+
         TypeAdapterConfig<OrderItemRequest, OrderItem>
             .NewConfig()
             .Map(dest => dest.ProductId, src => src.ProductId)
             .Map(dest => dest.ProductName, src => src.ProductName)
-            .Map(dest => dest.Quantity, src => src.Quantity)
-            .Map(dest => dest.Price, src => src.Price);
+            .Map(dest => dest.Quantity, src => src.Quantity);
 
         TypeAdapterConfig<Order, OrderResponse>
             .NewConfig()

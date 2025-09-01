@@ -6,6 +6,5 @@
 public record OrderItemRequest(
     long ProductId,
     string ProductName,
-    decimal Price,
     int Quantity
 );
