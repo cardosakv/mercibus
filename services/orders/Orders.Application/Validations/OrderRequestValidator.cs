@@ -13,6 +13,6 @@ public class OrderRequestValidator : AbstractValidator<OrderRequest>
     {
         RuleFor(x => x.Items)
             .Cascade(CascadeMode.Stop)
-            .NotEmpty().WithMessage(Consts.ErrorCode.ItemsEmpty);
+            .NotEmpty().WithMessage(Constants.ErrorCode.ItemsEmpty);
     }
 }
