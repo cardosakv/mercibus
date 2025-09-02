@@ -20,6 +20,12 @@ public class ProductReadService(IMongoDatabase database) : IProductReadService
         await _productCollection.InsertOneAsync(product, cancellationToken: cancellationToken);
         return true;
     }
+    
+    public async Task<bool> DeleteAsync(long productId, CancellationToken cancellationToken = default)
+    {
+        var result = await _productCollection.DeleteOneAsync(p => p.Id == productId, cancellationToken);
+        return result.DeletedCount > 0;
+    }
 }
 
 /// <summary>

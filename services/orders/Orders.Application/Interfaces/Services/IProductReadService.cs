@@ -20,4 +20,12 @@ public interface IProductReadService
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
     /// <returns>True if the product was added successfully; otherwise, false.</returns>
     Task<bool> AddAsync(long productId, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Deletes a product by its ID.
+    /// </summary>
+    /// <param name="productId">The ID of the product to delete.</param>
+    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+    /// <returns>True if the product was deleted successfully; otherwise, false.</returns>
+    Task<bool> DeleteAsync(long productId, CancellationToken cancellationToken = default);
 }

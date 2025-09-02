@@ -13,6 +13,7 @@ public static class MessagingExtension
         services.AddMassTransit(x =>
         {
             x.AddConsumer<ProductAddedConsumer>();
+            x.AddConsumer<ProductDeletedConsumer>();
             
             x.UsingRabbitMq((context, cfg) =>
             {
