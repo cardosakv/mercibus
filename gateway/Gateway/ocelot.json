@@ -49,6 +49,19 @@
         "Put",
         "Delete"
       ]
+    },
+    {
+      "UseServiceDiscovery": true,
+      "ServiceName": "order-service",
+      "DownstreamPathTemplate": "/api/orders/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/api/orders/{everything}",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ]
     }
   ],
   "GlobalConfiguration": {
