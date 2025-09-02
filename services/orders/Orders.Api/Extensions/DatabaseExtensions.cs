@@ -21,7 +21,7 @@ public static class DatabaseExtensions
         services.AddScoped<IMongoDatabase>(provider =>
         {
             var client = provider.GetRequiredService<IMongoClient>();
-            return client.GetDatabase("Orders");
+            return client.GetDatabase("mercibus_orders");
         });
     }
 
