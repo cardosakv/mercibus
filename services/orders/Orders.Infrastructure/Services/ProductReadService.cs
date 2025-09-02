@@ -13,6 +13,13 @@ public class ProductReadService(IMongoDatabase database) : IProductReadService
     {
         return await _productCollection.Find(p => p.Id == productId).FirstOrDefaultAsync(cancellationToken) != null;
     }
+    
+    public async Task<bool> AddAsync(long productId, CancellationToken cancellationToken = default)
+    {
+        var product = new ProductDocument { Id = productId };
+        await _productCollection.InsertOneAsync(product, cancellationToken: cancellationToken);
+        return true;
+    }
 }
 
 /// <summary>
