@@ -30,6 +30,7 @@ OrderMapping.Configure();
 // Add messaging.
 builder.Services.AddMessaging(builder.Configuration);
 
+builder.Services.AddHealthChecks();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -43,6 +44,7 @@ if (app.Environment.IsDevelopment())
     app.ApplyMigrations();
 }
 
+app.MapHealthChecks("/health");
 app.UseAuthorization();
 app.MapControllers();
 
