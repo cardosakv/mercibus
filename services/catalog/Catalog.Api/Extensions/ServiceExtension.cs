@@ -1,5 +1,7 @@
+using Catalog.Application.Interfaces.Messaging;
 using Catalog.Application.Interfaces.Services;
 using Catalog.Application.Services;
+using Catalog.Infrastructure.Messaging;
 using Catalog.Infrastructure.Services;
 
 namespace Catalog.Api.Extensions;
@@ -18,5 +20,6 @@ public static class ServiceExtension
         services.AddScoped<IProductImageService, ProductImageService>();
         services.AddScoped<IProductReviewService, ProductReviewService>();
         services.AddScoped<ICacheService, RedisCacheService>();
+        services.AddScoped<IEventPublisher, MassTransitEventPublisher>();
     }
 }

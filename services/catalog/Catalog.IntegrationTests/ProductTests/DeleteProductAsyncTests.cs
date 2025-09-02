@@ -9,7 +9,7 @@ using Mercibus.Common.Responses;
 
 namespace Catalog.IntegrationTests.ProductTests;
 
-public class DeleteProductAsyncTests(DbWebAppFactory factory) : IClassFixture<DbWebAppFactory>
+public class DeleteProductAsyncTests(MessageWebAppFactory factory) : IClassFixture<MessageWebAppFactory>
 {
     private const string DeleteProductUrl = "api/products/";
 
@@ -18,8 +18,16 @@ public class DeleteProductAsyncTests(DbWebAppFactory factory) : IClassFixture<Db
     {
         // Arrange
         var dbContext = factory.CreateDbContext();
-        var category = await dbContext.Categories.AddAsync(new Category { Name = "Category for Delete" });
-        var brand = await dbContext.Brands.AddAsync(new Brand { Name = "Brand for Delete" });
+        var category = await dbContext.Categories.AddAsync(
+            new Category
+            {
+                Name = "Category for Delete"
+            });
+        var brand = await dbContext.Brands.AddAsync(
+            new Brand
+            {
+                Name = "Brand for Delete"
+            });
         await dbContext.SaveChangesAsync();
 
         var product = await dbContext.Products.AddAsync(

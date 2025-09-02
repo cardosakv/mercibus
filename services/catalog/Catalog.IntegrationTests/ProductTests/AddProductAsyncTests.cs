@@ -13,7 +13,7 @@ namespace Catalog.IntegrationTests.ProductTests;
 /// <summary>
 /// Integration tests for adding a product.
 /// </summary>
-public class AddProductAsyncTests(DbWebAppFactory factory) : IClassFixture<DbWebAppFactory>
+public class AddProductAsyncTests(MessageWebAppFactory factory) : IClassFixture<MessageWebAppFactory>
 {
     private const string AddProductUrl = "api/Products";
 
@@ -22,8 +22,16 @@ public class AddProductAsyncTests(DbWebAppFactory factory) : IClassFixture<DbWeb
     {
         // Arrange
         var dbContext = factory.CreateDbContext();
-        var testCategory = await dbContext.Categories.AddAsync(new Category { Name = "Category 1" });
-        var testBrand = await dbContext.Brands.AddAsync(new Brand { Name = "Brand 1" });
+        var testCategory = await dbContext.Categories.AddAsync(
+            new Category
+            {
+                Name = "Category 1"
+            });
+        var testBrand = await dbContext.Brands.AddAsync(
+            new Brand
+            {
+                Name = "Brand 1"
+            });
         await dbContext.SaveChangesAsync();
 
         var request = new ProductRequest(
