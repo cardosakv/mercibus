@@ -13,13 +13,13 @@ public class OrderService(IMapper mapper, IAppDbContext dbContext, IOrderReposit
 {
     public async Task<ServiceResult> AddAsync(string? userId, OrderRequest request, CancellationToken cancellationToken = default)
     {
-        // if (string.IsNullOrEmpty(userId))
-        // {
-        //     return Error(ErrorType.AuthenticationError, ErrorCode.Unauthorized);
-        // }
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Error(ErrorType.AuthenticationError, ErrorCode.Unauthorized);
+        }
         
         var entity = mapper.Map<Order>(request);
-        entity.UserId = "test-user";
+        entity.UserId = userId;
         
         var order = await orderRepository.AddAsync(entity, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
