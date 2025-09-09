@@ -16,4 +16,11 @@ public class OrderController(IOrderService orderService) : BaseController
         var response = await orderService.AddAsync(userId, request, cancellationToken);
         return Ok(response);
     }
+
+    [HttpGet("{id:long}")]
+    public async Task<IActionResult> GetOrderByIdAsync(long id, CancellationToken cancellationToken)
+    {
+        var response = await orderService.GetByIdAsync(id, cancellationToken);
+        return Ok(response);
+    }
 }

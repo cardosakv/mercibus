@@ -2,6 +2,7 @@
 using Mercibus.Common.Constants;
 using Mercibus.Common.Models;
 using Mercibus.Common.Services;
+using Orders.Application.Common;
 using Orders.Application.DTOs;
 using Orders.Application.Interfaces.Repositories;
 using Orders.Application.Interfaces.Services;
@@ -13,16 +14,29 @@ public class OrderService(IMapper mapper, IAppDbContext dbContext, IOrderReposit
 {
     public async Task<ServiceResult> AddAsync(string? userId, OrderRequest request, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrEmpty(userId))
-        {
-            return Error(ErrorType.AuthenticationError, ErrorCode.Unauthorized);
-        }
+        // if (string.IsNullOrEmpty(userId))
+        // {
+        //     return Error(ErrorType.AuthenticationError, ErrorCode.Unauthorized);
+        // }
         
         var entity = mapper.Map<Order>(request);
-        entity.UserId = userId;
+        entity.UserId = "userId";
         
         var order = await orderRepository.AddAsync(entity, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
+        
+        var response = mapper.Map<OrderResponse>(order);
+        
+        return Success(response);
+    }
+
+    public async Task<ServiceResult> GetByIdAsync(long id, CancellationToken cancellationToken = default)
+    {
+        var order = await orderRepository.GetByIdAsync(id, cancellationToken);
+        if (order is null)
+        {
+            return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.OrderNotFound);
+        }
         
         var response = mapper.Map<OrderResponse>(order);
         

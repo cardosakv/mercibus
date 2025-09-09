@@ -13,4 +13,12 @@ public interface IOrderService
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Service result indicating success or failure.</returns>
     Task<ServiceResult> AddAsync(string? userId, OrderRequest request, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Retrieves an order by its unique identifier.
+    /// </summary>
+    /// <param name="id">The unique identifier of the order.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Service result containing the order if found; otherwise, an error result.</returns>
+    Task<ServiceResult> GetByIdAsync(long id, CancellationToken cancellationToken = default);
 }
