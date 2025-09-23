@@ -42,4 +42,17 @@ public class OrderService(IMapper mapper, IAppDbContext dbContext, IOrderReposit
         
         return Success(response);
     }
+
+    public async Task<ServiceResult> GetByUserIdAsync(string? userId, CancellationToken cancellationToken = default)
+    {
+        // if (string.IsNullOrEmpty(userId))
+        // {
+        //     return Error(ErrorType.AuthenticationError, ErrorCode.Unauthorized);
+        // }
+        
+        var orders = await orderRepository.GetByUserIdAsync("userId", cancellationToken);
+        var response = mapper.Map<List<OrderResponse>>(orders);
+        
+        return Success(response);
+    }
 }

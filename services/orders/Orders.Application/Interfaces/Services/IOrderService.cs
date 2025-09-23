@@ -21,4 +21,12 @@ public interface IOrderService
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Service result containing the order if found; otherwise, an error result.</returns>
     Task<ServiceResult> GetByIdAsync(long id, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Retrieves all orders for a specific user.
+    /// </summary>
+    /// <param name="userId">The ID of the user whose orders to retrieve.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Service result containing a list of orders for the user.</returns>
+    Task<ServiceResult> GetByUserIdAsync(string? userId, CancellationToken cancellationToken = default);
 }

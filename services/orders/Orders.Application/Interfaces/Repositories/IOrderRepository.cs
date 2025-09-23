@@ -22,4 +22,12 @@ public interface IOrderRepository
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The order if found; otherwise, <c>null</c>.</returns>
     Task<Order?> GetByIdAsync(long id, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Retrieves all orders for a specific user.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>List of orders for the user.</returns>
+    Task<List<Order>> GetByUserIdAsync(string userId, CancellationToken cancellationToken = default);
 }

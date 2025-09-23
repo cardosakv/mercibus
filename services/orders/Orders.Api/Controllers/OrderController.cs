@@ -23,4 +23,12 @@ public class OrderController(IOrderService orderService) : BaseController
         var response = await orderService.GetByIdAsync(id, cancellationToken);
         return Ok(response);
     }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetOrdersByUserIdAsync(CancellationToken cancellationToken)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var response = await orderService.GetByUserIdAsync(userId, cancellationToken);
+        return Ok(response);
+    }
 }
