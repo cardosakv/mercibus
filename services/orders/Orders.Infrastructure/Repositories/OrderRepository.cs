@@ -26,4 +26,10 @@ public class OrderRepository(AppDbContext dbContext) : IOrderRepository
             .Include(o => o.Items)
             .ToListAsync(cancellationToken);
     }
+
+    public async Task<bool> UpdateAsync(Order order, CancellationToken cancellationToken = default)
+    {
+        dbContext.Orders.Update(order);
+        return await Task.FromResult(true);
+    }
 }

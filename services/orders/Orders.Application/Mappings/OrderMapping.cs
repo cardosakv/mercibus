@@ -36,5 +36,9 @@ public class OrderMapping
             .Map(dest => dest.ProductName, src => src.ProductName)
             .Map(dest => dest.Quantity, src => src.Quantity)
             .Map(dest => dest.Price, src => src.Price);
+        
+        TypeAdapterConfig<Order, OrderUpdateRequest>
+            .NewConfig()
+            .Map(dest => dest.Status, src => src.Status.ToString());
     }
 }

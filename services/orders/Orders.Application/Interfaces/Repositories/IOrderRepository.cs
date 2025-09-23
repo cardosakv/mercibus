@@ -30,4 +30,12 @@ public interface IOrderRepository
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>List of orders for the user.</returns>
     Task<List<Order>> GetByUserIdAsync(string userId, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Updates an existing order.
+    /// </summary>
+    /// <param name="order">Order to update.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>True if the update was successful; otherwise, false.</returns>
+    Task<bool> UpdateAsync(Order order, CancellationToken cancellationToken = default);
 }

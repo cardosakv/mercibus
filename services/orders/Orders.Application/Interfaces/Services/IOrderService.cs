@@ -29,4 +29,13 @@ public interface IOrderService
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Service result containing a list of orders for the user.</returns>
     Task<ServiceResult> GetByUserIdAsync(string? userId, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Updates an existing order.
+    /// </summary>
+    /// <param name="id">The unique identifier of the order to update.</param>
+    /// <param name="request">Order update request containing updated order details.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Service result indicating success or failure of the update operation.</returns>
+    Task<ServiceResult> UpdateAsync(long id, OrderUpdateRequest request, CancellationToken cancellationToken = default);
 }

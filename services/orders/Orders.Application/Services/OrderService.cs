@@ -55,4 +55,19 @@ public class OrderService(IMapper mapper, IAppDbContext dbContext, IOrderReposit
         
         return Success(response);
     }
+
+    public async Task<ServiceResult> UpdateAsync(long id, OrderUpdateRequest request, CancellationToken cancellationToken = default)
+    {
+        var order = await orderRepository.GetByIdAsync(id, cancellationToken);
+        if (order is null)
+        {
+            return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.OrderNotFound);
+        }
+        
+        mapper.Map(request, order);
+        
+        await orderRepository.UpdateAsync(order, cancellationToken);
+
+        return Success();
+    }
 }

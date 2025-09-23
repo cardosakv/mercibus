@@ -31,4 +31,11 @@ public class OrderController(IOrderService orderService) : BaseController
         var response = await orderService.GetByUserIdAsync(userId, cancellationToken);
         return Ok(response);
     }
+
+    [HttpPatch("{id:long}")]
+    public async Task<IActionResult> UpdateOrderAsync(long id, [FromBody] OrderUpdateRequest request, CancellationToken cancellationToken)
+    {
+        var response = await orderService.UpdateAsync(id, request, cancellationToken);
+        return Ok(response);
+    }
 }
