@@ -123,6 +123,8 @@ services:
     container_name: order-mongo-container
     ports:
       - "8004:27017"
+    volumes:
+      - order_mongo_data:/data/db
     restart: always
 
   blob-storage:
@@ -168,5 +170,6 @@ volumes:
   auth_db_data:
   catalog_db_data:
   order_db_data:
+  order_mongo_data:
   blob_storage_data:
   redis_data:
