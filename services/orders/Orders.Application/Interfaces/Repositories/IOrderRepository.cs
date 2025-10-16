@@ -14,7 +14,7 @@ public interface IOrderRepository
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The added order.</returns>
     Task<Order> AddAsync(Order order, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Retrieves an order by its unique identifier.
     /// </summary>
@@ -22,7 +22,7 @@ public interface IOrderRepository
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The order if found; otherwise, <c>null</c>.</returns>
     Task<Order?> GetByIdAsync(long id, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Retrieves all orders for a specific user.
     /// </summary>
@@ -30,12 +30,12 @@ public interface IOrderRepository
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>List of orders for the user.</returns>
     Task<List<Order>> GetByUserIdAsync(string userId, CancellationToken cancellationToken = default);
-    
+
     /// <summary>
     /// Updates an existing order.
     /// </summary>
     /// <param name="order">Order to update.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>True if the update was successful; otherwise, false.</returns>
-    Task<bool> UpdateAsync(Order order, CancellationToken cancellationToken = default);
+    Task UpdateAsync(Order order, CancellationToken cancellationToken = default);
 }

@@ -18,15 +18,15 @@ public class OrderService(IMapper mapper, IAppDbContext dbContext, IOrderReposit
         {
             return Error(ErrorType.AuthenticationError, ErrorCode.Unauthorized);
         }
-        
+
         var entity = mapper.Map<Order>(request);
         entity.UserId = userId;
-        
+
         var order = await orderRepository.AddAsync(entity, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
-        
+
         var response = mapper.Map<OrderResponse>(order);
-        
+
         return Success(response);
     }
 
@@ -37,9 +37,9 @@ public class OrderService(IMapper mapper, IAppDbContext dbContext, IOrderReposit
         {
             return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.OrderNotFound);
         }
-        
+
         var response = mapper.Map<OrderResponse>(order);
-        
+
         return Success(response);
     }
 
@@ -49,10 +49,10 @@ public class OrderService(IMapper mapper, IAppDbContext dbContext, IOrderReposit
         {
             return Error(ErrorType.AuthenticationError, ErrorCode.Unauthorized);
         }
-        
+
         var orders = await orderRepository.GetByUserIdAsync(userId, cancellationToken);
         var response = mapper.Map<List<OrderResponse>>(orders);
-        
+
         return Success(response);
     }
 
@@ -63,10 +63,11 @@ public class OrderService(IMapper mapper, IAppDbContext dbContext, IOrderReposit
         {
             return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.OrderNotFound);
         }
-        
+
         mapper.Map(request, order);
-        
+
         await orderRepository.UpdateAsync(order, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
         return Success();
     }
