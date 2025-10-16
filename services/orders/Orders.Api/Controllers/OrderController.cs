@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Mercibus.Common.Controllers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Orders.Application.DTOs;
 using Orders.Application.Interfaces.Services;
@@ -7,6 +8,7 @@ using Orders.Application.Interfaces.Services;
 namespace Orders.Api.Controllers;
 
 [Route("api/orders")]
+[Authorize]
 public class OrderController(IOrderService orderService) : BaseController
 {
     [HttpPost]

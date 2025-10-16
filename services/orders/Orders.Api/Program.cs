@@ -1,5 +1,6 @@
 using FluentValidation;
 using Mapster;
+using Mercibus.Common.Middlewares;
 using Mercibus.Common.Validations;
 using Orders.Api.Extensions;
 using Orders.Application.Interfaces.Repositories;
@@ -30,6 +31,7 @@ OrderMapping.Configure();
 // Add messaging.
 builder.Services.AddMessaging(builder.Configuration);
 
+builder.Services.AddJwtAuthentication(builder);
 builder.Services.AddHealthChecks();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -45,6 +47,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapHealthChecks("/health");
+app.UseCustomAuthMiddleware();
 app.UseAuthorization();
 app.MapControllers();
 
