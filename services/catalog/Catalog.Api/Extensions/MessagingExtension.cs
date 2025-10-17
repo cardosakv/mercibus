@@ -1,3 +1,4 @@
+using Catalog.Infrastructure.Messaging;
 using MassTransit;
 
 namespace Catalog.Api.Extensions;
@@ -8,6 +9,8 @@ public static class MessagingExtension
     {
         services.AddMassTransit(x =>
         {
+            x.AddConsumer<OrderCreatedConsumer>();
+            
             x.UsingRabbitMq((context, config) =>
             {
                 config.Host(

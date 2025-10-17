@@ -73,6 +73,14 @@ public class ProductRepository(AppDbContext dbContext) : IProductRepository
         return Task.CompletedTask;
     }
 
+    public Task<bool> ReduceProductStockAsync(long productId, int quantity, CancellationToken cancellationToken = default)
+    {
+        return dbContext.Products
+            .Where(p => p.Id == productId && p.StockQuantity >= quantity)
+            .ExecuteUpdateAsync(p => p.SetProperty(prod => prod.StockQuantity, prod => prod.StockQuantity - quantity), cancellationToken)
+            .ContinueWith(t => t.Result > 0, cancellationToken);
+    }
+
     public Task DeleteProductAsync(Product product, CancellationToken cancellationToken = default)
     {
         dbContext.Products.Remove(product);

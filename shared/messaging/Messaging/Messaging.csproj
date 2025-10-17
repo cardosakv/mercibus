@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <PackageId>Mercibus.Messaging</PackageId>
     <Title>Mercibus Messaging</Title>
-    <Version>0.2.1</Version>
+    <Version>0.3.0</Version>
     <Authors>Khyle Vincent Cardosa</Authors>
     <Product>Mercibus.Messaging</Product>
     <Description>Mercibus backend microservices common messaging contracts.</Description>
