@@ -7,7 +7,7 @@ namespace Messaging.Events;
 /// </summary>
 public record OrderCreated(
     long OrderId,
-    long CustomerId,
+    string CustomerId,
     List<OrderItem> Items,
     DateTime CreatedAt
 );
