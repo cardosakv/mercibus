@@ -1,11 +1,11 @@
 ﻿using MapsterMapper;
-using MassTransit;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Models;
 using Mercibus.Common.Services;
 using Messaging.Events;
 using Orders.Application.Common;
 using Orders.Application.DTOs;
+using Orders.Application.Interfaces.Messaging;
 using Orders.Application.Interfaces.Repositories;
 using Orders.Application.Interfaces.Services;
 using Orders.Domain.Entities;
@@ -13,7 +13,7 @@ using EventOrderItem = Messaging.Models.OrderItem;
 
 namespace Orders.Application.Services;
 
-public class OrderService(IMapper mapper, IAppDbContext dbContext, IOrderRepository orderRepository, IPublishEndpoint publishEndpoint) : BaseService, IOrderService
+public class OrderService(IMapper mapper, IAppDbContext dbContext, IOrderRepository orderRepository, IEventPublisher eventPublisher) : BaseService, IOrderService
 {
     public async Task<ServiceResult> AddAsync(string? userId, OrderRequest request, CancellationToken cancellationToken = default)
     {
@@ -28,7 +28,7 @@ public class OrderService(IMapper mapper, IAppDbContext dbContext, IOrderReposit
         await orderRepository.AddAsync(order, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        await publishEndpoint.Publish(
+        await eventPublisher.PublishAsync(
             new OrderCreated(
                 OrderId: order.Id,
                 CustomerId: order.UserId,

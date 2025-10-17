@@ -3,11 +3,13 @@ using Mapster;
 using Mercibus.Common.Middlewares;
 using Mercibus.Common.Validations;
 using Orders.Api.Extensions;
+using Orders.Application.Interfaces.Messaging;
 using Orders.Application.Interfaces.Repositories;
 using Orders.Application.Interfaces.Services;
 using Orders.Application.Mappings;
 using Orders.Application.Services;
 using Orders.Application.Validations;
+using Orders.Infrastructure.Messaging;
 using Orders.Infrastructure.Repositories;
 using Orders.Infrastructure.Services;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
@@ -18,6 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IProductReadService, ProductReadService>();
+builder.Services.AddScoped<IEventPublisher, MassTransitEventPublisher>();
 builder.Services.AddDatabase(builder.Configuration);
 
 // Add validation.
