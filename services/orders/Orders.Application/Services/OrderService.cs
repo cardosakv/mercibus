@@ -1,16 +1,19 @@
 ﻿using MapsterMapper;
+using MassTransit;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Models;
 using Mercibus.Common.Services;
+using Messaging.Events;
 using Orders.Application.Common;
 using Orders.Application.DTOs;
 using Orders.Application.Interfaces.Repositories;
 using Orders.Application.Interfaces.Services;
 using Orders.Domain.Entities;
+using EventOrderItem = Messaging.Models.OrderItem;
 
 namespace Orders.Application.Services;
 
-public class OrderService(IMapper mapper, IAppDbContext dbContext, IOrderRepository orderRepository) : BaseService, IOrderService
+public class OrderService(IMapper mapper, IAppDbContext dbContext, IOrderRepository orderRepository, IPublishEndpoint publishEndpoint) : BaseService, IOrderService
 {
     public async Task<ServiceResult> AddAsync(string? userId, OrderRequest request, CancellationToken cancellationToken = default)
     {
@@ -19,15 +22,22 @@ public class OrderService(IMapper mapper, IAppDbContext dbContext, IOrderReposit
             return Error(ErrorType.AuthenticationError, ErrorCode.Unauthorized);
         }
 
-        var entity = mapper.Map<Order>(request);
-        entity.UserId = userId;
+        var order = mapper.Map<Order>(request);
+        order.UserId = userId;
 
-        var order = await orderRepository.AddAsync(entity, cancellationToken);
+        await orderRepository.AddAsync(order, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
-        var response = mapper.Map<OrderResponse>(order);
+        await publishEndpoint.Publish(
+            new OrderCreated(
+                OrderId: order.Id,
+                CustomerId: order.UserId,
+                CreatedAt: order.CreatedAt,
+                Items: order.Items.Select(item => new EventOrderItem(item.ProductId, item.Quantity)).ToList()
+            ),
+            cancellationToken);
 
-        return Success(response);
+        return Success();
     }
 
     public async Task<ServiceResult> GetByIdAsync(long id, CancellationToken cancellationToken = default)
