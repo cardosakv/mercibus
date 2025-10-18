@@ -8,25 +8,30 @@ public enum OrderStatus
     /// <summary>
     /// Created but not yet processed.
     /// </summary>
-    Pending,    
-    
+    Pending,
+
     /// <summary>
-    /// Done payment and currently being processed.
+    /// Order stock has been successfully reserved.
     /// </summary>
-    Processing,
-    
+    StockReserved,
+
     /// <summary>
-    /// Ready for shipment.
+    /// Order stock reservation failed.
     /// </summary>
-    Shipped,
-    
+    StockFailed,
+
     /// <summary>
-    /// Delivered to the customer.
+    /// Payment is not successful.
     /// </summary>
-    Delivered,
-    
+    PaymentFailed,
+
     /// <summary>
     /// Order has been cancelled.
     /// </summary>
-    Cancelled
+    Cancelled,
+
+    /// <summary>
+    /// Order has been processed successfully.
+    /// </summary>
+    Confirmed
 }
