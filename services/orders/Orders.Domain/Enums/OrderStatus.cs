@@ -8,12 +8,12 @@ public enum OrderStatus
     /// <summary>
     /// Created but not yet processed.
     /// </summary>
-    Pending,
+    Draft,
 
     /// <summary>
-    /// Order stock has been successfully reserved.
+    /// Order stock reserved and ready for payment.
     /// </summary>
-    StockReserved,
+    PendingPayment,
 
     /// <summary>
     /// Order stock reservation failed.

@@ -16,12 +16,12 @@ public class Order
     /// Identifier of the user who placed the order.
     /// </summary>
     public required string UserId { get; set; }
-    
+
     /// <summary>
     /// Current status of the order.
     /// </summary>
-    public OrderStatus Status { get; set; } = OrderStatus.Pending;
-    
+    public OrderStatus Status { get; set; } = OrderStatus.Draft;
+
     /// <summary>
     /// Date and time when the order was placed.
     /// </summary>
