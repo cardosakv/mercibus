@@ -5,5 +5,6 @@
 /// </summary>
 public record StockReserveFailed(
     long OrderId,
+    string CustomerId,
     List<long> UnavailableProductIds
 );
