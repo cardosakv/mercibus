@@ -155,6 +155,8 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
     restart: always
 
   consul:
@@ -173,3 +175,4 @@ volumes:
   order_mongo_data:
   blob_storage_data:
   redis_data:
+  rabbitmq_data:
