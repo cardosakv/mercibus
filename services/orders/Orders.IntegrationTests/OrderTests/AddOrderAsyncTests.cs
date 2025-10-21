@@ -19,7 +19,7 @@ public class AddOrderAsyncTests(WebAppFactory factory) : IClassFixture<WebAppFac
     public async Task ReturnsOk_WhenOrderAddedSuccessfully()
     {
         // Arrange
-        var productReadService = factory.Services.GetRequiredService<IProductReadService>();
+        var productReadService = factory.Services.CreateScope().ServiceProvider.GetRequiredService<IProductReadService>();
         await productReadService.AddAsync(1);
         await productReadService.AddAsync(2);
 
