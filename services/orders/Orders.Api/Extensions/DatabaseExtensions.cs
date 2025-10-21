@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
+using Orders.Application.Common;
 using Orders.Application.Interfaces.Repositories;
 using Orders.Infrastructure;
 
@@ -15,13 +16,13 @@ public static class DatabaseExtensions
         var defaultConnectionString = configuration.GetConnectionString("DefaultConnection");
         services.AddDbContext<AppDbContext>(options => options.UseNpgsql(defaultConnectionString));
         services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
-        
+
         var mongoConnectionString = configuration.GetConnectionString("MongoConnection");
         services.AddSingleton<IMongoClient, MongoClient>(_ => new MongoClient(mongoConnectionString));
         services.AddScoped<IMongoDatabase>(provider =>
         {
             var client = provider.GetRequiredService<IMongoClient>();
-            return client.GetDatabase("mercibus_orders");
+            return client.GetDatabase(Constants.Mongo.DatabaseName);
         });
     }
 

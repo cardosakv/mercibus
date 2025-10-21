@@ -13,4 +13,16 @@ public class Constants
         public const string OrderNotFound = "order_not_found";
         public const string InvalidOrderStatus = "invalid_order_status";
     }
+
+    public static class Mongo
+    {
+        public const string DatabaseName = "order_products";
+        public const string ProductCollectionName = "products";
+    }
+
+    public static class Hub
+    {
+        public const string OrderHub = "/order-hub";
+        public const string OrderStatusMethod = "order.status";
+    }
 }

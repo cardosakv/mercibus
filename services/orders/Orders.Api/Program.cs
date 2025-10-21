@@ -4,6 +4,7 @@ using Mercibus.Common.Middlewares;
 using Mercibus.Common.Validations;
 using Orders.Api.Extensions;
 using Orders.Api.Hubs;
+using Orders.Application.Common;
 using Orders.Application.Interfaces.Messaging;
 using Orders.Application.Interfaces.Repositories;
 using Orders.Application.Interfaces.Services;
@@ -56,6 +57,10 @@ app.MapHealthChecks("/health");
 app.UseCustomAuthMiddleware();
 app.UseAuthorization();
 app.MapControllers();
-app.MapHub<OrderHub>("/order-hub");
+app.MapHub<OrderHub>(Constants.Hub.OrderHub);
 
 await app.RunAsync();
+
+public partial class Program
+{
+}
