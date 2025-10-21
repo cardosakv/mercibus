@@ -1,4 +1,5 @@
 using Catalog.Application.Interfaces;
+using Catalog.Application.Interfaces.Messaging;
 using Catalog.Application.Interfaces.Repositories;
 using Catalog.Application.Interfaces.Services;
 using Catalog.Application.Services;
@@ -19,6 +20,7 @@ public abstract class BaseTest
     protected readonly Mock<IMapper> MapperMock;
     protected readonly Mock<IAppDbContext> DbContextMock;
     protected readonly Mock<ICacheService> CacheServiceMock;
+    protected readonly Mock<IEventPublisher> EventPublisherMock;
 
     protected BaseTest()
     {
@@ -27,7 +29,15 @@ public abstract class BaseTest
         DbContextMock = new Mock<IAppDbContext>();
         BlobStorageServiceMock = new Mock<IBlobStorageService>();
         CacheServiceMock = new Mock<ICacheService>();
+        EventPublisherMock = new Mock<IEventPublisher>();
 
-        ProductService = new ProductService(ProductRepositoryMock.Object, BlobStorageServiceMock.Object, MapperMock.Object, DbContextMock.Object, CacheServiceMock.Object);
+        ProductService = new ProductService(
+            ProductRepositoryMock.Object,
+            BlobStorageServiceMock.Object,
+            MapperMock.Object,
+            DbContextMock.Object,
+            CacheServiceMock.Object,
+            EventPublisherMock.Object
+        );
     }
 }

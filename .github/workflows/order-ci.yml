@@ -1,0 +1,43 @@
+name: Order Service CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "services/orders/**"
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - "services/orders/**"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    uses: ./.github/workflows/base-build.yml
+    with:
+      service: orders
+
+  test-and-scan:
+    uses: ./.github/workflows/base-test-and-scan.yml
+    with:
+      service: orders
+      project_key: mercibus_order
+      project_dll: Orders
+    secrets:
+      sonar_token: ${{ secrets.SONAR_TOKEN_ORDER }}
+
+  dockerize:
+    uses: ./.github/workflows/base-dockerize.yml
+    with:
+      service: orders
+      project_dll: Orders
+      image_name: mercibus-order
+    secrets:
+      docker_username: ${{ secrets.DOCKER_USERNAME }}
+      docker_password: ${{ secrets.DOCKER_PASSWORD }}

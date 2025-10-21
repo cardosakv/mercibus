@@ -67,6 +67,9 @@ services:
       Jwt__Issuer: ${JWT_ISSUER}
       Jwt__Audience: ${JWT_AUDIENCE}
       Jwt__Authority: http://auth-service:8080
+      RabbitMq__Host: rabbitmq
+      RabbitMq__Username: ${RABBITMQ_USER}
+      RabbitMq__Password: ${RABBITMQ_PASS}
     depends_on:
       - catalog-db
     restart: always
@@ -82,6 +85,46 @@ services:
       POSTGRES_DB: ${CATALOG_DB_NAME}
     volumes:
       - catalog_db_data:/var/lib/postgresql/data
+    restart: always
+    
+  order-service:
+    build:
+      context: ./services/orders/
+      dockerfile: Orders.Api/Dockerfile
+    container_name: order-service-container
+    ports:
+      - "9003:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: ${ORDER_DB_CONN}
+      ConnectionStrings__MongoConnection: ${ORDER_MONGO_CONN}
+      Jwt__Issuer: ${JWT_ISSUER}
+      Jwt__Audience: ${JWT_AUDIENCE}
+      Jwt__Authority: http://auth-service:8080
+      RabbitMq__Host: rabbitmq
+      RabbitMq__Username: ${RABBITMQ_USER}
+      RabbitMq__Password: ${RABBITMQ_PASS}
+    restart: always
+  
+  order-db:
+    image: postgres:latest
+    container_name: order-db-container
+    ports:
+      - "8003:5432"
+    environment:
+      POSTGRES_USER: ${ORDER_DB_USER}
+      POSTGRES_PASSWORD: ${ORDER_DB_PASS}
+    volumes:
+      - order_db_data:/var/lib/postgresql/data
+    restart: always
+    
+  order-mongo:
+    image: mongo:latest
+    container_name: order-mongo-container
+    ports:
+      - "8004:27017"
+    volumes:
+      - order_mongo_data:/data/db
     restart: always
 
   blob-storage:
@@ -102,6 +145,19 @@ services:
     volumes:
       - redis_data:/data
     restart: always
+    
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: rabbitmq-container
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: always
 
   consul:
     image: hashicorp/consul:latest
@@ -115,5 +171,8 @@ services:
 volumes:
   auth_db_data:
   catalog_db_data:
+  order_db_data:
+  order_mongo_data:
   blob_storage_data:
   redis_data:
+  rabbitmq_data:

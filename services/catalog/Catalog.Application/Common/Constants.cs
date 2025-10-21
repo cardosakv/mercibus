@@ -58,4 +58,9 @@ public static class Constants
         public const string ReviewPrefix = "-review-";
         public const string ImagePrefix = "-image-";
     }
+
+    public static class Messages
+    {
+        public const string ExceptionOccurred = "An unexpected error has occurred.";
+    }
 }

@@ -1,6 +1,7 @@
 using Catalog.Application.Common;
 using Catalog.Application.DTOs;
 using Catalog.Application.Interfaces;
+using Catalog.Application.Interfaces.Messaging;
 using Catalog.Application.Interfaces.Repositories;
 using Catalog.Application.Interfaces.Services;
 using Catalog.Domain.Entities;
@@ -8,10 +9,18 @@ using MapsterMapper;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Models;
 using Mercibus.Common.Services;
+using Messaging.Events;
 
 namespace Catalog.Application.Services;
 
-public class ProductService(IProductRepository productRepository, IBlobStorageService blobStorageService, IMapper mapper, IAppDbContext dbContext, ICacheService cacheService)
+public class ProductService(
+    IProductRepository productRepository,
+    IBlobStorageService blobStorageService,
+    IMapper mapper,
+    IAppDbContext dbContext,
+    ICacheService cacheService,
+    IEventPublisher eventPublisher
+)
     : BaseService, IProductService
 {
     public async Task<ServiceResult> GetProductsAsync(ProductQuery query, CancellationToken cancellationToken = default)
@@ -33,6 +42,7 @@ public class ProductService(IProductRepository productRepository, IBlobStorageSe
         var entity = mapper.Map<Product>(request);
         var product = await productRepository.AddProductAsync(entity, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
+        await eventPublisher.PublishAsync(eventMessage: new ProductAdded(product.Id), cancellationToken);
 
         var response = mapper.Map<ProductResponse>(product);
 
@@ -91,6 +101,7 @@ public class ProductService(IProductRepository productRepository, IBlobStorageSe
         await productRepository.DeleteProductAsync(product, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
         await cacheService.RemoveAsync(Constants.Redis.ProductPrefix + productId);
+        await eventPublisher.PublishAsync(eventMessage: new ProductDeleted(productId), cancellationToken);
 
         return Success();
     }

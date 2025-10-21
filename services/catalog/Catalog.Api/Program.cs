@@ -18,6 +18,7 @@ builder.Services.AddFluentValidationAutoValidation(options =>
 
 builder.Services.AddJwtAuthentication(builder);
 builder.Services.AddCaching(builder.Configuration);
+builder.Services.AddMessaging(builder.Configuration);
 builder.Services.AddHealthChecks();
 
 builder.Services.AddControllers();
