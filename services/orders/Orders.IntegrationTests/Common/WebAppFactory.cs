@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Driver;
+using Orders.Application.Common;
 using Orders.Infrastructure;
 using Testcontainers.MongoDb;
 using Testcontainers.PostgreSql;
@@ -64,6 +66,13 @@ public class WebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
                 services.Remove(dbContextDescriptor);
             }
 
+            services.AddSingleton<IMongoClient, MongoClient>(_ => new MongoClient(_mongoContainer.GetConnectionString()));
+            services.AddScoped<IMongoDatabase>(provider =>
+            {
+                var client = provider.GetRequiredService<IMongoClient>();
+                return client.GetDatabase(Constants.Mongo.DatabaseName);
+            });
+
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(_postgresContainer.GetConnectionString()));
             services.AddAuthentication("Test").AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", _ => { });
         });
@@ -74,9 +83,6 @@ public class WebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
             config.AddInMemoryCollection(
                 new Dictionary<string, string?>
                 {
-                    {
-                        "ConnectionStrings:MongoConnection", _mongoContainer.GetConnectionString()
-                    },
                     {
                         "RabbitMq:Host", _rabbitMqContainer.GetConnectionString()
                     },

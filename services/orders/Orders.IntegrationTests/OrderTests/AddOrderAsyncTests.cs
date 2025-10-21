@@ -21,7 +21,7 @@ public class AddOrderAsyncTests(WebAppFactory factory) : IClassFixture<WebAppFac
         // Arrange
         var eventPublisher = factory.Services.CreateScope().ServiceProvider.GetRequiredService<IEventPublisher>();
         await eventPublisher.PublishAsync(new ProductAdded(99));
-        await Task.Delay(5000);
+        await Task.Delay(1000);
 
         var request = new OrderRequest(
         [
@@ -44,7 +44,7 @@ public class AddOrderAsyncTests(WebAppFactory factory) : IClassFixture<WebAppFac
         // Arrange
         var request = new OrderRequest(
         [
-            new OrderItemRequest(99, "Phone", 2)
+            new OrderItemRequest(999, "Phone", 2)
         ]);
 
         var client = factory.CreateClient();
