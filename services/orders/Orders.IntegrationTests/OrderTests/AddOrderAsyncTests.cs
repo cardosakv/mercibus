@@ -21,12 +21,12 @@ public class AddOrderAsyncTests(WebAppFactory factory) : IClassFixture<WebAppFac
     {
         // Arrange
         var eventPublisher = factory.Services.CreateScope().ServiceProvider.GetRequiredService<IEventPublisher>();
-        await eventPublisher.PublishAsync(new ProductAdded(1));
-        await Task.Delay(1000);
+        await eventPublisher.PublishAsync(new ProductAdded(99));
+        await Task.Delay(500);
 
         var request = new OrderRequest(
         [
-            new OrderItemRequest(1, "Phone", 2),
+            new OrderItemRequest(99, "Phone", 2),
         ]);
 
         var client = factory.CreateClient();
@@ -38,8 +38,7 @@ public class AddOrderAsyncTests(WebAppFactory factory) : IClassFixture<WebAppFac
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var db = factory.CreateDbContext();
-        var order = db.Orders.Include(o => o.Items).First();
+        var order = await factory.CreateDbContext().Orders.Include(order => order.Items).FirstAsync();
         order.Items.Should().HaveCount(1);
     }
 
