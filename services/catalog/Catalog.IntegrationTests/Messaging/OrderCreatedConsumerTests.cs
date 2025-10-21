@@ -62,4 +62,41 @@ public class OrderCreatedConsumerTests(MessageWebAppFactory factory) : IClassFix
         updatedProduct.Should().NotBeNull();
         updatedProduct!.StockQuantity.Should().Be(99);
     }
+    
+    [Fact]
+    public async Task PublishesStockReserveFailed_WhenStockIsInsufficient()
+    {
+        // Arrange
+        var dbContext = factory.CreateDbContext();
+        var eventPublisher = factory.Services.CreateScope().ServiceProvider.GetRequiredService<IEventPublisher>();
+
+        var category = await dbContext.Categories.AddAsync(new Category { Name = "Cat" });
+        var brand = await dbContext.Brands.AddAsync(new Brand { Name = "Brand" });
+        await dbContext.SaveChangesAsync();
+
+        var product = await dbContext.Products.AddAsync(new Product
+        {
+            Name = "Low Stock Product",
+            Sku = "LS-01",
+            Price = 50,
+            StockQuantity = 1,
+            CategoryId = category.Entity.Id,
+            BrandId = brand.Entity.Id
+        });
+        await dbContext.SaveChangesAsync();
+
+        // Act
+        await eventPublisher.PublishAsync(new OrderCreated(
+            OrderId: 100,
+            CustomerId: "user-2",
+            Items: [ new OrderItem(product.Entity.Id, Quantity: 5) ],
+            DateTime.UtcNow
+        ));
+        await Task.Delay(1000); // allow consumer to process
+
+        // Assert
+        dbContext = factory.CreateDbContext();
+        var updated = await dbContext.Products.FindAsync(product.Entity.Id);
+        updated!.StockQuantity.Should().Be(1);
+    }
 }
