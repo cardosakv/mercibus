@@ -3,9 +3,7 @@
 **Mercibus** is a **personal practice project** for building an **e-commerce backend** using a **microservices
 architecture**.
 
----
-
-## 🗂 Services Overview
+## Services
 
 ### 🔐 Auth Service
 [![Auth Service CI](https://github.com/cardosakv/mercibus/actions/workflows/auth-ci.yml/badge.svg)](https://github.com/cardosakv/mercibus/actions/workflows/auth-ci.yml)
@@ -19,8 +17,6 @@ Manages:
 - JWT authentication & token refresh
 - Email confirmation & password resets
 
----
-
 ### 🛍️ Catalog Service
 
 [![Catalog Service CI](https://github.com/cardosakv/mercibus/actions/workflows/catalog-ci.yml/badge.svg)](https://github.com/cardosakv/mercibus/actions/workflows/catalog-ci.yml)
@@ -33,16 +29,16 @@ Handles:
 - Product image and attribute definitions
 - Product reviews
 
----
+### Order Service
 
-## 📌 Goals of the Project
+[![Order Service CI](https://github.com/cardosakv/mercibus/actions/workflows/order-ci.yml/badge.svg)](https://github.com/cardosakv/mercibus/actions/workflows/order-ci.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mercibus_order&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mercibus_order)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=mercibus_order&metric=coverage)](https://sonarcloud.io/summary/new_code?id=mercibus_order)
 
-- Learn and apply **microservice design patterns**.
-- Practice **test-driven development** with unit and integration tests.
-- Explore **asynchronous communication** using message brokers.
-- Integrate **CI/CD pipelines** and **code quality checks**.
+Handles:
 
----
+- Order creation & management
+- Order updates via events
 
 ## 📦 Tech Stack
 
@@ -55,17 +51,15 @@ Handles:
 - **SonarCloud** for static analysis & code coverage
 - **GitHub Actions** for CI/CD
 
----
-
 ## 🚀 Getting Started
 
-### 1️⃣ Clone the repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/cardosakv/mercibus.git
 ```
 
-### 2️⃣ Navigate to a service directory
+### 2. Navigate to a service directory
 
 Example:
 
@@ -73,13 +67,14 @@ Example:
 cd mercibus/services/auth
 ```
 
-### 3️⃣ Build and run using Docker Compose in root directory
+### 3. Build and run using Docker Compose in root directory
 
 ```bash
 docker-compose up -d
 ```
 
-### 4️⃣ Access service APIs
+### 4. Access service APIs
 
+- Gateway: `http://localhost:<gateway_port>/swagger`
 - Auth Service: `http://localhost:<auth_port>/swagger`
 - Catalog Service: `http://localhost:<catalog_port>/swagger`
