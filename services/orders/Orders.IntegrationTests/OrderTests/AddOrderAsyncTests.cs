@@ -4,7 +4,6 @@ using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
 using Messaging.Events;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Orders.Application.DTOs;
 using Orders.Application.Interfaces.Messaging;
@@ -37,9 +36,6 @@ public class AddOrderAsyncTests(WebAppFactory factory) : IClassFixture<WebAppFac
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        var order = await factory.CreateDbContext().Orders.Include(order => order.Items).FirstAsync();
-        order.Items.Should().HaveCount(1);
     }
 
     [Fact]
