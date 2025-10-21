@@ -14,7 +14,9 @@ public static class MessagingExtension
         {
             x.AddConsumer<ProductAddedConsumer>();
             x.AddConsumer<ProductDeletedConsumer>();
-            
+            x.AddConsumer<StockReservedConsumer>();
+            x.AddConsumer<StockReserveFailedConsumer>();
+
             x.UsingRabbitMq((context, cfg) =>
             {
                 cfg.Host(
@@ -24,7 +26,7 @@ public static class MessagingExtension
                         h.Username(configuration["RabbitMq:Username"]!);
                         h.Password(configuration["RabbitMq:Password"]!);
                     });
-                
+
                 cfg.ConfigureEndpoints(context);
             });
         });

@@ -3,6 +3,7 @@ using Mapster;
 using Mercibus.Common.Middlewares;
 using Mercibus.Common.Validations;
 using Orders.Api.Extensions;
+using Orders.Api.Hubs;
 using Orders.Application.Interfaces.Messaging;
 using Orders.Application.Interfaces.Repositories;
 using Orders.Application.Interfaces.Services;
@@ -21,6 +22,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IProductReadService, ProductReadService>();
 builder.Services.AddScoped<IEventPublisher, MassTransitEventPublisher>();
+builder.Services.AddScoped<IOrderNotifier, OrderNotifier>();
 builder.Services.AddDatabase(builder.Configuration);
 
 // Add validation.
@@ -39,6 +41,7 @@ builder.Services.AddHealthChecks();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -53,5 +56,6 @@ app.MapHealthChecks("/health");
 app.UseCustomAuthMiddleware();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<OrderHub>("/order-hub");
 
 await app.RunAsync();

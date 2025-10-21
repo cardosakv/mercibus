@@ -30,18 +30,18 @@ public class OrderCreatedConsumer(IProductRepository productRepository, AppDbCon
             if (unavailableProducts.Count > 0)
             {
                 await transaction.RollbackAsync();
-                await context.Publish(new StockReserveFailed(order.OrderId, unavailableProducts) );
+                await context.Publish(new StockReserveFailed(order.OrderId, order.CustomerId, unavailableProducts) );
             }
             else
             {
                 await transaction.CommitAsync();
-                await context.Publish(new StockReserved(order.OrderId));
+                await context.Publish(new StockReserved(order.OrderId, order.CustomerId));
             }
         }
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            await context.Publish(new StockReserveFailed(order.OrderId, order.Items.Select(o => o.ProductId).ToList()) );
+            await context.Publish(new StockReserveFailed(order.OrderId, order.CustomerId, order.Items.Select(o => o.ProductId).ToList()) );
             logger.LogError(ex, Constants.Messages.ExceptionOccurred);
         }
     }

@@ -55,6 +55,7 @@
     },
     {
       "UseServiceDiscovery": true,
+      "UseWebSocket": true,
       "ServiceName": "order-service",
       "DownstreamPathTemplate": "/api/orders/{everything}",
       "DownstreamScheme": "http",
@@ -65,6 +66,17 @@
         "Put",
         "Patch",
         "Delete"
+      ]
+    },
+    {
+      "UseServiceDiscovery": true,
+      "ServiceName": "order-service",
+      "DownstreamPathTemplate": "/order-hub/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/order-hub/{everything}",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post"
       ]
     }
   ],
