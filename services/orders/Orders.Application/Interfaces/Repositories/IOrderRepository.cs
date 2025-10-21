@@ -12,8 +12,8 @@ public interface IOrderRepository
     /// </summary>
     /// <param name="order">Order to add.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>The added order.</returns>
-    Task<Order> AddAsync(Order order, CancellationToken cancellationToken = default);
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task AddAsync(Order order, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves an order by its unique identifier.

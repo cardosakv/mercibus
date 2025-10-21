@@ -6,10 +6,9 @@ namespace Orders.Infrastructure.Repositories;
 
 public class OrderRepository(AppDbContext dbContext) : IOrderRepository
 {
-    public async Task<Order> AddAsync(Order order, CancellationToken cancellationToken = default)
+    public async Task AddAsync(Order order, CancellationToken cancellationToken = default)
     {
-        var entry = await dbContext.Orders.AddAsync(order, cancellationToken);
-        return entry.Entity;
+        await dbContext.Orders.AddAsync(order, cancellationToken);
     }
 
     public async Task<Order?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
