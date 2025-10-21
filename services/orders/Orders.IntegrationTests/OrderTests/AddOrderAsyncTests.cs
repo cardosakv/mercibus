@@ -1,0 +1,70 @@
+﻿using System.Net;
+using System.Net.Http.Json;
+using FluentAssertions;
+using Mercibus.Common.Constants;
+using Mercibus.Common.Responses;
+using Messaging.Events;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Orders.Application.DTOs;
+using Orders.Application.Interfaces.Messaging;
+using Orders.IntegrationTests.Common;
+
+namespace Orders.IntegrationTests.OrderTests;
+
+public class AddOrderAsyncTests(WebAppFactory factory) : IClassFixture<WebAppFactory>
+{
+    private const string AddOrderUrl = "api/orders";
+
+    [Fact]
+    public async Task ReturnsOk_WhenOrderAddedSuccessfully()
+    {
+        // Arrange
+        var eventPublisher = factory.Services.CreateScope().ServiceProvider.GetRequiredService<IEventPublisher>();
+        await eventPublisher.PublishAsync(new ProductAdded(1));
+        await eventPublisher.PublishAsync(new ProductAdded(2));
+        await Task.Delay(500);
+
+        var request = new OrderRequest(
+        [
+            new OrderItemRequest(1, "Phone", 2),
+            new OrderItemRequest(2, "Headset", 1)
+        ]);
+
+        var client = factory.CreateClient();
+        client.DefaultRequestHeaders.Add("Authorization", "Bearer test-token");
+
+        // Act
+        var response = await client.PostAsJsonAsync(AddOrderUrl, request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var db = factory.CreateDbContext();
+        var order = db.Orders.Include(o => o.Items).First();
+        order.Items.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public async Task ReturnsBadRequest_WhenValidationFails()
+    {
+        // Arrange
+        var request = new OrderRequest(
+        [
+            new OrderItemRequest(3, "Phone", 2),
+            new OrderItemRequest(4, "Headset", 1)
+        ]);
+
+        var client = factory.CreateClient();
+        client.DefaultRequestHeaders.Add("Authorization", "Bearer test-token");
+
+        // Act
+        var response = await client.PostAsJsonAsync(AddOrderUrl, request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var content = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
+        content.Should().NotBeNull();
+        content.Error.Type.Should().Be(ErrorType.InvalidRequestError);
+    }
+}
