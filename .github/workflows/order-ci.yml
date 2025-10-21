@@ -30,7 +30,7 @@ jobs:
       project_key: mercibus_order
       project_dll: Orders
     secrets:
-      sonar_token: ${{ secrets.SONAR_TOKEN_CATALOG }}
+      sonar_token: ${{ secrets.SONAR_TOKEN_ORDER }}
 
   dockerize:
     uses: ./.github/workflows/base-dockerize.yml
