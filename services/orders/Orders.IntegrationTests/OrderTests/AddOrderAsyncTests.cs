@@ -3,11 +3,10 @@ using System.Net.Http.Json;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
-using Messaging.Events;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Orders.Application.DTOs;
-using Orders.Application.Interfaces.Messaging;
+using Orders.Application.Interfaces.Services;
 using Orders.IntegrationTests.Common;
 
 namespace Orders.IntegrationTests.OrderTests;
@@ -20,10 +19,9 @@ public class AddOrderAsyncTests(WebAppFactory factory) : IClassFixture<WebAppFac
     public async Task ReturnsOk_WhenOrderAddedSuccessfully()
     {
         // Arrange
-        var eventPublisher = factory.Services.CreateScope().ServiceProvider.GetRequiredService<IEventPublisher>();
-        await eventPublisher.PublishAsync(new ProductAdded(1));
-        await eventPublisher.PublishAsync(new ProductAdded(2));
-        await Task.Delay(500);
+        var productReadService = factory.Services.GetRequiredService<IProductReadService>();
+        await productReadService.AddAsync(1);
+        await productReadService.AddAsync(2);
 
         var request = new OrderRequest(
         [
