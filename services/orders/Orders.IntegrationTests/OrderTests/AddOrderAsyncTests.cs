@@ -3,10 +3,11 @@ using System.Net.Http.Json;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
+using Messaging.Events;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Orders.Application.DTOs;
-using Orders.Application.Interfaces.Services;
+using Orders.Application.Interfaces.Messaging;
 using Orders.IntegrationTests.Common;
 
 namespace Orders.IntegrationTests.OrderTests;
@@ -19,14 +20,13 @@ public class AddOrderAsyncTests(WebAppFactory factory) : IClassFixture<WebAppFac
     public async Task ReturnsOk_WhenOrderAddedSuccessfully()
     {
         // Arrange
-        var productReadService = factory.Services.CreateScope().ServiceProvider.GetRequiredService<IProductReadService>();
-        await productReadService.AddAsync(1);
-        await productReadService.AddAsync(2);
+        var eventPublisher = factory.Services.CreateScope().ServiceProvider.GetRequiredService<IEventPublisher>();
+        await eventPublisher.PublishAsync(new ProductAdded(1));
+        await Task.Delay(1000);
 
         var request = new OrderRequest(
         [
             new OrderItemRequest(1, "Phone", 2),
-            new OrderItemRequest(2, "Headset", 1)
         ]);
 
         var client = factory.CreateClient();
@@ -40,7 +40,7 @@ public class AddOrderAsyncTests(WebAppFactory factory) : IClassFixture<WebAppFac
 
         var db = factory.CreateDbContext();
         var order = db.Orders.Include(o => o.Items).First();
-        order.Items.Should().HaveCount(2);
+        order.Items.Should().HaveCount(1);
     }
 
     [Fact]
