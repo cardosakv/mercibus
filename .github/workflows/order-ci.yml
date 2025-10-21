@@ -21,12 +21,12 @@ jobs:
   build:
     uses: ./.github/workflows/base-build.yml
     with:
-      service: order
+      service: orders
 
   test-and-scan:
     uses: ./.github/workflows/base-test-and-scan.yml
     with:
-      service: order
+      service: orders
       project_key: mercibus_order
       project_dll: Orders
     secrets:
@@ -35,7 +35,7 @@ jobs:
   dockerize:
     uses: ./.github/workflows/base-dockerize.yml
     with:
-      service: order
+      service: orders
       project_dll: Orders
       image_name: mercibus-order
     secrets:
