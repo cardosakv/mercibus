@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36109.1 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payment.Api", "Payment.Api\Payment.Api.csproj", "{B6403EA3-D20F-494C-A83E-3FC888CBFA61}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payments.Api", "Payments.Api\Payments.Api.csproj", "{B6403EA3-D20F-494C-A83E-3FC888CBFA61}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payment.Application", "Payment.Application\Payment.Application.csproj", "{8C77594B-CFDC-45F9-85CA-0E1B068C7D14}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payments.Application", "Payments.Application\Payments.Application.csproj", "{8C77594B-CFDC-45F9-85CA-0E1B068C7D14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payment.Infrastructure", "Payment.Infrastructure\Payment.Infrastructure.csproj", "{789D6C0C-B769-44A2-91FE-2418371312FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payments.Infrastructure", "Payments.Infrastructure\Payments.Infrastructure.csproj", "{789D6C0C-B769-44A2-91FE-2418371312FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payment.Domain", "Payment.Domain\Payment.Domain.csproj", "{024B7813-E8EA-4887-9179-AABA507C14A1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payments.Domain", "Payments.Domain\Payments.Domain.csproj", "{024B7813-E8EA-4887-9179-AABA507C14A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
