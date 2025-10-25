@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a request to the payment client.
 /// </summary>
-public class PaymentClientRequest(
+public record PaymentClientRequest(
     string ReferenceId,
     decimal Amount,
     string Currency,
