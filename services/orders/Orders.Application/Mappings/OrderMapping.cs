@@ -21,7 +21,8 @@ public class OrderMapping
             .NewConfig()
             .Map(dest => dest.ProductId, src => src.ProductId)
             .Map(dest => dest.ProductName, src => src.ProductName)
-            .Map(dest => dest.Quantity, src => src.Quantity);
+            .Map(dest => dest.Quantity, src => src.Quantity)
+            .Map(dest => dest.Price, src => src.Price);
 
         TypeAdapterConfig<Order, OrderResponse>
             .NewConfig()
