@@ -25,6 +25,9 @@ builder.Services.AddFluentValidationAutoValidation(options => options.OverrideDe
 builder.Services.AddMapster();
 PaymentMapping.Configure();
 
+// Add messaging.
+builder.Services.AddMessaging(builder.Configuration);
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
