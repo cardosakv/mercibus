@@ -1,4 +1,5 @@
-﻿using MapsterMapper;
+﻿using System.Text.RegularExpressions;
+using MapsterMapper;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Models;
 using Mercibus.Common.Services;
@@ -74,7 +75,8 @@ public class PaymentService(IPaymentClient paymentClient, IPaymentRepository pay
 
     public async Task<ServiceResult> ProcessPaymentWebhookAsync(PaymentWebhookRequest request, CancellationToken cancellationToken = default)
     {
-        if (!long.TryParse(request.Data.ReferenceId, out var referenceId))
+        var match = Regex.Match(request.Data.ReferenceId, @"^\d+");
+        if (!match.Success || !long.TryParse(match.Value, out var referenceId))
         {
             return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.PaymentNotFound);
         }
