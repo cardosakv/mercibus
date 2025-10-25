@@ -11,6 +11,11 @@ public class PaymentRepository(AppDbContext dbContext) : IPaymentRepository
         return await dbContext.Payments.FirstOrDefaultAsync(p => p.Id == paymentId, cancellationToken);
     }
 
+    public Task<Payment?> GetPaymentByOrderIdAsync(long orderId, CancellationToken cancellationToken = default)
+    {
+        return dbContext.Payments.FirstOrDefaultAsync(p => p.OrderId == orderId, cancellationToken);
+    }
+
     public async Task AddPaymentAsync(Payment payment, CancellationToken cancellationToken = default)
     { 
         await dbContext.Payments.AddAsync(payment, cancellationToken);

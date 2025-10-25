@@ -14,6 +14,14 @@ public interface IPaymentRepository
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
     /// <returns>The payment details if found; otherwise, null.</returns>
     Task<Payment?> GetPaymentByIdAsync(long paymentId, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// Retrieves a payment by its associated order ID.
+    /// </summary>
+    /// <param name="orderId">The unique identifier of the order.</param>
+    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+    /// <returns>The payment details if found; otherwise, null.</returns>
+    Task<Payment?> GetPaymentByOrderIdAsync(long orderId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Creates a new payment record.
