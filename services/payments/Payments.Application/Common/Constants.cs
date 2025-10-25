@@ -15,5 +15,14 @@ public class Constants
         public const string StateRequired = "state_required";
         public const string PostalCodeRequired = "postal_code_required";
         public const string CountryRequired = "country_required";
+        public const string PaymentCurrentlyProcessing = "payment_currently_processing";
+        public const string PaymentAlreadyCompleted = "payment_already_completed";
+        public const string PaymentFailed = "payment_failed";
+    }
+
+    public static class PaymentClient
+    {
+        public const string SessionType = "PAY";
+        public const string Mode = "PAYMENT_LINK";
     }
 }

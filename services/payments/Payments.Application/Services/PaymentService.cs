@@ -6,10 +6,11 @@ using Payments.Application.Common;
 using Payments.Application.DTOs;
 using Payments.Application.Interfaces.Repositories;
 using Payments.Application.Interfaces.Services;
+using Payments.Domain.Enums;
 
 namespace Payments.Application.Services;
 
-public class PaymentService(IPaymentRepository paymentRepository, IMapper mapper) : BaseService, IPaymentService
+public class PaymentService(IPaymentClient paymentClient, IPaymentRepository paymentRepository, IAppDbContext dbContext, IMapper mapper) : BaseService, IPaymentService
 {
     public async Task<ServiceResult> GetPaymentByIdAsync(long paymentId, CancellationToken cancellationToken = default)
     {
@@ -18,14 +19,54 @@ public class PaymentService(IPaymentRepository paymentRepository, IMapper mapper
         {
             return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.PaymentNotFound);
         }
-        
+
         var response = mapper.Map<PaymentResponse>(payment);
-        
+
         return Success(response);
     }
-    
-    public Task<ServiceResult> InitiatePaymentAsync(PaymentRequest request, CancellationToken cancellationToken = default)
+
+    public async Task<ServiceResult> InitiatePaymentAsync(PaymentRequest request, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var payment = await paymentRepository.GetPaymentByOrderIdAsync(request.OrderId, cancellationToken);
+        if (payment is null)
+        {
+            return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.PaymentNotFound);
+        }
+
+        switch (payment.Status)
+        {
+            case PaymentStatus.Processing:
+                return Error(ErrorType.ConflictError, Constants.ErrorCode.PaymentCurrentlyProcessing);
+            case PaymentStatus.Completed:
+                return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.PaymentAlreadyCompleted);
+            case PaymentStatus.Failed:
+                return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.PaymentFailed);
+        }
+
+        payment.Status = PaymentStatus.Processing;
+        await paymentRepository.UpdatePaymentAsync(payment, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        var paymentClientRequest = new PaymentClientRequest(
+            ReferenceId: payment.Id.ToString(),
+            Amount: payment.Amount,
+            Currency: payment.Currency,
+            Country: request.BillingRequest.Country,
+            SessionType: Constants.PaymentClient.SessionType,
+            Mode: Constants.PaymentClient.Mode
+        );
+
+        try
+        {
+            var paymentLinkUrl = await paymentClient.Initiate(paymentClientRequest, cancellationToken);
+            return Success(paymentLinkUrl);
+        }
+        catch (Exception)
+        {
+            payment.Status = PaymentStatus.Failed;
+            await paymentRepository.UpdatePaymentAsync(payment, cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
+            throw;
+        }
     }
 }

@@ -1,5 +1,6 @@
 using FluentValidation;
 using Mapster;
+using Mercibus.Common.Middlewares;
 using Mercibus.Common.Validations;
 using Payments.Api.Extensions;
 using Payments.Application.Interfaces.Repositories;
@@ -8,6 +9,7 @@ using Payments.Application.Mappings;
 using Payments.Application.Services;
 using Payments.Application.Validations;
 using Payments.Infrastructure.Repositories;
+using Payments.Infrastructure.Services;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +17,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IPaymentClient, XenditClient>();
 builder.Services.AddDatabase(builder.Configuration);
+builder.Services.AddHttpClient();
 
 // Add validation.
 builder.Services.AddValidatorsFromAssemblyContaining<PaymentRequestValidator>();
@@ -43,6 +47,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapHealthChecks("/health");
+app.UseExceptionMiddleware();
 app.UseAuthorization();
 app.MapControllers();
 
