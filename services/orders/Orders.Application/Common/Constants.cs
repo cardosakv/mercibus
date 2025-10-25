@@ -14,6 +14,8 @@ public class Constants
         public const string InvalidOrderStatus = "invalid_order_status";
         public const string CurrencyRequired = "currency_required";
         public const string CurrencyInvalid = "currency_invalid";
+        public const string PriceRequired = "price_required";
+        public const string PriceInvalid = "price_invalid";
     }
 
     public static class Mongo

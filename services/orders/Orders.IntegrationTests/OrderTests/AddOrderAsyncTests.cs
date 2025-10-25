@@ -26,7 +26,7 @@ public class AddOrderAsyncTests(WebAppFactory factory) : IClassFixture<WebAppFac
         var request = new OrderRequest(
             "PHP",
             [
-                new OrderItemRequest(99, "Phone", 2),
+                new OrderItemRequest(99, "Phone", 2, 100.0m),
             ]);
 
         var client = factory.CreateClient();
@@ -46,7 +46,7 @@ public class AddOrderAsyncTests(WebAppFactory factory) : IClassFixture<WebAppFac
         var request = new OrderRequest(
             "PHP",
             [
-                new OrderItemRequest(999, "Phone", 2)
+                new OrderItemRequest(999, "Phone", 2, 100.0m)
             ]);
 
         var client = factory.CreateClient();

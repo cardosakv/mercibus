@@ -17,8 +17,8 @@ public class AddAsyncTests : BaseTest
         var request = new OrderRequest(
             "PHP",
             [
-                new(101, "Laptop", 2),
-                new(202, "Mouse", 1)
+                new(101, "Laptop", 2, 100.0m),
+                new(202, "Mouse", 1, 100.0m)
             ]);
 
         var order = new Order
