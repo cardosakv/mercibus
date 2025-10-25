@@ -22,9 +22,8 @@ public class XenditClient(IHttpClientFactory httpClientFactory, IConfiguration c
             PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
             DictionaryKeyPolicy = JsonNamingPolicy.SnakeCaseLower
         };
-
-        var payload = JsonContent.Create(request, options: options);
-        var response = await httpClient.PostAsJsonAsync("https://api.xendit.co/sessions", payload, cancellationToken);
+        
+        var response = await httpClient.PostAsJsonAsync("https://api.xendit.co/sessions", request, options, cancellationToken);
         var content = await response.Content.ReadAsStringAsync(cancellationToken);
 
         if (!response.IsSuccessStatusCode)
