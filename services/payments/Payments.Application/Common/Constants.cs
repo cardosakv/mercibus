@@ -24,5 +24,6 @@ public class Constants
     {
         public const string SessionType = "PAY";
         public const string Mode = "PAYMENT_LINK";
+        public const string SuccessStatus = "SUCCEEDED";
     }
 }

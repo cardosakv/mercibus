@@ -21,4 +21,11 @@ public class PaymentController(IPaymentService paymentService) : BaseController
         var response = await paymentService.InitiatePaymentAsync(request, cancellationToken);
         return Ok(response);
     }
+
+    [HttpPost("webhook")]
+    public async Task<IActionResult> ProcessPaymentWebhook([FromBody] PaymentWebhookRequest request, CancellationToken cancellationToken)
+    {
+        var response = await paymentService.ProcessPaymentWebhookAsync(request, cancellationToken);
+        return Ok(response);
+    }
 }

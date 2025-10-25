@@ -44,6 +44,7 @@ public class PaymentService(IPaymentClient paymentClient, IPaymentRepository pay
         }
 
         payment.Status = PaymentStatus.Processing;
+        payment.UpdatedAt = DateTime.UtcNow;
         await paymentRepository.UpdatePaymentAsync(payment, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
 
@@ -64,9 +65,31 @@ public class PaymentService(IPaymentClient paymentClient, IPaymentRepository pay
         catch (Exception)
         {
             payment.Status = PaymentStatus.Failed;
+            payment.UpdatedAt = DateTime.UtcNow;
             await paymentRepository.UpdatePaymentAsync(payment, cancellationToken);
             await dbContext.SaveChangesAsync(cancellationToken);
             throw;
         }
+    }
+
+    public async Task<ServiceResult> ProcessPaymentWebhookAsync(PaymentWebhookRequest request, CancellationToken cancellationToken = default)
+    {
+        if (!long.TryParse(request.Data.ReferenceId, out var referenceId))
+        {
+            return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.PaymentNotFound);
+        }
+        
+        var payment = await paymentRepository.GetPaymentByIdAsync(referenceId, cancellationToken);
+        if (payment is null)
+        {
+            return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.PaymentNotFound);
+        }
+        
+        payment.Status = request.Data.Status == Constants.PaymentClient.SuccessStatus ? PaymentStatus.Completed : PaymentStatus.Failed;
+        payment.UpdatedAt = DateTime.UtcNow;
+        await paymentRepository.UpdatePaymentAsync(payment, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
+        
+        return Success();
     }
 }
