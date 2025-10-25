@@ -3,15 +3,15 @@
 /// <summary>
 /// Represents billing information for a payment.
 /// </summary>
-public record BillingInfo(
+public record BillingRequest(
     string FirstName,
     string LastName,
     string Email,
-    string PhoneNumber,
+    string? PhoneNumber,
     string StreetLine1,
-    string StreetLine2,
+    string? StreetLine2,
     string City,
     string State,
-    string PostalCode,
+    int PostalCode,
     string Country
 );

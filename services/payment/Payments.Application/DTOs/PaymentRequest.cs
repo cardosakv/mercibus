@@ -5,5 +5,5 @@
 /// </summary>
 public record PaymentRequest(
     long OrderId,
-    BillingInfo BillingInfo
+    BillingRequest BillingRequest
 );
