@@ -29,6 +29,7 @@ public class GetOrderByIdAsyncTests(WebAppFactory factory) : IClassFixture<WebAp
             new Order
             {
                 UserId = "user-1",
+                Currency = "PHP",
                 Items =
                 [
                     new OrderItem

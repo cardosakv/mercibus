@@ -23,6 +23,11 @@ public class Order
     public OrderStatus Status { get; set; } = OrderStatus.Draft;
 
     /// <summary>
+    /// Currency code for the order (e.g., USD, EUR).
+    /// </summary>
+    public required string Currency { get; set; }
+
+    /// <summary>
     /// Date and time when the order was placed.
     /// </summary>
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

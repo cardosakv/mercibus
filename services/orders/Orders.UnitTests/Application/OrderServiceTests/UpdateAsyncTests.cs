@@ -18,7 +18,8 @@ public class UpdateAsyncTests : BaseTest
         {
             Id = id,
             UserId = "user-50",
-            Status = OrderStatus.Draft
+            Status = OrderStatus.Draft,
+            Currency = "PHP",
         };
 
         OrderRepositoryMock.Setup(r => r.GetByIdAsync(id, It.IsAny<CancellationToken>()))
@@ -63,7 +64,8 @@ public class UpdateAsyncTests : BaseTest
         var order = new Order
         {
             Id = id,
-            UserId = "user-1"
+            UserId = "user-1",
+            Currency = "PHP",
         };
 
         OrderRepositoryMock.Setup(r => r.GetByIdAsync(id, It.IsAny<CancellationToken>()))

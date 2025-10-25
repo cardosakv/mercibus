@@ -14,6 +14,7 @@ public class OrderMapping
     {
         TypeAdapterConfig<OrderRequest, Order>
             .NewConfig()
+            .Map(dest => dest.Currency, src => src.Currency)
             .Map(dest => dest.Items, src => src.Items);
 
         TypeAdapterConfig<OrderItemRequest, OrderItem>
@@ -27,6 +28,7 @@ public class OrderMapping
             .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.UserId, src => src.UserId)
             .Map(dest => dest.Status, src => src.Status.ToString())
+            .Map(dest => dest.Currency, src => src.Currency)
             .Map(dest => dest.CreatedAt, src => src.CreatedAt)
             .Map(dest => dest.Items, src => src.Items);
 

@@ -31,6 +31,7 @@ public class UpdateOrderAsyncTests(WebAppFactory factory) : IClassFixture<WebApp
             {
                 UserId = "user-1",
                 Status = OrderStatus.Draft,
+                Currency = "PHP",
                 Items =
                 [
                     new OrderItem

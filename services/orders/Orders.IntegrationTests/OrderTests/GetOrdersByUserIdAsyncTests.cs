@@ -24,12 +24,14 @@ public class GetOrdersByUserIdAsyncTests(WebAppFactory factory) : IClassFixture<
         await db.Orders.AddAsync(
             new Order
             {
-                UserId = "user-1"
+                UserId = "user-1",
+                Currency = "PHP",
             });
         await db.Orders.AddAsync(
             new Order
             {
-                UserId = "user-1"
+                UserId = "user-1",
+                Currency = "PHP",
             });
         await db.SaveChangesAsync();
 

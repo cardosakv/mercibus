@@ -17,19 +17,21 @@ public class GetByUserIdAsyncTests : BaseTest
             new()
             {
                 Id = 1,
-                UserId = userId
+                UserId = userId,
+                Currency = "PHP",
             },
             new()
             {
                 Id = 2,
-                UserId = userId
+                UserId = userId,
+                Currency = "PHP",
             }
         };
 
         var mapped = new List<OrderResponse>
         {
-            new(1, userId, DateTime.UtcNow, "Draft", []),
-            new(2, userId, DateTime.UtcNow, "Draft", [])
+            new(1, userId, DateTime.UtcNow, "Draft", "PHP", []),
+            new(2, userId, DateTime.UtcNow, "Draft", "PHP", [])
         };
 
         OrderRepositoryMock.Setup(r => r.GetByUserIdAsync(userId, It.IsAny<CancellationToken>()))

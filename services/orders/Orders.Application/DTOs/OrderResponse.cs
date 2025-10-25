@@ -1,6 +1,4 @@
-﻿using Orders.Domain.Enums;
-
-namespace Orders.Application.DTOs;
+﻿namespace Orders.Application.DTOs;
 
 /// <summary>
 /// Represents a response containing order details.
@@ -10,5 +8,6 @@ public record OrderResponse(
     string UserId,
     DateTime CreatedAt,
     string Status,
+    string Currency,
     List<OrderItemResponse> Items
 );
