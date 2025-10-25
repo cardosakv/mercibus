@@ -24,7 +24,7 @@ public class StockReservedConsumer(IOrderService orderService, IOrderNotifier or
             new OrderPendingPayment(
                 OrderId: order.Id,
                 CustomerId: order.UserId,
-                TotalAmount: order.Items.Sum(i => i.Price),
+                TotalAmount: order.Items.Sum(i => i.Price * i.Quantity),
                 Currency: order.Currency
             ),
             context.CancellationToken);
