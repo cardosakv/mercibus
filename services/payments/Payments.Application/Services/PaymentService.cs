@@ -3,15 +3,17 @@ using MapsterMapper;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Models;
 using Mercibus.Common.Services;
+using Messaging.Events;
 using Payments.Application.Common;
 using Payments.Application.DTOs;
+using Payments.Application.Interfaces.Messaging;
 using Payments.Application.Interfaces.Repositories;
 using Payments.Application.Interfaces.Services;
 using Payments.Domain.Enums;
 
 namespace Payments.Application.Services;
 
-public class PaymentService(IPaymentClient paymentClient, IPaymentRepository paymentRepository, IAppDbContext dbContext, IMapper mapper) : BaseService, IPaymentService
+public class PaymentService(IPaymentClient paymentClient, IPaymentRepository paymentRepository, IAppDbContext dbContext, IMapper mapper, IEventPublisher eventPublisher) : BaseService, IPaymentService
 {
     public async Task<ServiceResult> GetPaymentByIdAsync(long paymentId, CancellationToken cancellationToken = default)
     {
@@ -69,6 +71,18 @@ public class PaymentService(IPaymentClient paymentClient, IPaymentRepository pay
             payment.UpdatedAt = DateTime.UtcNow;
             await paymentRepository.UpdatePaymentAsync(payment, cancellationToken);
             await dbContext.SaveChangesAsync(cancellationToken);
+
+            await eventPublisher.PublishAsync(
+                new PaymentFailed(
+                    payment.Id,
+                    payment.OrderId,
+                    payment.CustomerId,
+                    payment.Amount,
+                    payment.Currency
+                ),
+                cancellationToken
+            );
+
             throw;
         }
     }
@@ -80,18 +94,48 @@ public class PaymentService(IPaymentClient paymentClient, IPaymentRepository pay
         {
             return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.PaymentNotFound);
         }
-        
+
         var payment = await paymentRepository.GetPaymentByIdAsync(referenceId, cancellationToken);
         if (payment is null)
         {
             return Error(ErrorType.InvalidRequestError, Constants.ErrorCode.PaymentNotFound);
         }
-        
-        payment.Status = request.Data.Status == Constants.PaymentClient.SuccessStatus ? PaymentStatus.Completed : PaymentStatus.Failed;
+
+        payment.Status = request.Data.Status == Constants.PaymentClient.SuccessStatus
+            ? PaymentStatus.Completed
+            : PaymentStatus.Failed;
         payment.UpdatedAt = DateTime.UtcNow;
         await paymentRepository.UpdatePaymentAsync(payment, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
-        
+
+        switch (payment.Status)
+        {
+            case PaymentStatus.Completed:
+                await eventPublisher.PublishAsync(
+                    new PaymentSucceeded(
+                        payment.Id,
+                        payment.OrderId,
+                        payment.CustomerId,
+                        payment.Amount,
+                        payment.Currency
+                    ),
+                    cancellationToken
+                );
+                break;
+            case PaymentStatus.Failed:
+                await eventPublisher.PublishAsync(
+                    new PaymentFailed(
+                        payment.Id,
+                        payment.OrderId,
+                        payment.CustomerId,
+                        payment.Amount,
+                        payment.Currency
+                    ),
+                    cancellationToken
+                );
+                break;
+        }
+
         return Success();
     }
 }
