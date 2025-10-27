@@ -1,12 +1,13 @@
 ﻿using MassTransit;
 using Messaging.Events;
+using Messaging.Models;
 using Orders.Application.Interfaces.Messaging;
 using Orders.Application.Interfaces.Repositories;
 using Orders.Domain.Enums;
 
 namespace Orders.Infrastructure.Messaging;
 
-public class PaymentFailedConsumer(IOrderRepository orderRepository, AppDbContext dbContext, IOrderNotifier orderNotifier) : IConsumer<PaymentFailed>
+public class PaymentFailedConsumer(IOrderRepository orderRepository, AppDbContext dbContext, IOrderNotifier orderNotifier, IEventPublisher eventPublisher) : IConsumer<PaymentFailed>
 {
     public async Task Consume(ConsumeContext<PaymentFailed> context)
     {
@@ -20,6 +21,13 @@ public class PaymentFailedConsumer(IOrderRepository orderRepository, AppDbContex
             await dbContext.SaveChangesAsync();
 
             await orderNotifier.NotifyOrderStatusAsync(order.Id, order.UserId, nameof(OrderStatus.PaymentFailed));
+            await eventPublisher.PublishAsync(
+                new OrderFailed(
+                    order.Id,
+                    message.CustomerId,
+                    order.Items.Select(x => new OrderItem(x.ProductId, x.Quantity)).ToList(),
+                    DateTime.UtcNow
+                ));
         }
     }
 }
