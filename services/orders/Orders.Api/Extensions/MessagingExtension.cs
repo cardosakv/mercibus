@@ -16,6 +16,8 @@ public static class MessagingExtension
             x.AddConsumer<ProductDeletedConsumer>();
             x.AddConsumer<StockReservedConsumer>();
             x.AddConsumer<StockReserveFailedConsumer>();
+            x.AddConsumer<PaymentSucceededConsumer>();
+            x.AddConsumer<PaymentFailedConsumer>();
 
             x.UsingRabbitMq((context, cfg) =>
             {
