@@ -10,7 +10,8 @@ public static class MessagingExtension
         services.AddMassTransit(x =>
         {
             x.AddConsumer<OrderCreatedConsumer>();
-            
+            x.AddConsumer<OrderFailedConsumer>();
+
             x.UsingRabbitMq((context, config) =>
             {
                 config.Host(
