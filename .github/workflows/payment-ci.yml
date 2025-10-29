@@ -41,3 +41,4 @@ jobs:
     secrets:
       docker_username: ${{ secrets.DOCKER_USERNAME }}
       docker_password: ${{ secrets.DOCKER_PASSWORD }}
+      xendit_api_key: ${{ secrets.XENDIT_API_KEY }}
