@@ -35,6 +35,7 @@ PaymentMapping.Configure();
 // Add messaging.
 builder.Services.AddMessaging(builder.Configuration);
 
+builder.Services.AddJwtAuthentication(builder);
 builder.Services.AddHealthChecks();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -51,6 +52,7 @@ if (app.Environment.IsDevelopment())
 
 app.MapHealthChecks("/health");
 app.UseExceptionMiddleware();
+app.UseCustomAuthMiddleware();
 app.UseAuthorization();
 app.MapControllers();
 
