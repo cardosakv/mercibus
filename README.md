@@ -40,6 +40,17 @@ Handles:
 - Order creation & management
 - Order updates via events
 
+### Payment Service
+
+[![Payment Service CI](https://github.com/cardosakv/mercibus/actions/workflows/payment-ci.yml/badge.svg)](https://github.com/cardosakv/mercibus/actions/workflows/payment-ci.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mercibus_payment&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mercibus_payment)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=mercibus_payment&metric=coverage)](https://sonarcloud.io/summary/new_code?id=mercibus_payment)
+
+Handles:
+
+- Payment processing with Xendit
+- Payment status via webhooks
+
 ## 📦 Tech Stack
 
 - **.NET 8** (C#) for service implementation
@@ -75,6 +86,8 @@ docker-compose up -d
 
 ### 4. Access service APIs
 
-- Gateway: `http://localhost:<gateway_port>/swagger`
-- Auth Service: `http://localhost:<auth_port>/swagger`
-- Catalog Service: `http://localhost:<catalog_port>/swagger`
+- Gateway: `http://localhost:<gateway_port>`
+- Auth Service: `http://localhost:<auth_port>/swagger-auth`
+- Catalog Service: `http://localhost:<catalog_port>/swagger-catalog`
+- Order Service: `http://localhost:<order_port>/swagger-order`
+- Payment Service: `http://localhost:<payment_port>/swagger-payment`
