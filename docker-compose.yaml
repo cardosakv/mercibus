@@ -209,7 +209,7 @@ services:
     ports:
       - "8500:8500"
     volumes:
-      - ./consul:/consul/config
+      - ./gateway/Gateway/Consul:/consul/config
     restart: always
 
 volumes:
