@@ -1,0 +1,43 @@
+﻿name: Payment Service CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "services/payments/**"
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - "services/payments/**"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    uses: ./.github/workflows/base-build.yml
+    with:
+      service: payments
+
+  test-and-scan:
+    uses: ./.github/workflows/base-test-and-scan.yml
+    with:
+      service: payments
+      project_key: mercibus_payment
+      project_dll: Payments
+    secrets:
+      sonar_token: ${{ secrets.SONAR_TOKEN_PAYMENT }}
+
+  dockerize:
+    uses: ./.github/workflows/base-dockerize.yml
+    with:
+      service: payments
+      project_dll: Payments
+      image_name: mercibus-payment
+    secrets:
+      docker_username: ${{ secrets.DOCKER_USERNAME }}
+      docker_password: ${{ secrets.DOCKER_PASSWORD }}
