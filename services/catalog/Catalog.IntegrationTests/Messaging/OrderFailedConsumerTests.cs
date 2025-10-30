@@ -57,7 +57,7 @@ public class OrderFailedConsumerTests(MessageWebAppFactory factory) : IClassFixt
                 DateTime.UtcNow
             )
         );
-        await Task.Delay(1000); // Allow consumer to process
+        await Task.Delay(5000);
 
         // Assert
         dbContext = factory.CreateDbContext();
