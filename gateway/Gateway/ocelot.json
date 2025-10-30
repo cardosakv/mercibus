@@ -14,9 +14,9 @@
     {
       "UseServiceDiscovery": true,
       "ServiceName": "auth-service",
-      "DownstreamPathTemplate": "/swagger-auth/",
+      "DownstreamPathTemplate": "/swagger/{everything}",
       "DownstreamScheme": "http",
-      "UpstreamPathTemplate": "/swagger/",
+      "UpstreamPathTemplate": "/swagger-auth/{everything}",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -70,9 +70,9 @@
     {
         "UseServiceDiscovery": true,
         "ServiceName": "catalog-service",
-        "DownstreamPathTemplate": "/swagger-catalog/",
+        "DownstreamPathTemplate": "/swagger/{everything}",
         "DownstreamScheme": "http",
-        "UpstreamPathTemplate": "/swagger/",
+        "UpstreamPathTemplate": "/swagger-catalog/{everything}",
         "UpstreamHttpMethod": [
             "Get",
             "Post",
@@ -98,9 +98,9 @@
     {
       "UseServiceDiscovery": true,
       "ServiceName": "order-service",
-      "DownstreamPathTemplate": "/api/orders/hub/{everything}",
+      "DownstreamPathTemplate": "/order-hub/{everything}",
       "DownstreamScheme": "http",
-      "UpstreamPathTemplate": "/order-hub/{everything}",
+      "UpstreamPathTemplate": "/api/orders/hub/{everything}",
       "UseWebSocket": true,
       "UpstreamHttpMethod": [
         "Get",
@@ -110,9 +110,9 @@
     {
         "UseServiceDiscovery": true,
         "ServiceName": "order-service",
-        "DownstreamPathTemplate": "/swagger-order/",
+        "DownstreamPathTemplate": "/swagger/{everything}",
         "DownstreamScheme": "http",
-        "UpstreamPathTemplate": "/swagger/",
+        "UpstreamPathTemplate": "/swagger-order/{everything}",
         "UpstreamHttpMethod": [
             "Get",
             "Post",
@@ -138,9 +138,9 @@
     {
       "UseServiceDiscovery": true,
       "ServiceName": "payment-service",
-      "DownstreamPathTemplate": "/swagger-payment/",
+      "DownstreamPathTemplate": "/swagger/{everything}",
       "DownstreamScheme": "http",
-      "UpstreamPathTemplate": "/swagger/",
+      "UpstreamPathTemplate": "/swagger-payment/{everything}",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
