@@ -17,5 +17,8 @@ public class PaymentRequestValidator: AbstractValidator<PaymentRequest>
         RuleFor(x => x.OrderId)
             .MustAsync(async (id, cancellationToken) => await paymentRepository.GetPaymentByOrderIdAsync(id, cancellationToken) != null)
             .WithMessage(Constants.ErrorCode.OrderNotFound);
+
+        RuleFor(x => x.BillingRequest)
+            .SetValidator(new BillingRequestValidator());
     }
 }
