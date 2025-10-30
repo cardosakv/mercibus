@@ -3,9 +3,9 @@
     {
       "UseServiceDiscovery": true,
       "ServiceName": "auth-service",
-      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api/auth/{everything}",
       "DownstreamScheme": "http",
-      "UpstreamPathTemplate": "/api/{everything}",
+      "UpstreamPathTemplate": "/api/auth/{everything}",
       "UpstreamHttpMethod": [
         "Get",
         "Post"
@@ -28,9 +28,37 @@
     {
       "UseServiceDiscovery": true,
       "ServiceName": "catalog-service",
-      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api/brands/{everything}",
       "DownstreamScheme": "http",
-      "UpstreamPathTemplate": "/api/{everything}",
+      "UpstreamPathTemplate": "/api/brands/{everything}",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Patch",
+        "Delete"
+      ]
+    },
+    {
+      "UseServiceDiscovery": true,
+      "ServiceName": "catalog-service",
+      "DownstreamPathTemplate": "/api/categories/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/api/categories/{everything}",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Patch",
+        "Delete"
+      ]
+    },
+    {
+      "UseServiceDiscovery": true,
+      "ServiceName": "catalog-service",
+      "DownstreamPathTemplate": "/api/products/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/api/products/{everything}",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -56,9 +84,9 @@
     {
       "UseServiceDiscovery": true,
       "ServiceName": "order-service",
-      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api/orders/{everything}",
       "DownstreamScheme": "http",
-      "UpstreamPathTemplate": "/api/{everything}",
+      "UpstreamPathTemplate": "/api/orders/{everything}",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -96,9 +124,9 @@
     {
       "UseServiceDiscovery": true,
       "ServiceName": "payment-service",
-      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamPathTemplate": "/api/payments/{everything}",
       "DownstreamScheme": "http",
-      "UpstreamPathTemplate": "/api/{everything}",
+      "UpstreamPathTemplate": "/api/payments/{everything}",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
