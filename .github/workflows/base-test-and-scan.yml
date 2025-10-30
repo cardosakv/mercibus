@@ -87,7 +87,7 @@ jobs:
             /d:sonar.token="${{ secrets.sonar_token }}" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.cs.opencover.reportsPaths="**/TestResults/*.coverage.opencover.xml" \
-            /d:sonar.coverage.exclusions="**/${{ inputs.project_dll }}.Infrastructure/Migrations/*.cs,**/${{ inputs.project_dll }}.Application/Common/**/*.cs,**/${{ inputs.project_dll }}.Api/Program.cs,**/${{ inputs.project_dll }}.Api/Extensions/*.cs" \
+            /d:sonar.coverage.exclusions="**/${{ inputs.project_dll }}.Infrastructure/Migrations/*.cs,**/${{ inputs.project_dll }}.Infrastructure/Messaging/*.cs,**/${{ inputs.project_dll }}.Application/Common/**/*.cs,**/${{ inputs.project_dll }}.Api/Program.cs,**/${{ inputs.project_dll }}.Api/Extensions/*.cs" \
 
       - name: Restore and build
         run: |
