@@ -78,6 +78,20 @@
         "Get",
         "Post"
       ]
+    },
+    {
+      "UseServiceDiscovery": true,
+      "ServiceName": "payment-service",
+      "DownstreamPathTemplate": "/api/payments/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/api/payments/{everything}",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Patch",
+        "Delete"
+      ]
     }
   ],
   "GlobalConfiguration": {

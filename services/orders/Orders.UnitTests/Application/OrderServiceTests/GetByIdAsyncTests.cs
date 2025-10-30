@@ -18,6 +18,7 @@ public class GetByIdAsyncTests : BaseTest
             Id = orderId,
             UserId = "user-10",
             Status = OrderStatus.Confirmed,
+            Currency = "PHP",
             Items =
             [
                 new OrderItem
@@ -36,7 +37,8 @@ public class GetByIdAsyncTests : BaseTest
             "user-10",
             order.CreatedAt,
             "Confirmed",
-            [new(1, 10, "Phone", 1000, 1)]);
+            "PHP",
+            [new OrderItemResponse(1, 10, "Phone", 1000, 1)]);
 
         OrderRepositoryMock.Setup(r => r.GetByIdAsync(orderId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(order);

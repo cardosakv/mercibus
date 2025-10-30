@@ -15,15 +15,17 @@ public class AddAsyncTests : BaseTest
         // Arrange
         const string userId = "user-1";
         var request = new OrderRequest(
-        [
-            new(101, "Laptop", 2),
-            new(202, "Mouse", 1)
-        ]);
+            "PHP",
+            [
+                new(101, "Laptop", 2, 100.0m),
+                new(202, "Mouse", 1, 100.0m)
+            ]);
 
         var order = new Order
         {
             Id = 10,
             UserId = userId,
+            Currency = "PHP",
             Items = new List<OrderItem>
             {
                 new()
@@ -64,7 +66,7 @@ public class AddAsyncTests : BaseTest
     public async Task ReturnsError_WhenUserIdIsNull()
     {
         // Arrange
-        var request = new OrderRequest([]);
+        var request = new OrderRequest("PHP", []);
 
         // Act
         var result = await OrderService.AddAsync(null, request, CancellationToken.None);
@@ -78,10 +80,11 @@ public class AddAsyncTests : BaseTest
     {
         // Arrange
         const string userId = "user-1";
-        var request = new OrderRequest([]);
+        var request = new OrderRequest("PHP", []);
         var order = new Order
         {
-            UserId = userId
+            UserId = userId,
+            Currency = "PHP",
         };
 
         MapperMock.Setup(m => m.Map<Order>(request)).Returns(order);

@@ -54,6 +54,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapHealthChecks("/health");
+app.UseExceptionMiddleware();
 app.UseCustomAuthMiddleware();
 app.UseAuthorization();
 app.MapControllers();

@@ -14,19 +14,22 @@ public class OrderMapping
     {
         TypeAdapterConfig<OrderRequest, Order>
             .NewConfig()
+            .Map(dest => dest.Currency, src => src.Currency)
             .Map(dest => dest.Items, src => src.Items);
 
         TypeAdapterConfig<OrderItemRequest, OrderItem>
             .NewConfig()
             .Map(dest => dest.ProductId, src => src.ProductId)
             .Map(dest => dest.ProductName, src => src.ProductName)
-            .Map(dest => dest.Quantity, src => src.Quantity);
+            .Map(dest => dest.Quantity, src => src.Quantity)
+            .Map(dest => dest.Price, src => src.Price);
 
         TypeAdapterConfig<Order, OrderResponse>
             .NewConfig()
             .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.UserId, src => src.UserId)
             .Map(dest => dest.Status, src => src.Status.ToString())
+            .Map(dest => dest.Currency, src => src.Currency)
             .Map(dest => dest.CreatedAt, src => src.CreatedAt)
             .Map(dest => dest.Items, src => src.Items);
 

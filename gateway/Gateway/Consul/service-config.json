@@ -1,0 +1,52 @@
+{
+  "Services": [
+    {
+      "ID": "auth-service",
+      "Name": "auth-service",
+      "Address": "auth-service",
+      "Port": 8080,
+      "Checks": [
+        {
+          "HTTP": "http://auth-service:8080/health",
+          "Interval": "10s"
+        }
+      ]
+    },
+    {
+      "ID": "catalog-service",
+      "Name": "catalog-service",
+      "Address": "catalog-service",
+      "Port": 8080,
+      "Checks": [
+        {
+          "HTTP": "http://catalog-service:8080/health",
+          "Interval": "10s"
+        }
+      ]
+    },
+    {
+      "ID": "order-service",
+      "Name": "order-service",
+      "Address": "order-service",
+      "Port": 8080,
+      "Checks": [
+        {
+          "HTTP": "http://order-service:8080/health",
+          "Interval": "10s"
+        }
+      ]
+    },
+    {
+      "ID": "payment-service",
+      "Name": "payment-service",
+      "Address": "payment-service",
+      "Port": 8080,
+      "Checks": [
+        {
+          "HTTP": "http://payment-service:8080/health",
+          "Interval": "10s"
+        }
+      ]
+    }
+  ]
+}

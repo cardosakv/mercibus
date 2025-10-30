@@ -26,5 +26,9 @@ public class OrderItemRequestValidator : AbstractValidator<OrderItemRequest>
             .Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage(Constants.ErrorCode.QuantityRequired)
             .GreaterThan(0).WithMessage(Constants.ErrorCode.QuantityInvalid);
+
+        RuleFor(x => x.Price)
+            .NotEmpty().WithMessage(Constants.ErrorCode.PriceRequired)
+            .GreaterThan(0).WithMessage(Constants.ErrorCode.PriceInvalid);
     }
 }

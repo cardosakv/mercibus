@@ -24,9 +24,10 @@ public class AddOrderAsyncTests(WebAppFactory factory) : IClassFixture<WebAppFac
         await Task.Delay(1000);
 
         var request = new OrderRequest(
-        [
-            new OrderItemRequest(99, "Phone", 2),
-        ]);
+            "PHP",
+            [
+                new OrderItemRequest(99, "Phone", 2, 100.0m),
+            ]);
 
         var client = factory.CreateClient();
         client.DefaultRequestHeaders.Add("Authorization", "Bearer test-token");
@@ -43,9 +44,10 @@ public class AddOrderAsyncTests(WebAppFactory factory) : IClassFixture<WebAppFac
     {
         // Arrange
         var request = new OrderRequest(
-        [
-            new OrderItemRequest(999, "Phone", 2)
-        ]);
+            "PHP",
+            [
+                new OrderItemRequest(999, "Phone", 2, 100.0m)
+            ]);
 
         var client = factory.CreateClient();
         client.DefaultRequestHeaders.Add("Authorization", "Bearer test-token");
