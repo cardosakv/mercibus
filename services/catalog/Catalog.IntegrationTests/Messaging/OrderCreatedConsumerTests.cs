@@ -54,7 +54,7 @@ public class OrderCreatedConsumerTests(MessageWebAppFactory factory) : IClassFix
                 DateTime.UtcNow
             )
         );
-        await Task.Delay(5000);
+        await Task.Delay(1000);
 
         // Assert
         dbContext = factory.CreateDbContext();

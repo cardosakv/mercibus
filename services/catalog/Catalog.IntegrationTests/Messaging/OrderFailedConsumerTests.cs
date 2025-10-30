@@ -57,11 +57,11 @@ public class OrderFailedConsumerTests(MessageWebAppFactory factory) : IClassFixt
                 DateTime.UtcNow
             )
         );
-        await Task.Delay(5000);
+        await Task.Delay(1000);
 
         // Assert
         dbContext = factory.CreateDbContext();
-        var updatedProduct = await dbContext.Products.FindAsync(product.Entity.Id);
+        var updatedProduct = await dbContext.Products.FirstOrDefaultAsync(p => p.Id == product.Entity.Id);
         updatedProduct.Should().NotBeNull();
         updatedProduct!.StockQuantity.Should().Be(7); // 5 + 2 restored
     }
