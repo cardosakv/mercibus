@@ -25,7 +25,7 @@ builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddHttpClient();
 
 // Add validation.
-builder.Services.AddValidatorsFromAssemblyContaining<PaymentRequestValidator>();
+builder.Services.AddValidatorsFromAssembly(typeof(PaymentRequestValidator).Assembly);
 builder.Services.AddFluentValidationAutoValidation(options => options.OverrideDefaultResultFactoryWith<ValidationResultFactory>());
 
 // Add mapping.
