@@ -3,6 +3,7 @@ using Catalog.Application.Validations;
 using FluentValidation;
 using Mercibus.Common.Middlewares;
 using Mercibus.Common.Validations;
+using Prometheus;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,12 +35,13 @@ if (app.Environment.IsDevelopment())
     app.ApplyMigrations();
 }
 
+app.UseHttpMetrics();
+app.MapMetrics("/metrics");
 app.MapHealthChecks("/health");
 app.UseExceptionMiddleware();
 app.UseLoggingMiddleware();
 app.UseCustomAuthMiddleware();
 app.UseAuthorization();
-
 app.MapControllers();
 
 await app.RunAsync();

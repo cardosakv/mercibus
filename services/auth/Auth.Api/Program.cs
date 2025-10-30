@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Prometheus;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -105,6 +106,8 @@ if (app.Environment.IsDevelopment())
     app.ApplyMigrations();
 }
 
+app.UseHttpMetrics();
+app.MapMetrics("/metrics");
 app.MapHealthChecks("/health");
 app.UseExceptionMiddleware();
 app.UseLoggingMiddleware();
