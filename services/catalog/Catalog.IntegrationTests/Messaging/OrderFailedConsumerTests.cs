@@ -74,7 +74,7 @@ public class OrderFailedConsumerTests(MessageWebAppFactory factory) : IClassFixt
         var eventPublisher = factory.Services.CreateScope().ServiceProvider.GetRequiredService<IEventPublisher>();
 
         // Ensure database is empty
-        (await dbContext.Products.ToListAsync()).Should().BeEmpty();
+        await dbContext.Products.ExecuteDeleteAsync();
 
         // Act
         await eventPublisher.PublishAsync(
@@ -92,6 +92,7 @@ public class OrderFailedConsumerTests(MessageWebAppFactory factory) : IClassFixt
 
         // Assert
         dbContext = factory.CreateDbContext();
-        (await dbContext.Products.ToListAsync()).Should().BeEmpty();
+        var products = await dbContext.Products.ToListAsync();
+        products.Should().BeEmpty();
     }
 }
