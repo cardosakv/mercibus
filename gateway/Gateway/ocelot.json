@@ -98,7 +98,7 @@
     {
       "UseServiceDiscovery": true,
       "ServiceName": "order-service",
-      "DownstreamPathTemplate": "/order-hub/{everything}",
+      "DownstreamPathTemplate": "/api/orders/hub/{everything}",
       "DownstreamScheme": "http",
       "UpstreamPathTemplate": "/order-hub/{everything}",
       "UseWebSocket": true,
