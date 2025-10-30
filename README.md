@@ -1,7 +1,7 @@
 # Mercibus
 
-**Mercibus** is a **personal practice project** for building an **e-commerce backend** using a **microservices
-architecture**.
+**Mercibus** is a personal practice project for building an e-commerce application using microservices
+architecture.
 
 ## Services
 
