@@ -13,6 +13,20 @@
     },
     {
       "UseServiceDiscovery": true,
+      "ServiceName": "auth-service",
+      "DownstreamPathTemplate": "/swagger/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/swagger-auth/{everything}",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Patch",
+        "Delete"
+      ]
+    },
+    {
+      "UseServiceDiscovery": true,
       "ServiceName": "catalog-service",
       "DownstreamPathTemplate": "/api/brands/{everything}",
       "DownstreamScheme": "http",
@@ -54,8 +68,21 @@
       ]
     },
     {
+        "UseServiceDiscovery": true,
+        "ServiceName": "catalog-service",
+        "DownstreamPathTemplate": "/swagger/{everything}",
+        "DownstreamScheme": "http",
+        "UpstreamPathTemplate": "/swagger-catalog/{everything}",
+        "UpstreamHttpMethod": [
+            "Get",
+            "Post",
+            "Put",
+            "Patch",
+            "Delete"
+        ]
+    },
+    {
       "UseServiceDiscovery": true,
-      "UseWebSocket": true,
       "ServiceName": "order-service",
       "DownstreamPathTemplate": "/api/orders/{everything}",
       "DownstreamScheme": "http",
@@ -73,11 +100,26 @@
       "ServiceName": "order-service",
       "DownstreamPathTemplate": "/order-hub/{everything}",
       "DownstreamScheme": "http",
-      "UpstreamPathTemplate": "/order-hub/{everything}",
+      "UpstreamPathTemplate": "/api/orders/hub/{everything}",
+      "UseWebSocket": true,
       "UpstreamHttpMethod": [
         "Get",
         "Post"
       ]
+    },
+    {
+        "UseServiceDiscovery": true,
+        "ServiceName": "order-service",
+        "DownstreamPathTemplate": "/swagger/{everything}",
+        "DownstreamScheme": "http",
+        "UpstreamPathTemplate": "/swagger-order/{everything}",
+        "UpstreamHttpMethod": [
+            "Get",
+            "Post",
+            "Put",
+            "Patch",
+            "Delete"
+        ]
     },
     {
       "UseServiceDiscovery": true,
@@ -85,6 +127,20 @@
       "DownstreamPathTemplate": "/api/payments/{everything}",
       "DownstreamScheme": "http",
       "UpstreamPathTemplate": "/api/payments/{everything}",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Patch",
+        "Delete"
+      ]
+    },
+    {
+      "UseServiceDiscovery": true,
+      "ServiceName": "payment-service",
+      "DownstreamPathTemplate": "/swagger/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/swagger-payment/{everything}",
       "UpstreamHttpMethod": [
         "Get",
         "Post",

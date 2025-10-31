@@ -86,8 +86,8 @@ docker-compose up -d
 
 ### 4. Access service APIs
 
-- Gateway: `http://localhost:<gateway_port>`
-- Auth Service: `http://localhost:<auth_port>/swagger-auth`
-- Catalog Service: `http://localhost:<catalog_port>/swagger-catalog`
-- Order Service: `http://localhost:<order_port>/swagger-order`
-- Payment Service: `http://localhost:<payment_port>/swagger-payment`
+- Gateway: `http://localhost:9000`
+- Auth Service: `http://localhost:9000/swagger-auth/index.html`
+- Catalog Service: `http://localhost:9000/swagger-catalog/index.html`
+- Order Service: `http://localhost:9000/swagger-order/index.html`
+- Payment Service: `http://localhost:9000/swagger-payment/index.html`

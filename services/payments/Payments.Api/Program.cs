@@ -12,6 +12,7 @@ using Payments.Application.Validations;
 using Payments.Infrastructure.Messaging;
 using Payments.Infrastructure.Repositories;
 using Payments.Infrastructure.Services;
+using Prometheus;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,8 +51,11 @@ if (app.Environment.IsDevelopment())
     app.ApplyMigrations();
 }
 
+app.UseHttpMetrics();
+app.MapMetrics("/metrics");
 app.MapHealthChecks("/health");
 app.UseExceptionMiddleware();
+app.UseLoggingMiddleware();
 app.UseCustomAuthMiddleware();
 app.UseAuthorization();
 app.MapControllers();
