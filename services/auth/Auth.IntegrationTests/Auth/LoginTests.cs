@@ -1,10 +1,7 @@
 using System.Net;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Auth.Application.DTOs;
 using Auth.Domain.Common;
-using Auth.Domain.Entities;
-using Auth.IntegrationTests.Common;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
@@ -17,18 +14,12 @@ public class LoginTests(TestWebAppFactory factory) : BaseTests(factory)
     [Fact]
     public async Task ReturnsOk_WhenLoginIsSuccessful()
     {
-        // Arrange: create and register a valid user
-        var user = new User
-        {
-            UserName = "valid_user",
-            Email = "valid@email.com"
-        };
-        await UserManager.CreateAsync(user, "Valid@123");
-        await UserManager.AddToRoleAsync(user, Roles.Customer);
+        // Arrange
+        var user = await CreateUserAsync("valid_user", "valid@email.com", "Valid@123", Roles.Customer);
 
         var request = new LoginRequest
         {
-            Username = "valid_user",
+            Username = user.UserName,
             Password = "Valid@123"
         };
 
@@ -74,20 +65,15 @@ public class LoginTests(TestWebAppFactory factory) : BaseTests(factory)
     public async Task ReturnsBadRequest_WhenPasswordIsIncorrect()
     {
         // Arrange
-        var user = new User { UserName = "wrong_pass_user", Email = "wrong@pass.com" };
-        await UserManager.CreateAsync(user, "Correct@Password1");
-        await UserManager.AddToRoleAsync(user, Roles.Customer);
+        var user = await CreateUserAsync("wrong_pass_user", "wrong@pass.com", "Correct@Password1", Roles.Customer);
 
         var request = new LoginRequest
         {
-            Username = "wrong_pass_user",
+            Username = user.UserName,
             Password = "WrongPassword"
         };
 
-        var token = await TestUtils.LoginUser(HttpClient, LoginUrl, user.UserName, "Correct@Password1");
-
         // Act
-        HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token!.AccessToken);
         var response = await HttpClient.PostAsJsonAsync(LoginUrl, request);
 
         // Assert
