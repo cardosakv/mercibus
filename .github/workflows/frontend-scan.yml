@@ -1,4 +1,4 @@
-name: Frontend SonarQube Scan
+name: Frontend CI
 
 on:
   push:
@@ -12,8 +12,7 @@ on:
       - "app/**"
 
 jobs:
-  sonarqube:
-    name: SonarQube Frontend Scan
+  scan:
     runs-on: ubuntu-latest
 
     defaults:
@@ -21,11 +20,12 @@ jobs:
         working-directory: ./app
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: SonarQube Scan
+      - name: Scan with SonarCloud
         uses: SonarSource/sonarqube-scan-action@v6
         with:
           projectBaseDir: app
