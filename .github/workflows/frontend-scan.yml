@@ -1,0 +1,37 @@
+name: Frontend CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "app/**"
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "app/**"
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./app
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan with SonarCloud
+        uses: SonarSource/sonarqube-scan-action@v6
+        with:
+          projectBaseDir: app
+          args: >
+            -Dsonar.organization=cardosakv
+            -Dsonar.projectKey=mercibus_app
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_APP }}
+          SONAR_HOST_URL: "https://sonarcloud.io"
