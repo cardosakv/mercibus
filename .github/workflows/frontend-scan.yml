@@ -27,9 +27,11 @@ jobs:
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
+        with:
+          projectBaseDir: app
+          args: >
+            -Dsonar.organization=cardosakv
+            -Dsonar.projectKey=mercibus_app
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_APP }}
           SONAR_HOST_URL: "https://sonarcloud.io"
-          SONAR_PROJECT_KEY: "mercibus_app"
-        with:
-          projectBaseDir: app/
