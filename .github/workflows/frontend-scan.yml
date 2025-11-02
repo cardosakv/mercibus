@@ -29,5 +29,6 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_APP }}
+          SONAR_HOST_URL: "https://sonarcloud.io"
         with:
           projectBaseDir: app/
