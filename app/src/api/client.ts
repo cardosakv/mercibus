@@ -82,12 +82,12 @@ class HttpClient {
             }
 
             // Call refresh token endpoint
-            const response = await axios.post<AuthTokenResponse>(
+            const response = await axios.post<{ data: AuthTokenResponse }>(
               `${API_BASE_URL}/auth/refresh-token`,
               { refreshToken }
             )
 
-            const { accessToken, refreshToken: newRefreshToken, expiresIn } = response.data
+            const { accessToken, refreshToken: newRefreshToken, expiresIn } = response.data.data
 
             // Store new tokens
             tokenStorage.setAccessToken(accessToken)
