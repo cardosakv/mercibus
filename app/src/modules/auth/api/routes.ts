@@ -7,6 +7,7 @@ export const AUTH_API = {
   CONFIRM_EMAIL: '/auth/confirm-email',
   FORGOT_PASSWORD: '/auth/forgot-password',
   RESET_PASSWORD: '/auth/reset-password',
+  CHANGE_PASSWORD: '/auth/change-password',
   INFO: '/auth/info',
   UPLOAD_PROFILE_PICTURE: '/auth/upload-profile-picture',
 } as const;
