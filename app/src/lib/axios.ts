@@ -36,7 +36,7 @@ axiosInstance.interceptors.request.use(
  * Response interceptor to handle API responses and errors.
  */
 axiosInstance.interceptors.response.use(
-  (response: AxiosResponse<ApiSuccessResponse<any>>) => {
+  (response: AxiosResponse) => {
     if (response.data.data) {
       return response.data.data;
     }

@@ -1,4 +1,4 @@
-export interface ApiSuccessResponse<T = any> {
+export interface ApiSuccessResponse<T = unknown> {
   data: T | null;
 }
 
