@@ -11,6 +11,11 @@
     "format": "prettier --write .",
     "prepare": "husky"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint && npm run format"
+    }
+  },
   "dependencies": {
     "axios": "^1.13.1",
     "axios-auth-refresh": "^3.3.6",
