@@ -1,14 +1,13 @@
 import { useState } from 'react';
+import { Button } from './components/ui/button';
 
 function App() {
   const [count, setCount] = useState(0);
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center gap-5">
       <div>MERCIBUS APP: {count}</div>
-      <button className="rounded-sm bg-blue-600" onClick={() => setCount(count + 1)}>
-        Increment
-      </button>
+      <Button onClick={() => setCount(count + 1)}>Increment</Button>
     </div>
   );
 }
