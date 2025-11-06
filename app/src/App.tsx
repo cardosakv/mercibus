@@ -1,13 +1,9 @@
-import { useState } from 'react';
-import { Button } from './components/ui/button';
+import { SignupForm } from '@/modules/auth/components/signup-form';
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <div className="flex flex-col items-center justify-center gap-5">
-      <div>MERCIBUS APP: {count}</div>
-      <Button onClick={() => setCount(count + 1)}>Increment</Button>
+    <div className="flex flex-col items-center justify-center gap-5 ">
+      <SignupForm />
     </div>
   );
 }
