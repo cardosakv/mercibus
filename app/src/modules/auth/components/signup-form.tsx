@@ -1,43 +1,108 @@
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { signupSchema, type SignupData } from '../schemas/signup';
 
-export function SignupForm({ className, ...props }: React.ComponentProps<'div'>) {
+interface SignupFormProps {
+  onSubmit: (data: SignupData) => void;
+  isLoading: boolean;
+}
+
+export function SignupForm({ onSubmit, isLoading }: SignupFormProps) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignupData>({
+    resolver: zodResolver(signupSchema),
+    mode: 'onChange',
+  });
+
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
+    <div className="flex flex-col gap-6">
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Create your account</CardTitle>
-          <CardDescription>Enter your email below to create your account</CardDescription>
+          <CardDescription>Enter your details to start shopping.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="name">Username</FieldLabel>
-                <Input id="name" type="text" placeholder="juandelacruz" required />
+                <FieldLabel htmlFor="username">Username</FieldLabel>
+                <div>
+                  <Input
+                    id="username"
+                    type="text"
+                    placeholder="juandelacruz"
+                    disabled={isLoading}
+                    {...register('username')}
+                  />
+                  <FieldDescription className="text-red-500 text-xs pt-1">
+                    {errors?.username?.message}
+                  </FieldDescription>
+                </div>
               </Field>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input id="email" type="email" placeholder="mail@example.com" required />
+                <div>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="user@mail.com"
+                    disabled={isLoading}
+                    {...register('email')}
+                  />
+                  <FieldDescription className="text-red-500 text-xs pt-1">
+                    {errors?.email?.message}
+                  </FieldDescription>
+                </div>
               </Field>
               <Field>
                 <Field className="grid grid-cols-2 gap-4">
                   <Field>
                     <FieldLabel htmlFor="password">Password</FieldLabel>
-                    <Input id="password" type="password" required />
+                    <div>
+                      <Input
+                        id="password"
+                        type="password"
+                        placeholder="••••••••"
+                        disabled={isLoading}
+                        {...register('password')}
+                      />
+                      <FieldDescription className="text-red-500 text-xs pt-1">
+                        {errors?.password?.message}
+                      </FieldDescription>
+                    </div>
                   </Field>
                   <Field>
-                    <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
-                    <Input id="confirm-password" type="password" required />
+                    <FieldLabel htmlFor="confirmPassword">Confirm Password</FieldLabel>
+                    <div>
+                      <Input
+                        id="confirmPassword"
+                        type="password"
+                        placeholder="••••••••"
+                        disabled={isLoading}
+                        {...register('confirmPassword')}
+                      />
+                      <FieldDescription className="text-red-500 text-xs pt-1 min-h-1">
+                        {errors?.confirmPassword?.message}
+                      </FieldDescription>
+                    </div>
                   </Field>
                 </Field>
-                <FieldDescription>Must be at least 8 characters long.</FieldDescription>
               </Field>
               <Field>
-                <Button type="submit">Create Account</Button>
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full"
+                >
+                  {isLoading ? 'Creating...' : 'Create Account'}
+                </Button>
                 <FieldDescription className="text-center">
                   Already have an account? <a href="#">Sign in</a>
                 </FieldDescription>
@@ -47,7 +112,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a> and{' '}
+        By continuing, you agree to our <a href="#">Terms of Service</a> and{' '}
         <a href="#">Privacy Policy</a>.
       </FieldDescription>
     </div>
