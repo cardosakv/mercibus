@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signupSchema, type SignupData } from '../schemas/signup';
+import { CircleAlertIcon } from '@/components/ui/icons/lucide-circle-alert';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface SignupFormProps {
   onSubmit: (data: SignupData) => void;
@@ -22,7 +24,7 @@ export function SignupForm({ onSubmit, isLoading }: SignupFormProps) {
   });
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col">
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Create your account</CardTitle>
@@ -31,6 +33,15 @@ export function SignupForm({ onSubmit, isLoading }: SignupFormProps) {
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup>
+              <Alert
+                variant="destructive"
+                className="bg-destructive/10 border-destructive text-destructive"
+              >
+                <CircleAlertIcon />
+                <AlertDescription>
+                  Username is already registered. Please try to use a different one.
+                </AlertDescription>
+              </Alert>
               <Field>
                 <FieldLabel htmlFor="username">Username</FieldLabel>
                 <div>
@@ -41,7 +52,7 @@ export function SignupForm({ onSubmit, isLoading }: SignupFormProps) {
                     disabled={isLoading}
                     {...register('username')}
                   />
-                  <FieldDescription className="text-red-500 text-xs pt-1">
+                  <FieldDescription className="text-destructive text-xs pt-1">
                     {errors?.username?.message}
                   </FieldDescription>
                 </div>
@@ -56,7 +67,7 @@ export function SignupForm({ onSubmit, isLoading }: SignupFormProps) {
                     disabled={isLoading}
                     {...register('email')}
                   />
-                  <FieldDescription className="text-red-500 text-xs pt-1">
+                  <FieldDescription className="text-destructive text-xs pt-1">
                     {errors?.email?.message}
                   </FieldDescription>
                 </div>
@@ -73,7 +84,7 @@ export function SignupForm({ onSubmit, isLoading }: SignupFormProps) {
                         disabled={isLoading}
                         {...register('password')}
                       />
-                      <FieldDescription className="text-red-500 text-xs pt-1">
+                      <FieldDescription className="text-destructive text-xs pt-1">
                         {errors?.password?.message}
                       </FieldDescription>
                     </div>
@@ -88,7 +99,7 @@ export function SignupForm({ onSubmit, isLoading }: SignupFormProps) {
                         disabled={isLoading}
                         {...register('confirmPassword')}
                       />
-                      <FieldDescription className="text-red-500 text-xs pt-1 min-h-1">
+                      <FieldDescription className="text-destructive text-xs pt-1 min-h-1">
                         {errors?.confirmPassword?.message}
                       </FieldDescription>
                     </div>
@@ -111,10 +122,6 @@ export function SignupForm({ onSubmit, isLoading }: SignupFormProps) {
           </form>
         </CardContent>
       </Card>
-      <FieldDescription className="px-6 text-center">
-        By continuing, you agree to our <a href="#">Terms of Service</a> and{' '}
-        <a href="#">Privacy Policy</a>.
-      </FieldDescription>
     </div>
   );
 }

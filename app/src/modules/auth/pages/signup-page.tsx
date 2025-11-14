@@ -3,6 +3,7 @@ import { SignupForm } from '../components/signup-form';
 import type { SignupData } from '../schemas/signup';
 import { authService } from '../api/service';
 import type { RegisterRequest } from '../api/types';
+import logo from '@/assets/mercibus.png';
 
 export function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -26,9 +27,25 @@ export function SignupPage() {
   };
 
   return (
-    <SignupForm
-      onSubmit={handleSignup}
-      isLoading={isLoading}
-    />
+    <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-10 lg:p-0">
+      <div className="flex w-full max-w-md flex-col gap-6">
+        <a
+          href="#"
+          className="flex items-center gap-2 self-center font-medium text-primary"
+        >
+          <div className="flex size-6 items-center justify-center rounded-md">
+            <img
+              src={logo}
+              alt="Mercibus Logo"
+            />
+          </div>
+          Mercibus
+        </a>
+        <SignupForm
+          onSubmit={handleSignup}
+          isLoading={isLoading}
+        />
+      </div>
+    </div>
   );
 }
