@@ -4,13 +4,16 @@ import type { SignupData } from '../schemas/signup';
 import { authService } from '../api/service';
 import type { RegisterRequest } from '../api/types';
 import logo from '@/assets/mercibus.png';
+import { getErrorMessage } from '@/utils/error';
 
 export function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSignup = async (data: SignupData) => {
     try {
       setIsLoading(true);
+      setError(null);
 
       const payload: RegisterRequest = {
         username: data.username,
@@ -20,7 +23,8 @@ export function SignupPage() {
 
       await authService.register(payload);
     } catch (error) {
-      console.error(error);
+      const errorMessage = getErrorMessage(error);
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -44,6 +48,7 @@ export function SignupPage() {
         <SignupForm
           onSubmit={handleSignup}
           isLoading={isLoading}
+          error={error}
         />
       </div>
     </div>

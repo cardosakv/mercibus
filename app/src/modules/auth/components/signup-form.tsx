@@ -11,9 +11,10 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 interface SignupFormProps {
   onSubmit: (data: SignupData) => void;
   isLoading: boolean;
+  error?: string | null;
 }
 
-export function SignupForm({ onSubmit, isLoading }: SignupFormProps) {
+export function SignupForm({ onSubmit, isLoading, error }: SignupFormProps) {
   const {
     register,
     handleSubmit,
@@ -33,15 +34,15 @@ export function SignupForm({ onSubmit, isLoading }: SignupFormProps) {
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup>
-              <Alert
-                variant="destructive"
-                className="bg-destructive/10 border-destructive text-destructive"
-              >
-                <CircleAlertIcon />
-                <AlertDescription>
-                  Username is already registered. Please try to use a different one.
-                </AlertDescription>
-              </Alert>
+              {error && (
+                <Alert
+                  variant="destructive"
+                  className="bg-destructive/10 border-destructive text-destructive"
+                >
+                  <CircleAlertIcon />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
               <Field>
                 <FieldLabel htmlFor="username">Username</FieldLabel>
                 <div>
