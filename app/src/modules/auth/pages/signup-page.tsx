@@ -27,11 +27,11 @@ export function SignupPage() {
   };
 
   return (
-    <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-10 lg:p-0">
+    <div className="bg-muted flex min-h-svh flex-col items-center justify-start p-10">
       <div className="flex w-full max-w-md flex-col gap-6">
         <a
-          href="#"
-          className="flex items-center gap-2 self-center font-medium text-primary"
+          href="/"
+          className="flex items-center gap-2 self-center font-bold text-primary"
         >
           <div className="flex size-6 items-center justify-center rounded-md">
             <img
