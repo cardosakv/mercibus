@@ -4,4 +4,6 @@ export const ROUTE_PATHS = {
   EMAIL_SUCCESS: '/verification/email-success',
   EMAIL_FAILURE: '/verification/email-error',
   LOGIN: '/login',
+  FORGOT_PASSWORD: '/forgot-password',
+  RESET_PASSWORD: '/reset-password',
 } as const;
