@@ -1,5 +1,5 @@
 import { AUTH_API } from '@/modules/auth/api/routes';
-import type { ApiErrorResponse, ApiSuccessResponse } from '@/types/api';
+import type { ApiError, ApiErrorResponse, ApiSuccessResponse } from '@/types/api';
 import type { AuthTokenResponse } from '@/modules/auth/api/types';
 import { AUTH_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/utils/constants';
 import { setTokens } from '@/utils/token';
@@ -44,7 +44,15 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error: AxiosError<ApiErrorResponse>) => {
-    return Promise.reject(error.response?.data.error ?? error);
+    const payload = error.response?.data?.error;
+
+    const apiError: ApiError = {
+      type: payload?.type ?? 'unknown',
+      code: payload?.code ?? 'internal',
+      params: payload?.params ?? [],
+    };
+
+    return Promise.reject(apiError);
   }
 );
 

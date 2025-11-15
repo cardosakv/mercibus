@@ -59,6 +59,7 @@ jobs:
           args: >
             -Dsonar.organization=cardosakv
             -Dsonar.projectKey=mercibus_app
+            -Dsonar.exclusions=src/components/ui/**
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_APP }}
           SONAR_HOST_URL: "https://sonarcloud.io"

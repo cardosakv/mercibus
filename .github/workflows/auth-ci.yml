@@ -37,9 +37,9 @@ jobs:
       email_sender: ${{ secrets.EMAIL_SENDER }}
       email_username: ${{ secrets.EMAIL_USERNAME }}
       email_password: ${{ secrets.EMAIL_PASSWORD }}
-      redirect_email_confirm_success: ${{ secrets.REDIRECT_EMAILCONFIRM_SUCCESS}}
-      redirect_email_confirm_fail: ${{ secrets.REDIRECT_EMAILCONFIRM_FAIL }}
-      redirect_password_reset: ${{ secrets.REDIRECT_PASSWORD_RESET }}
+      url_email_confirm_success: ${{ secrets.REDIRECT_EMAILCONFIRM_SUCCESS}}
+      url_email_confirm_fail: ${{ secrets.REDIRECT_EMAILCONFIRM_FAIL }}
+      url_password_reset: ${{ secrets.REDIRECT_PASSWORD_RESET }}
 
   dockerize:
     uses: ./.github/workflows/base-dockerize.yml

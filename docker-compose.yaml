@@ -6,6 +6,10 @@ services:
     container_name: gateway-container
     ports:
       - "9000:8080"
+    environment:
+      AllowedOrigins: ${ALLOWED_ORIGINS}
+    depends_on:
+      - consul
     restart: always
 
   auth-service:
@@ -29,9 +33,10 @@ services:
       Email__Sender: ${EMAIL_SENDER}
       Email__Username: ${EMAIL_USERNAME}
       Email__Password: ${EMAIL_PASSWORD}
-      RedirectUrl__EmailConfirmSuccess: ${EMAIL_CONFIRM_SUCCESS}
-      RedirectUrl__EmailConfirmFail: ${EMAIL_CONFIRM_FAIL}
-      RedirectUrl__PasswordReset: ${PASSWORD_RESET_URL}
+      Url__EmailConfirmSuccess: ${EMAIL_CONFIRM_SUCCESS}
+      Url__EmailConfirmFail: ${EMAIL_CONFIRM_FAIL}
+      Url__PasswordReset: ${PASSWORD_RESET_URL}
+      Url__ApiBase: ${AUTH_BASE_URL}
     volumes:
       - ./services/auth/Auth.Api/jwt_priv_key.pem:/app/jwt_priv_key.pem
       - ./services/auth/Auth.Api/jwt_pub_key.pem:/app/jwt_pub_key.pem
@@ -89,7 +94,7 @@ services:
     volumes:
       - catalog_db_data:/var/lib/postgresql/data
     restart: always
-    
+
   order-service:
     build:
       context: ./services/orders/
@@ -112,7 +117,7 @@ services:
       - order-mongo
       - rabbitmq
     restart: always
-  
+
   order-db:
     image: postgres:latest
     container_name: order-db-container
@@ -124,7 +129,7 @@ services:
     volumes:
       - order_db_data:/var/lib/postgresql/data
     restart: always
-    
+
   order-mongo:
     image: mongo:latest
     container_name: order-mongo-container
@@ -135,7 +140,7 @@ services:
     volumes:
       - order_mongo_data:/data/db
     restart: always
-    
+
   payment-service:
     build:
       context: ./services/payments/
@@ -157,7 +162,7 @@ services:
       - payment-db
       - rabbitmq
     restart: always
-    
+
   payment-db:
     image: postgres:latest
     container_name: payment-db-container
@@ -180,7 +185,7 @@ services:
     volumes:
       - blob_storage_data:/data
     restart: always
-  
+
   redis:
     image: redis/redis-stack:latest
     container_name: redis-container
@@ -189,7 +194,7 @@ services:
     volumes:
       - redis_data:/data
     restart: always
-    
+
   rabbitmq:
     image: rabbitmq:4-management
     container_name: rabbitmq-container
@@ -211,7 +216,7 @@ services:
     volumes:
       - ./gateway/Gateway/Consul:/consul/config
     restart: always
-    
+
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus-container
@@ -221,7 +226,7 @@ services:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     restart: always
-    
+
   grafana:
     image: grafana/grafana:latest
     container_name: grafana-container

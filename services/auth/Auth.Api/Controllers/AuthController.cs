@@ -40,7 +40,6 @@ public class AuthController(IAuthService authService, IConfiguration configurati
     }
 
     [HttpPost("send-confirmation-email")]
-    [Authorize]
     public async Task<IActionResult> SendConfirmationEmail([FromBody] SendConfirmationEmailRequest request)
     {
         var response = await authService.SendConfirmationEmailAsync(request);
@@ -53,8 +52,8 @@ public class AuthController(IAuthService authService, IConfiguration configurati
         var response = await authService.ConfirmEmailAsync(query);
 
         return response.IsSuccess
-            ? Redirect(configuration["RedirectUrl:EmailConfirmSuccess"] ?? string.Empty)
-            : Redirect(configuration["RedirectUrl:EmailConfirmFail"] ?? string.Empty);
+            ? Redirect(configuration["Url:EmailConfirmSuccess"] ?? string.Empty)
+            : Redirect(configuration["Url:EmailConfirmFail"] ?? string.Empty);
     }
 
     [HttpPost("forgot-password")]

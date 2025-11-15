@@ -101,4 +101,34 @@ public class RegisterTests(TestWebAppFactory factory) : BaseTests(factory)
         error!.Error.Type.Should().Be(ErrorType.ConflictError);
         error.Error.Code.Should().Be(ErrorCode.UsernameAlreadyExists);
     }
+
+    [Fact]
+    public async Task ReturnsConflict_WhenEmailAlreadyExists()
+    {
+        var existingUser = new User
+        {
+            UserName = "duplicate_user_b",
+            Email = "duplicate_user_b@email.com",
+        };
+
+        await UserManager.CreateAsync(existingUser, "Test@12345");
+
+        var request = new RegisterRequest
+        {
+            Username = "duplicate_user_c",
+            Email = "duplicate_user_b@email.com",
+            Password = "Test@12345",
+        };
+
+        // Act
+        var response = await HttpClient.PostAsJsonAsync(RegisterUrl, request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Conflict);
+
+        var error = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
+        error.Should().NotBeNull();
+        error!.Error.Type.Should().Be(ErrorType.ConflictError);
+        error.Error.Code.Should().Be(ErrorCode.EmailAlreadyExists);
+    }
 }
