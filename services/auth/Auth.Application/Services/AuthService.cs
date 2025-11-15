@@ -37,6 +37,12 @@ public class AuthService(
         await transactionService.BeginAsync();
         var user = mapper.Map<User>(request);
 
+        var existingUser = await userManager.FindByEmailAsync(request.Email);
+        if (existingUser is not null)
+        {
+            return Error(ErrorType.ConflictError, ErrorCode.EmailAlreadyExists);
+        }
+
         var createResult = await userManager.CreateAsync(user, request.Password);
         if (!createResult.Succeeded)
         {
