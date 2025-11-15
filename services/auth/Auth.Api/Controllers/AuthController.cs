@@ -40,7 +40,6 @@ public class AuthController(IAuthService authService, IConfiguration configurati
     }
 
     [HttpPost("send-confirmation-email")]
-    [Authorize]
     public async Task<IActionResult> SendConfirmationEmail([FromBody] SendConfirmationEmailRequest request)
     {
         var response = await authService.SendConfirmationEmailAsync(request);
