@@ -5,11 +5,11 @@ import { ROUTE_PATHS } from '@/routes/paths';
 import { Link } from 'react-router-dom';
 import { AuthLayout } from '@/components/layouts/auth-layout';
 
-export function RegisterSuccessPage() {
+export function SignupSuccessPage() {
   return (
     <AuthLayout>
       <Card>
-        <CardHeader className="text-center">
+        <CardHeader className="text-center mb-6">
           <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-green-100">
             <CheckCircleIcon className="size-8 text-green-600" />
           </div>
@@ -20,7 +20,7 @@ export function RegisterSuccessPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col">
             <Button asChild>
               <Link to={ROUTE_PATHS.LOGIN}>Back to Sign In</Link>
             </Button>
