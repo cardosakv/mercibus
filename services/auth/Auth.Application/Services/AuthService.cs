@@ -200,8 +200,10 @@ public class AuthService(
 
         var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
         var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-        var confirmEndpoint = linkGenerator.GetUriByAction(httpContextAccessor.HttpContext, "ConfirmEmail", "Auth");
-        var confirmLink = confirmEndpoint + "?userId=" + user.Id + "&token=" + encodedToken;
+
+        var apiBaseUrl = configuration["Url:ApiBase"];
+        var path = linkGenerator.GetPathByAction("ConfirmEmail", "Auth");
+        var confirmLink = $"{apiBaseUrl}{path}?userId={user.Id}&token={encodedToken}";
 
         BackgroundJob.Enqueue(() => emailService.SendEmailConfirmationLink(request.Email, confirmLink));
 

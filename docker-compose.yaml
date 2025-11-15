@@ -33,9 +33,10 @@ services:
       Email__Sender: ${EMAIL_SENDER}
       Email__Username: ${EMAIL_USERNAME}
       Email__Password: ${EMAIL_PASSWORD}
-      RedirectUrl__EmailConfirmSuccess: ${EMAIL_CONFIRM_SUCCESS}
-      RedirectUrl__EmailConfirmFail: ${EMAIL_CONFIRM_FAIL}
-      RedirectUrl__PasswordReset: ${PASSWORD_RESET_URL}
+      Url__EmailConfirmSuccess: ${EMAIL_CONFIRM_SUCCESS}
+      Url__EmailConfirmFail: ${EMAIL_CONFIRM_FAIL}
+      Url__PasswordReset: ${PASSWORD_RESET_URL}
+      Url__ApiBase: ${AUTH_BASE_URL}
     volumes:
       - ./services/auth/Auth.Api/jwt_priv_key.pem:/app/jwt_priv_key.pem
       - ./services/auth/Auth.Api/jwt_pub_key.pem:/app/jwt_pub_key.pem
