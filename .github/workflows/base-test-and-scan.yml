@@ -33,6 +33,8 @@ on:
         required: false
       url_password_reset:
         required: false
+      url_api_base:
+        required: false
       xendit_api_key:
         required: false
 
@@ -117,6 +119,7 @@ jobs:
           Url__EmailConfirmSuccess: ${{ secrets.url_email_confirm_success }}
           Url__EmailConfirmFail: ${{ secrets.url_email_confirm_fail }}
           Url__PasswordReset: ${{ secrets.url_password_reset }}
+          Url__ApiBase: ${{ secrets.url_api_base }}
           Xendit__ApiKey: ${{ secrets.xendit_api_key }}
 
       - name: Run integration tests with OpenCover coverage
@@ -136,6 +139,7 @@ jobs:
           Url__EmailConfirmSuccess: ${{ secrets.url_email_confirm_success }}
           Url__EmailConfirmFail: ${{ secrets.url_email_confirm_fail }}
           Url__PasswordReset: ${{ secrets.url_password_reset }}
+          Url__ApiBase: ${{ secrets.url_api_base }}
           Xendit__ApiKey: ${{ secrets.xendit_api_key }}
 
       - name: End SonarCloud analysis
