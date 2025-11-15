@@ -21,8 +21,8 @@ public class ConfirmEmailTests : BaseTests
 
     public ConfirmEmailTests()
     {
-        ConfigurationMock.Setup(x => x["RedirectUrl:EmailConfirmSuccess"]).Returns("https://success");
-        ConfigurationMock.Setup(x => x["RedirectUrl:EmailConfirmFail"]).Returns("https://fail");
+        ConfigurationMock.Setup(x => x["Url:EmailConfirmSuccess"]).Returns("https://success");
+        ConfigurationMock.Setup(x => x["Url:EmailConfirmFail"]).Returns("https://fail");
     }
 
     [Fact]
@@ -31,7 +31,11 @@ public class ConfirmEmailTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.ConfirmEmailAsync(_query))
-            .ReturnsAsync(new ServiceResult { IsSuccess = true });
+            .ReturnsAsync(
+                new ServiceResult
+                {
+                    IsSuccess = true
+                });
 
         // Act
         var result = await Controller.ConfirmEmail(_query);
@@ -47,12 +51,13 @@ public class ConfirmEmailTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.ConfirmEmailAsync(_query))
-            .ReturnsAsync(new ServiceResult
-            {
-                IsSuccess = false,
-                ErrorType = ErrorType.InvalidRequestError,
-                ErrorCode = ErrorCode.Internal
-            });
+            .ReturnsAsync(
+                new ServiceResult
+                {
+                    IsSuccess = false,
+                    ErrorType = ErrorType.InvalidRequestError,
+                    ErrorCode = ErrorCode.Internal
+                });
 
         // Act
         var result = await Controller.ConfirmEmail(_query);
