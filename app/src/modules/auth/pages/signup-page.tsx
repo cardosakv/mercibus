@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { SignupForm } from '../components/signup-form';
 import type { SignupData } from '../schemas/signup';
-import { authService } from '../api/service';
-import type { RegisterRequest } from '../api/types';
 import logo from '@/assets/images/mercibus.png';
 import { getErrorMessage } from '@/utils/error';
+import { authService } from '../api/service';
 
 export function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -15,13 +14,15 @@ export function SignupPage() {
       setIsLoading(true);
       setError(null);
 
-      const payload: RegisterRequest = {
+      await authService.register({
         username: data.username,
         email: data.email,
         password: data.password,
-      };
+      });
 
-      await authService.register(payload);
+      await authService.sendConfirmationEmail({
+        email: data.email,
+      });
     } catch (error) {
       const errorMessage = getErrorMessage(error);
       setError(errorMessage);
