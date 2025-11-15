@@ -1,5 +1,6 @@
 import { AuthLayout } from '@/components/layouts/auth-layout';
 import type { ReactNode } from 'react';
+import { Helmet } from 'react-helmet';
 
 interface AuthPageWrapperProps {
   title: string;
@@ -9,7 +10,9 @@ interface AuthPageWrapperProps {
 export function AuthPageWrapper({ title, children }: AuthPageWrapperProps) {
   return (
     <>
-      <title>{title}</title>
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
       <AuthLayout>{children}</AuthLayout>
     </>
   );
