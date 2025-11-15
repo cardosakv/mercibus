@@ -4,33 +4,32 @@ import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui
 import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signupSchema, type SignupData } from '../schemas/signup';
 import { CircleAlertIcon } from '@/components/ui/icons/lucide-circle-alert';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { loginSchema, type LoginData } from '../schemas/login';
 import { Link } from 'react-router-dom';
-import { ROUTE_PATHS } from '@/routes/paths';
 
-interface SignupFormProps {
-  onSubmit: (data: SignupData) => void;
+interface LoginFormProps {
+  onSubmit: (data: LoginData) => void;
   isLoading: boolean;
   error?: string | null;
 }
 
-export function SignupForm({ onSubmit, isLoading, error }: SignupFormProps) {
+export function LoginForm({ onSubmit, isLoading, error }: LoginFormProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignupData>({
-    resolver: zodResolver(signupSchema),
+  } = useForm<LoginData>({
+    resolver: zodResolver(loginSchema),
     mode: 'onChange',
   });
 
   return (
     <Card>
       <CardHeader className="text-center">
-        <CardTitle className="text-xl">Create your account</CardTitle>
-        <CardDescription>Enter your details to start shopping.</CardDescription>
+        <CardTitle className="text-xl">Login to your account</CardTitle>
+        <CardDescription>Enter your credentials to access your account.</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -61,56 +60,20 @@ export function SignupForm({ onSubmit, isLoading, error }: SignupFormProps) {
               </div>
             </Field>
             <Field>
-              <FieldLabel htmlFor="email">Email</FieldLabel>
+              <FieldLabel htmlFor="password">Password</FieldLabel>
               <div>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="user@mail.com"
-                  aria-invalid={!!errors?.email}
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  aria-invalid={!!errors?.password}
                   disabled={isLoading}
-                  {...register('email')}
+                  {...register('password')}
                 />
                 <FieldDescription className="text-destructive text-xs pt-1">
-                  {errors?.email?.message}
+                  {errors?.password?.message}
                 </FieldDescription>
               </div>
-            </Field>
-            <Field>
-              <Field className="grid grid-cols-2 gap-4">
-                <Field>
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <div>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="••••••••"
-                      aria-invalid={!!errors?.password}
-                      disabled={isLoading}
-                      {...register('password')}
-                    />
-                    <FieldDescription className="text-destructive text-xs pt-1">
-                      {errors?.password?.message}
-                    </FieldDescription>
-                  </div>
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="confirmPassword">Confirm Password</FieldLabel>
-                  <div>
-                    <Input
-                      id="confirmPassword"
-                      type="password"
-                      placeholder="••••••••"
-                      aria-invalid={!!errors?.confirmPassword}
-                      disabled={isLoading}
-                      {...register('confirmPassword')}
-                    />
-                    <FieldDescription className="text-destructive text-xs pt-1 min-h-1">
-                      {errors?.confirmPassword?.message}
-                    </FieldDescription>
-                  </div>
-                </Field>
-              </Field>
             </Field>
             <Field>
               <Button
@@ -118,10 +81,10 @@ export function SignupForm({ onSubmit, isLoading, error }: SignupFormProps) {
                 disabled={isLoading}
                 className="w-full"
               >
-                {isLoading ? 'Creating...' : 'Create Account'}
+                {isLoading ? 'Logging in...' : 'Login'}
               </Button>
               <FieldDescription className="text-center">
-                Already have an account? <Link to={ROUTE_PATHS.LOGIN}>Sign in</Link>
+                Not registered yet? <Link to="/signup">Sign up</Link>
               </FieldDescription>
             </Field>
           </FieldGroup>

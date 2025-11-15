@@ -40,6 +40,7 @@ jobs:
       url_email_confirm_success: ${{ secrets.REDIRECT_EMAILCONFIRM_SUCCESS}}
       url_email_confirm_fail: ${{ secrets.REDIRECT_EMAILCONFIRM_FAIL }}
       url_password_reset: ${{ secrets.REDIRECT_PASSWORD_RESET }}
+      url_api_base: ${{ secrets.URL_API_BASE }}
 
   dockerize:
     uses: ./.github/workflows/base-dockerize.yml

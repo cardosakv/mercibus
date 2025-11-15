@@ -1,11 +1,12 @@
 import { AUTH_API } from '@/modules/auth/api/routes';
 import type { ApiError, ApiErrorResponse, ApiSuccessResponse } from '@/types/api';
 import type { AuthTokenResponse } from '@/modules/auth/api/types';
-import { AUTH_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/utils/constants';
-import { setTokens } from '@/utils/token';
+import { getAuthToken, getRefreshToken, setTokens } from '@/utils/token';
 import axios, { AxiosError } from 'axios';
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
+import { useNavigate } from 'react-router-dom';
+import { ROUTE_PATHS } from '@/routes/paths';
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api',
@@ -19,7 +20,7 @@ const axiosInstance = axios.create({
  */
 axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem(AUTH_TOKEN_KEY);
+    const token = getAuthToken();
 
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -44,6 +45,11 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error: AxiosError<ApiErrorResponse>) => {
+    // Auth refresh interceptor should handle 401
+    if (error.response?.status === 401) {
+      return Promise.reject(error);
+    }
+
     const payload = error.response?.data?.error;
 
     const apiError: ApiError = {
@@ -60,12 +66,17 @@ axiosInstance.interceptors.response.use(
  * Auth refresh interceptor to handle token refresh on 401 responses.
  */
 createAuthRefreshInterceptor(axiosInstance, async () => {
-  const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY) ?? '';
+  const refreshToken = getRefreshToken();
 
   const response = await axios.post<ApiSuccessResponse<AuthTokenResponse>>(
     `${axiosInstance.defaults.baseURL}${AUTH_API.REFRESH_TOKEN}`,
     { refreshToken }
   );
+
+  if (response.status !== 200) {
+    const navigate = useNavigate();
+    navigate(ROUTE_PATHS.LOGIN);
+  }
 
   const tokens = response.data.data as AuthTokenResponse;
   setTokens(tokens.accessToken, tokens.refreshToken);
