@@ -4,7 +4,7 @@ import { type SignupData } from '../schemas/signup';
 import { authService } from '../api/service';
 import { AuthLayout } from '@/components/layouts/auth-layout';
 import { getErrorMessage } from '@/utils/error';
-import { SignupSuccess } from '../components/signup-success';
+import { SignupEmailConfirm } from '../components/signup-email-confirm';
 
 export function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +38,7 @@ export function SignupPage() {
   return (
     <AuthLayout>
       {isSuccess ? (
-        <SignupSuccess />
+        <SignupEmailConfirm />
       ) : (
         <SignupForm
           onSubmit={handleSignup}

@@ -1,5 +1,6 @@
 export const ROUTE_PATHS = {
   SIGNUP: '/signup',
-  SIGNUP_SUCCESS: '/signup-success',
+  EMAIL_SUCCESS: '/verification/email-success',
+  EMAIL_FAILURE: '/verification/email-error',
   LOGIN: '/login',
 } as const;
