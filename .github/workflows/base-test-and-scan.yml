@@ -27,11 +27,11 @@ on:
         required: false
       email_password:
         required: false
-      redirect_email_confirm_success:
+      url_email_confirm_success:
         required: false
-      redirect_email_confirm_fail:
+      url_email_confirm_fail:
         required: false
-      redirect_password_reset:
+      url_password_reset:
         required: false
       xendit_api_key:
         required: false
