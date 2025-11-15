@@ -133,9 +133,9 @@ jobs:
           Email__Sender: ${{ secrets.email_sender }}
           Email__Username: ${{ secrets.email_username }}
           Email__Password: ${{ secrets.email_password }}
-          RedirectUrl__EmailConfirmSuccess: ${{ secrets.redirect_email_confirm_success }}
-          RedirectUrl__EmailConfirmFail: ${{ secrets.redirect_email_confirm_fail }}
-          RedirectUrl__PasswordReset: ${{ secrets.redirect_password_reset }}
+          Url__EmailConfirmSuccess: ${{ secrets.url_email_confirm_success }}
+          Url__EmailConfirmFail: ${{ secrets.url_email_confirm_fail }}
+          Url__PasswordReset: ${{ secrets.url_password_reset }}
           Xendit__ApiKey: ${{ secrets.xendit_api_key }}
 
       - name: End SonarCloud analysis
