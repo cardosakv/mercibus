@@ -1,4 +1,4 @@
-import { AuthLayout } from '@/components/layouts/auth-layout';
+import { AuthPageWrapper } from '@/components/ui/auth-page-wrapper';
 import { LoginForm } from '../components/login-form';
 import { useState } from 'react';
 import type { LoginData } from '../schemas/login';
@@ -35,15 +35,12 @@ export function LoginPage() {
   };
 
   return (
-    <>
-      <title>Mercibus - Login</title>
-      <AuthLayout>
-        <LoginForm
-          onSubmit={handleLogin}
-          isLoading={isLoading}
-          error={error}
-        />
-      </AuthLayout>
-    </>
+    <AuthPageWrapper title="Mercibus - Login">
+      <LoginForm
+        onSubmit={handleLogin}
+        isLoading={isLoading}
+        error={error}
+      />
+    </AuthPageWrapper>
   );
 }

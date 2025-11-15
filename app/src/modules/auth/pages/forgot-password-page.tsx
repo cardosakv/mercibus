@@ -1,10 +1,10 @@
-import { AuthLayout } from '@/components/layouts/auth-layout';
+import { AuthPageWrapper } from '@/components/ui/auth-page-wrapper';
 import { useState } from 'react';
 import { authService } from '../api/service';
 import { getErrorMessage } from '@/utils/error';
 import type { ForgotPasswordData } from '../schemas/forgot-password';
 import { ForgotPasswordForm } from '../components/forgot-password-form';
-import { ForgotPasswordEmailSent } from '../components/forgot-password-email-sent';
+import { EmailConfirmCard } from '@/components/ui/email-confirm-card';
 
 export function ForgotPasswordPage() {
   const [error, setError] = useState<string | null>(null);
@@ -30,19 +30,19 @@ export function ForgotPasswordPage() {
   };
 
   return (
-    <>
-      <title>Mercibus - Forgot Password</title>
-      <AuthLayout>
-        {isAccountFound ? (
-          <ForgotPasswordEmailSent />
-        ) : (
-          <ForgotPasswordForm
-            onSubmit={handleForgotPassword}
-            isLoading={isLoading}
-            error={error}
-          />
-        )}
-      </AuthLayout>
-    </>
+    <AuthPageWrapper title="Mercibus - Forgot Password">
+      {isAccountFound ? (
+        <EmailConfirmCard
+          title="Check Your Email"
+          description="We've sent a password reset email to your inbox. Please check your email to complete the password reset process."
+        />
+      ) : (
+        <ForgotPasswordForm
+          onSubmit={handleForgotPassword}
+          isLoading={isLoading}
+          error={error}
+        />
+      )}
+    </AuthPageWrapper>
   );
 }

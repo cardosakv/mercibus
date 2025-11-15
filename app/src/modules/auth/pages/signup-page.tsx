@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { SignupForm } from '../components/signup-form';
 import { type SignupData } from '../schemas/signup';
 import { authService } from '../api/service';
-import { AuthLayout } from '@/components/layouts/auth-layout';
 import { getErrorMessage } from '@/utils/error';
-import { SignupEmailConfirm } from '../components/signup-email-confirm';
+import { AuthPageWrapper } from '@/components/ui/auth-page-wrapper';
+import { EmailConfirmCard } from '@/components/ui/email-confirm-card';
 
 export function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -36,19 +36,19 @@ export function SignupPage() {
   };
 
   return (
-    <>
-      <title>Mercibus - Sign Up</title>
-      <AuthLayout>
-        {isSuccess ? (
-          <SignupEmailConfirm />
-        ) : (
-          <SignupForm
-            onSubmit={handleSignup}
-            isLoading={isLoading}
-            error={error}
-          />
-        )}
-      </AuthLayout>
-    </>
+    <AuthPageWrapper title="Mercibus - Sign Up">
+      {isSuccess ? (
+        <EmailConfirmCard
+          title="Confirm Your Email"
+          description="We've sent a confirmation email to your inbox. Please check your email to complete the registration process."
+        />
+      ) : (
+        <SignupForm
+          onSubmit={handleSignup}
+          isLoading={isLoading}
+          error={error}
+        />
+      )}
+    </AuthPageWrapper>
   );
 }
