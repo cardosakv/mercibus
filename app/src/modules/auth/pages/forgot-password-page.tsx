@@ -30,16 +30,19 @@ export function ForgotPasswordPage() {
   };
 
   return (
-    <AuthLayout>
-      {isAccountFound ? (
-        <ForgotPasswordEmailSent />
-      ) : (
-        <ForgotPasswordForm
-          onSubmit={handleForgotPassword}
-          isLoading={isLoading}
-          error={error}
-        />
-      )}
-    </AuthLayout>
+    <>
+      <title>Mercibus - Forgot Password</title>
+      <AuthLayout>
+        {isAccountFound ? (
+          <ForgotPasswordEmailSent />
+        ) : (
+          <ForgotPasswordForm
+            onSubmit={handleForgotPassword}
+            isLoading={isLoading}
+            error={error}
+          />
+        )}
+      </AuthLayout>
+    </>
   );
 }

@@ -35,16 +35,19 @@ export function ResetPasswordPage() {
   };
 
   return (
-    <AuthLayout>
-      {isResetSuccessful ? (
-        <ResetPasswordSuccess />
-      ) : (
-        <ResetPasswordForm
-          onSubmit={handleResetPassword}
-          isLoading={isLoading}
-          error={error}
-        />
-      )}
-    </AuthLayout>
+    <>
+      <title>Mercibus - Reset Password</title>
+      <AuthLayout>
+        {isResetSuccessful ? (
+          <ResetPasswordSuccess />
+        ) : (
+          <ResetPasswordForm
+            onSubmit={handleResetPassword}
+            isLoading={isLoading}
+            error={error}
+          />
+        )}
+      </AuthLayout>
+    </>
   );
 }

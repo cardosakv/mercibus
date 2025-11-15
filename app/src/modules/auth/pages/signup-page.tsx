@@ -36,16 +36,19 @@ export function SignupPage() {
   };
 
   return (
-    <AuthLayout>
-      {isSuccess ? (
-        <SignupEmailConfirm />
-      ) : (
-        <SignupForm
-          onSubmit={handleSignup}
-          isLoading={isLoading}
-          error={error}
-        />
-      )}
-    </AuthLayout>
+    <>
+      <title>Mercibus - Sign Up</title>
+      <AuthLayout>
+        {isSuccess ? (
+          <SignupEmailConfirm />
+        ) : (
+          <SignupForm
+            onSubmit={handleSignup}
+            isLoading={isLoading}
+            error={error}
+          />
+        )}
+      </AuthLayout>
+    </>
   );
 }

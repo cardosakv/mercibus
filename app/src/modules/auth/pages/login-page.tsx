@@ -35,12 +35,15 @@ export function LoginPage() {
   };
 
   return (
-    <AuthLayout>
-      <LoginForm
-        onSubmit={handleLogin}
-        isLoading={isLoading}
-        error={error}
-      />
-    </AuthLayout>
+    <>
+      <title>Mercibus - Login</title>
+      <AuthLayout>
+        <LoginForm
+          onSubmit={handleLogin}
+          isLoading={isLoading}
+          error={error}
+        />
+      </AuthLayout>
+    </>
   );
 }
