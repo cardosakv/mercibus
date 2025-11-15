@@ -16,7 +16,7 @@ public class ForgotPasswordTests : BaseTests
 {
     private readonly ForgotPasswordRequest _request = new()
     {
-        Email = "test@email.com"
+        Username = "test_user"
     };
 
     [Fact]
@@ -25,10 +25,11 @@ public class ForgotPasswordTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.ForgotPasswordAsync(_request))
-            .ReturnsAsync(new ServiceResult
-            {
-                IsSuccess = true
-            });
+            .ReturnsAsync(
+                new ServiceResult
+                {
+                    IsSuccess = true
+                });
 
         // Act
         var result = await Controller.ForgotPassword(_request);
@@ -44,12 +45,13 @@ public class ForgotPasswordTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.ForgotPasswordAsync(_request))
-            .ReturnsAsync(new ServiceResult
-            {
-                IsSuccess = false,
-                ErrorType = ErrorType.InvalidRequestError,
-                ErrorCode = ErrorCode.UserNotFound
-            });
+            .ReturnsAsync(
+                new ServiceResult
+                {
+                    IsSuccess = false,
+                    ErrorType = ErrorType.InvalidRequestError,
+                    ErrorCode = ErrorCode.UserNotFound
+                });
 
         // Act
         var result = await Controller.ForgotPassword(_request);
@@ -65,12 +67,13 @@ public class ForgotPasswordTests : BaseTests
         // Arrange
         AuthServiceMock
             .Setup(x => x.ForgotPasswordAsync(_request))
-            .ReturnsAsync(new ServiceResult
-            {
-                IsSuccess = false,
-                ErrorType = ErrorType.ApiError,
-                ErrorCode = ErrorCode.Internal
-            });
+            .ReturnsAsync(
+                new ServiceResult
+                {
+                    IsSuccess = false,
+                    ErrorType = ErrorType.ApiError,
+                    ErrorCode = ErrorCode.Internal
+                });
 
         // Act
         var result = await Controller.ForgotPassword(_request);

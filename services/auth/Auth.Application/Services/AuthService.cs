@@ -231,7 +231,7 @@ public class AuthService(
 
     public async Task<ServiceResult> ForgotPasswordAsync(ForgotPasswordRequest request)
     {
-        var user = await userManager.FindByEmailAsync(request.Email);
+        var user = await userManager.FindByNameAsync(request.Username);
         if (user is null)
         {
             return Error(ErrorType.InvalidRequestError, ErrorCode.UserNotFound);
@@ -247,7 +247,7 @@ public class AuthService(
         var passwordResetRedirectUrl = configuration["Url:PasswordReset"];
         var resetLink = passwordResetRedirectUrl + "?userId=" + user.Id + "&token=" + encodedToken;
 
-        BackgroundJob.Enqueue(() => emailService.SendPasswordResetLink(request.Email, resetLink));
+        BackgroundJob.Enqueue(() => emailService.SendPasswordResetLink(user.Email!, resetLink));
 
         return Success();
     }

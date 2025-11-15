@@ -1,8 +1,10 @@
+using System.Text;
 using Auth.Application.DTOs;
 using Auth.Domain.Entities;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using Moq;
 using ErrorCode = Auth.Application.Common.ErrorCode;
 
@@ -16,26 +18,29 @@ public class ResetPasswordAsyncTests : BaseTests
     private readonly ResetPasswordRequest _request = new()
     {
         UserId = "user-1",
-        Token = "token",
-        NewPassword = "new-password"
+        Token = "reset-token",
+        NewPassword = "NewPassword123"
     };
 
     private readonly User _user = new()
     {
         Id = "user-1",
-        Email = "test@email.com"
+        Email = "test@email.com",
+        UserName = "test_user"
     };
 
     [Fact]
     public async Task Success_WhenPasswordReset()
     {
         // Arrange
+        var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(_request.Token));
+
         UserManagerMock
             .Setup(x => x.FindByIdAsync(_request.UserId))
             .ReturnsAsync(_user);
 
         UserManagerMock
-            .Setup(x => x.ResetPasswordAsync(_user, _request.Token, _request.NewPassword))
+            .Setup(x => x.ResetPasswordAsync(_user, decodedToken, _request.NewPassword))
             .ReturnsAsync(IdentityResult.Success);
 
         // Act
@@ -44,7 +49,7 @@ public class ResetPasswordAsyncTests : BaseTests
         // Assert
         TransactionServiceMock.Verify(x => x.BeginAsync(), Times.Once);
         UserManagerMock.Verify(x => x.FindByIdAsync(_request.UserId), Times.Once);
-        UserManagerMock.Verify(x => x.ResetPasswordAsync(_user, _request.Token, _request.NewPassword), Times.Once);
+        UserManagerMock.Verify(x => x.ResetPasswordAsync(_user, decodedToken, _request.NewPassword), Times.Once);
         TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Once);
 
         response.IsSuccess.Should().BeTrue();
@@ -76,14 +81,19 @@ public class ResetPasswordAsyncTests : BaseTests
     public async Task Fail_WhenResetFails()
     {
         // Arrange
-        var error = new IdentityError { Code = "InvalidToken", Description = "Token is invalid" };
+        var error = new IdentityError
+        {
+            Code = "InvalidToken",
+            Description = "Token is invalid"
+        };
+        var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(_request.Token));
 
         UserManagerMock
             .Setup(x => x.FindByIdAsync(_request.UserId))
             .ReturnsAsync(_user);
 
         UserManagerMock
-            .Setup(x => x.ResetPasswordAsync(_user, _request.Token, _request.NewPassword))
+            .Setup(x => x.ResetPasswordAsync(_user, decodedToken, _request.NewPassword))
             .ReturnsAsync(IdentityResult.Failed(error));
 
         // Act
@@ -92,7 +102,7 @@ public class ResetPasswordAsyncTests : BaseTests
         // Assert
         TransactionServiceMock.Verify(x => x.BeginAsync(), Times.Once);
         UserManagerMock.Verify(x => x.FindByIdAsync(_request.UserId), Times.Once);
-        UserManagerMock.Verify(x => x.ResetPasswordAsync(_user, _request.Token, _request.NewPassword), Times.Once);
+        UserManagerMock.Verify(x => x.ResetPasswordAsync(_user, decodedToken, _request.NewPassword), Times.Once);
         TransactionServiceMock.Verify(x => x.CommitAsync(), Times.Never);
 
         response.IsSuccess.Should().BeFalse();

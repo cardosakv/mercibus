@@ -11,9 +11,11 @@ public class ForgotPasswordRequestValidator : AbstractValidator<ForgotPasswordRe
 {
     public ForgotPasswordRequestValidator()
     {
-        RuleFor(x => x.Email)
+        RuleFor(x => x.Username)
             .Cascade(CascadeMode.Stop)
-            .NotEmpty().WithMessage(ErrorCode.EmailRequired)
-            .EmailAddress().WithMessage(ErrorCode.EmailInvalid);
+            .NotEmpty().WithMessage(ErrorCode.UsernameRequired)
+            .MinimumLength(Constants.UserValidation.UsernameMinLength).WithMessage(ErrorCode.UsernameTooShort)
+            .MaximumLength(Constants.UserValidation.UsernameMaxLength).WithMessage(ErrorCode.UsernameTooLong)
+            .Matches(Constants.UserValidation.UsernamePattern).WithMessage(ErrorCode.UsernameInvalid);
     }
 }
