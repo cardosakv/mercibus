@@ -8,6 +8,7 @@ import { CircleAlertIcon } from '@/components/ui/icons/lucide-circle-alert';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { loginSchema, type LoginData } from '../schemas/login';
 import { Link } from 'react-router-dom';
+import { ROUTE_PATHS } from '@/routes/paths';
 
 interface LoginFormProps {
   onSubmit: (data: LoginData) => void;
@@ -73,6 +74,9 @@ export function LoginForm({ onSubmit, isLoading, error }: LoginFormProps) {
                 <FieldDescription className="text-destructive text-xs pt-1">
                   {errors?.password?.message}
                 </FieldDescription>
+                <FieldDescription className="text-xs pt-1 text-right">
+                  <Link to={ROUTE_PATHS.FORGOT_PASSWORD}>Forgot password?</Link>
+                </FieldDescription>
               </div>
             </Field>
             <Field>
@@ -84,7 +88,7 @@ export function LoginForm({ onSubmit, isLoading, error }: LoginFormProps) {
                 {isLoading ? 'Logging in...' : 'Login'}
               </Button>
               <FieldDescription className="text-center">
-                Not registered yet? <Link to="/signup">Sign up</Link>
+                Don't have an account? <Link to={ROUTE_PATHS.SIGNUP}>Sign up</Link>
               </FieldDescription>
             </Field>
           </FieldGroup>
