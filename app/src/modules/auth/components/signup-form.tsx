@@ -50,6 +50,7 @@ export function SignupForm({ onSubmit, isLoading, error }: SignupFormProps) {
                     id="username"
                     type="text"
                     placeholder="juandelacruz"
+                    aria-invalid={!!errors?.username}
                     disabled={isLoading}
                     {...register('username')}
                   />
@@ -65,6 +66,7 @@ export function SignupForm({ onSubmit, isLoading, error }: SignupFormProps) {
                     id="email"
                     type="email"
                     placeholder="user@mail.com"
+                    aria-invalid={!!errors?.email}
                     disabled={isLoading}
                     {...register('email')}
                   />
@@ -82,6 +84,7 @@ export function SignupForm({ onSubmit, isLoading, error }: SignupFormProps) {
                         id="password"
                         type="password"
                         placeholder="••••••••"
+                        aria-invalid={!!errors?.password}
                         disabled={isLoading}
                         {...register('password')}
                       />
@@ -97,6 +100,7 @@ export function SignupForm({ onSubmit, isLoading, error }: SignupFormProps) {
                         id="confirmPassword"
                         type="password"
                         placeholder="••••••••"
+                        aria-invalid={!!errors?.confirmPassword}
                         disabled={isLoading}
                         {...register('confirmPassword')}
                       />
