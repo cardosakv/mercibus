@@ -1,4 +1,3 @@
-import { AuthPageWrapper } from '@/components/ui/auth-page-wrapper';
 import { useState } from 'react';
 import { authService } from '../api/service';
 import { getErrorMessage } from '@/utils/error';
@@ -8,6 +7,8 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { SuccessCard } from '@/components/ui/success-card';
 import { ROUTE_PATHS } from '@/routes/paths';
 import { Button } from '@/components/ui/button';
+import { AuthLayout } from '@/components/layouts/auth-layout';
+import { Helmet } from 'react-helmet';
 
 export function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
@@ -37,24 +38,29 @@ export function ResetPasswordPage() {
   };
 
   return (
-    <AuthPageWrapper title="Mercibus - Reset Password">
-      {isResetSuccessful ? (
-        <SuccessCard
-          title="Reset Successful"
-          description="Your password has been successfully reset. You can now log in to your account."
-          action={
-            <Button asChild>
-              <Link to={ROUTE_PATHS.LOGIN}>Go to Login</Link>
-            </Button>
-          }
-        />
-      ) : (
-        <ResetPasswordForm
-          onSubmit={handleResetPassword}
-          isLoading={isLoading}
-          error={error}
-        />
-      )}
-    </AuthPageWrapper>
+    <>
+      <Helmet>
+        <title>Mercibus - Reset Password</title>
+      </Helmet>
+      <AuthLayout>
+        {isResetSuccessful ? (
+          <SuccessCard
+            title="Reset Successful"
+            description="Your password has been successfully reset. You can now log in to your account."
+            action={
+              <Button asChild>
+                <Link to={ROUTE_PATHS.LOGIN}>Go to Login</Link>
+              </Button>
+            }
+          />
+        ) : (
+          <ResetPasswordForm
+            onSubmit={handleResetPassword}
+            isLoading={isLoading}
+            error={error}
+          />
+        )}
+      </AuthLayout>
+    </>
   );
 }

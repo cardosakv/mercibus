@@ -1,12 +1,13 @@
-import { AuthPageWrapper } from '@/components/ui/auth-page-wrapper';
-import { LoginForm } from '../components/login-form';
 import { useState } from 'react';
+import { LoginForm } from '../components/login-form';
 import type { LoginData } from '../schemas/login';
 import { authService } from '../api/service';
 import { getErrorMessage } from '@/utils/error';
 import { setTokens } from '@/utils/token';
 import { useNavigate } from 'react-router-dom';
 import { ROUTE_PATHS } from '@/routes/paths';
+import { AuthLayout } from '@/components/layouts/auth-layout';
+import { Helmet } from 'react-helmet';
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -35,12 +36,17 @@ export function LoginPage() {
   };
 
   return (
-    <AuthPageWrapper title="Mercibus - Login">
-      <LoginForm
-        onSubmit={handleLogin}
-        isLoading={isLoading}
-        error={error}
-      />
-    </AuthPageWrapper>
+    <>
+      <Helmet>
+        <title>Mercibus - Login</title>
+      </Helmet>
+      <AuthLayout>
+        <LoginForm
+          onSubmit={handleLogin}
+          isLoading={isLoading}
+          error={error}
+        />
+      </AuthLayout>
+    </>
   );
 }

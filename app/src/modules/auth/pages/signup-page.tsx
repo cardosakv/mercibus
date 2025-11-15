@@ -3,8 +3,9 @@ import { SignupForm } from '../components/signup-form';
 import { type SignupData } from '../schemas/signup';
 import { authService } from '../api/service';
 import { getErrorMessage } from '@/utils/error';
-import { AuthPageWrapper } from '@/components/ui/auth-page-wrapper';
 import { MessageCard } from '@/components/ui/message-card';
+import { AuthLayout } from '@/components/layouts/auth-layout';
+import { Helmet } from 'react-helmet';
 
 export function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -36,19 +37,24 @@ export function SignupPage() {
   };
 
   return (
-    <AuthPageWrapper title="Mercibus - Sign Up">
-      {isSuccess ? (
-        <MessageCard
-          title="Confirm Your Email"
-          description="We've sent a confirmation email to your inbox. Please check your email to complete the registration process."
-        />
-      ) : (
-        <SignupForm
-          onSubmit={handleSignup}
-          isLoading={isLoading}
-          error={error}
-        />
-      )}
-    </AuthPageWrapper>
+    <>
+      <Helmet>
+        <title>Mercibus - Sign Up</title>
+      </Helmet>
+      <AuthLayout>
+        {isSuccess ? (
+          <MessageCard
+            title="Confirm Your Email"
+            description="We've sent a confirmation email to your inbox. Please check your email to complete the registration process."
+          />
+        ) : (
+          <SignupForm
+            onSubmit={handleSignup}
+            isLoading={isLoading}
+            error={error}
+          />
+        )}
+      </AuthLayout>
+    </>
   );
 }
