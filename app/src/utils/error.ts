@@ -2,7 +2,6 @@ import axios from 'axios';
 import type { ApiError } from '@/types/api';
 import { errorMap } from './error-map';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isApiError(err: any): err is ApiError {
   return (
     err && typeof err === 'object' && typeof err.code === 'string' && typeof err.type === 'string'
