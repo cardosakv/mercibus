@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { SignupForm } from '../components/signup-form';
-import type { SignupData } from '../schemas/signup';
-import logo from '@/assets/images/mercibus.png';
-import { getErrorMessage } from '@/utils/error';
+import { type SignupData } from '../schemas/signup';
 import { authService } from '../api/service';
+import { ROUTE_PATHS } from '@/routes/paths';
+import { useNavigate } from 'react-router-dom';
+import { AuthLayout } from '@/components/layouts/auth-layout';
+import { getErrorMessage } from '@/utils/error';
 
 export function SignupPage() {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,6 +26,8 @@ export function SignupPage() {
       await authService.sendConfirmationEmail({
         email: data.email,
       });
+
+      navigate(ROUTE_PATHS.SIGNUP_SUCCESS);
     } catch (error) {
       const errorMessage = getErrorMessage(error);
       setError(errorMessage);
@@ -32,26 +37,12 @@ export function SignupPage() {
   };
 
   return (
-    <div className="bg-muted flex min-h-svh flex-col items-center justify-start p-12">
-      <div className="flex w-full max-w-md flex-col gap-6">
-        <a
-          href="/"
-          className="flex items-center gap-2 self-center font-bold text-primary"
-        >
-          <div className="flex size-6 items-center justify-center rounded-md">
-            <img
-              src={logo}
-              alt="Mercibus Logo"
-            />
-          </div>
-          Mercibus
-        </a>
-        <SignupForm
-          onSubmit={handleSignup}
-          isLoading={isLoading}
-          error={error}
-        />
-      </div>
-    </div>
+    <AuthLayout>
+      <SignupForm
+        onSubmit={handleSignup}
+        isLoading={isLoading}
+        error={error}
+      />
+    </AuthLayout>
   );
 }
