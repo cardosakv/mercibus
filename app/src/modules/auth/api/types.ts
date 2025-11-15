@@ -49,7 +49,7 @@ export interface ChangePasswordRequest {
 }
 
 export interface ForgotPasswordRequest {
-  email: string;
+  username: string;
 }
 
 export interface ResetPasswordRequest {
