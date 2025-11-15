@@ -3,7 +3,7 @@ import { SignupForm } from '../components/signup-form';
 import type { SignupData } from '../schemas/signup';
 import { authService } from '../api/service';
 import type { RegisterRequest } from '../api/types';
-import logo from '@/assets/mercibus.png';
+import logo from '@/assets/images/mercibus.png';
 import { getErrorMessage } from '@/utils/error';
 
 export function SignupPage() {
