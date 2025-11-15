@@ -1,8 +1,8 @@
-import * as React from "react";
+import * as React from 'react';
 
 export function CircleXIcon({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   className,
   ...props
@@ -25,7 +25,12 @@ export function CircleXIcon({
       className={className}
       {...props}
     >
-      <circle cx="12" cy="12" r="10"/><path d="m15 9l-6 6m0-6l6 6"/>
+      <circle
+        cx="12"
+        cy="12"
+        r="10"
+      />
+      <path d="m15 9l-6 6m0-6l6 6" />
     </svg>
   );
 }

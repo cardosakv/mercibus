@@ -1,8 +1,8 @@
-import * as React from "react";
+import * as React from 'react';
 
 export function CircleCheckIcon({
   size = 24,
-  color = "currentColor",
+  color = 'currentColor',
   strokeWidth = 2,
   className,
   ...props
@@ -25,7 +25,12 @@ export function CircleCheckIcon({
       className={className}
       {...props}
     >
-      <circle cx="12" cy="12" r="10"/><path d="m9 12l2 2l4-4"/>
+      <circle
+        cx="12"
+        cy="12"
+        r="10"
+      />
+      <path d="m9 12l2 2l4-4" />
     </svg>
   );
 }
