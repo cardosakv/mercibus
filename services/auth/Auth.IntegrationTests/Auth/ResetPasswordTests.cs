@@ -1,10 +1,12 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text;
 using Auth.Application.DTOs;
 using Auth.Domain.Entities;
 using FluentAssertions;
 using Mercibus.Common.Constants;
 using Mercibus.Common.Responses;
+using Microsoft.AspNetCore.WebUtilities;
 using ErrorCode = Auth.Application.Common.ErrorCode;
 
 namespace Auth.IntegrationTests.Auth;
@@ -16,15 +18,21 @@ public class ResetPasswordTests(TestWebAppFactory factory) : BaseTests(factory)
     {
         // Arrange
         const string email = "resetme@email.com";
-        var user = new User { UserName = "reset_user", Email = email, EmailConfirmed = true };
+        var user = new User
+        {
+            UserName = "reset_user",
+            Email = email,
+            EmailConfirmed = true
+        };
         await UserManager.CreateAsync(user, "OldPassword@123");
 
         var token = await UserManager.GeneratePasswordResetTokenAsync(user);
+        var encoded = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
 
         var request = new ResetPasswordRequest
         {
             UserId = user.Id,
-            Token = token,
+            Token = encoded,
             NewPassword = "NewValid@123"
         };
 

@@ -19,7 +19,7 @@ export const errorMap: Record<string, string> = {
   password_required: 'Password is required.',
   password_too_short: 'Password is too short.',
   password_invalid: 'Password does not meet requirements.',
-  password_mismatch: 'Passwords do not match.',
+  password_mismatch: 'Password is incorrect.',
   password_already_set: 'Password has already been set.',
 
   role_invalid: 'Invalid role.',

@@ -4,43 +4,34 @@ import { FormField } from '@/components/ui/form-field';
 import { Field, FieldDescription, FieldGroup } from '@/components/ui/field';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema, type LoginData } from '../schemas/login';
 import { Link } from 'react-router-dom';
 import { ROUTE_PATHS } from '@/routes/paths';
+import { resetPasswordSchema, type ResetPasswordData } from '../schemas/reset-password';
 
-interface LoginFormProps {
-  onSubmit: (data: LoginData) => void;
+interface ResetPasswordFormProps {
+  onSubmit: (data: ResetPasswordData) => void;
   isLoading: boolean;
   error?: string | null;
 }
 
-export function LoginForm({ onSubmit, isLoading, error }: LoginFormProps) {
+export function ResetPasswordForm({ onSubmit, isLoading, error }: ResetPasswordFormProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginData>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<ResetPasswordData>({
+    resolver: zodResolver(resetPasswordSchema),
     mode: 'onChange',
   });
 
   return (
     <FormContainer
-      title="Login to your account"
-      description="Enter your credentials to access your account."
+      title="Reset your password"
+      description="Enter your new password below."
       error={error}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <FieldGroup>
-          <FormField
-            id="username"
-            label="Username"
-            type="text"
-            placeholder="juandelacruz"
-            error={errors?.username?.message}
-            disabled={isLoading}
-            register={register}
-          />
           <FormField
             id="password"
             label="Password"
@@ -50,19 +41,25 @@ export function LoginForm({ onSubmit, isLoading, error }: LoginFormProps) {
             disabled={isLoading}
             register={register}
           />
-          <FieldDescription className="text-xs pt-1 text-right">
-            <Link to={ROUTE_PATHS.FORGOT_PASSWORD}>Forgot password?</Link>
-          </FieldDescription>
+          <FormField
+            id="confirmPassword"
+            label="Confirm Password"
+            type="password"
+            placeholder="••••••••"
+            error={errors?.confirmPassword?.message}
+            disabled={isLoading}
+            register={register}
+          />
           <Field>
             <Button
               type="submit"
               disabled={isLoading}
               className="w-full"
             >
-              {isLoading ? 'Logging in...' : 'Login'}
+              {isLoading ? 'Resetting...' : 'Reset Password'}
             </Button>
             <FieldDescription className="text-center">
-              Don't have an account? <Link to={ROUTE_PATHS.SIGNUP}>Sign up</Link>
+              Remembered your password? <Link to={ROUTE_PATHS.LOGIN}>Login</Link>
             </FieldDescription>
           </Field>
         </FieldGroup>

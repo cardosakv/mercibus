@@ -1,10 +1,8 @@
 import { z } from 'zod';
-import { usernameSchema, passwordSchema, confirmPasswordSchema } from './shared';
+import { passwordSchema, confirmPasswordSchema } from './shared';
 
-export const signupSchema = z
+export const resetPasswordSchema = z
   .object({
-    username: usernameSchema,
-    email: z.email('Invalid email address.'),
     password: passwordSchema,
     confirmPassword: confirmPasswordSchema,
   })
@@ -13,4 +11,4 @@ export const signupSchema = z
     path: ['confirmPassword'],
   });
 
-export type SignupData = z.infer<typeof signupSchema>;
+export type ResetPasswordData = z.infer<typeof resetPasswordSchema>;

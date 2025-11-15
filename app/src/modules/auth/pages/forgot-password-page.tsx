@@ -1,33 +1,27 @@
 import { useState } from 'react';
-import { SignupForm } from '../components/signup-form';
-import { type SignupData } from '../schemas/signup';
 import { authService } from '../api/service';
 import { getErrorMessage } from '@/utils/error';
+import type { ForgotPasswordData } from '../schemas/forgot-password';
+import { ForgotPasswordForm } from '../components/forgot-password-form';
 import { MessageCard } from '@/components/ui/message-card';
 import { AuthLayout } from '@/components/layouts/auth-layout';
 import { Helmet } from 'react-helmet';
 
-export function SignupPage() {
-  const [isLoading, setIsLoading] = useState(false);
+export function ForgotPasswordPage() {
   const [error, setError] = useState<string | null>(null);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isAccountFound, setIsAccountFound] = useState(false);
 
-  const handleSignup = async (data: SignupData) => {
+  const handleForgotPassword = async (data: ForgotPasswordData) => {
     try {
       setIsLoading(true);
       setError(null);
 
-      await authService.register({
+      await authService.forgotPassword({
         username: data.username,
-        email: data.email,
-        password: data.password,
       });
 
-      await authService.sendConfirmationEmail({
-        email: data.email,
-      });
-
-      setIsSuccess(true);
+      setIsAccountFound(true);
     } catch (error) {
       const errorMessage = getErrorMessage(error);
       setError(errorMessage);
@@ -39,17 +33,17 @@ export function SignupPage() {
   return (
     <>
       <Helmet>
-        <title>Mercibus - Sign Up</title>
+        <title>Mercibus - Forgot Password</title>
       </Helmet>
       <AuthLayout>
-        {isSuccess ? (
+        {isAccountFound ? (
           <MessageCard
-            title="Confirm Your Email"
-            description="We've sent a confirmation email to your inbox. Please check your email to complete the registration process."
+            title="Check Your Email"
+            description="We've sent a password reset email to your inbox. Please check your email to complete the password reset process."
           />
         ) : (
-          <SignupForm
-            onSubmit={handleSignup}
+          <ForgotPasswordForm
+            onSubmit={handleForgotPassword}
             isLoading={isLoading}
             error={error}
           />

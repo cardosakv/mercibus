@@ -15,12 +15,16 @@ public class ForgotPasswordTests(TestWebAppFactory factory) : BaseTests(factory)
     public async Task ReturnsOk_WhenForgotPasswordIsSuccessful()
     {
         // Arrange
-        var user = new User { UserName = "reset_user", Email = "resetme@email.com" };
+        var user = new User
+        {
+            UserName = "test_user_a",
+            Email = "resetme@email.com"
+        };
         await UserManager.CreateAsync(user, "Valid@123");
 
         var request = new ForgotPasswordRequest
         {
-            Email = user.Email
+            Username = user.UserName
         };
 
         // Act
@@ -31,12 +35,12 @@ public class ForgotPasswordTests(TestWebAppFactory factory) : BaseTests(factory)
     }
 
     [Fact]
-    public async Task ReturnsBadRequest_WhenEmailNotFound()
+    public async Task ReturnsBadRequest_WhenUsernameNotFound()
     {
         // Arrange
         var request = new ForgotPasswordRequest
         {
-            Email = "nonexistent@email.com"
+            Username = "nonexistent_user"
         };
 
         // Act

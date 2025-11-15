@@ -6,7 +6,7 @@ namespace Auth.Application.DTOs;
 public class ForgotPasswordRequest
 {
     /// <summary>
-    /// Email address to send reset link.
+    /// Account username.
     /// </summary>
-    public required string Email { get; set; }
+    public required string Username { get; set; }
 }

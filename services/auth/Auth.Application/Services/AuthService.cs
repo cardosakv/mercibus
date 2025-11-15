@@ -231,7 +231,7 @@ public class AuthService(
 
     public async Task<ServiceResult> ForgotPasswordAsync(ForgotPasswordRequest request)
     {
-        var user = await userManager.FindByEmailAsync(request.Email);
+        var user = await userManager.FindByNameAsync(request.Username);
         if (user is null)
         {
             return Error(ErrorType.InvalidRequestError, ErrorCode.UserNotFound);
@@ -244,10 +244,10 @@ public class AuthService(
 
         var token = await userManager.GeneratePasswordResetTokenAsync(user);
         var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-        var passwordResetRedirectUrl = configuration["RedirectUrl:PasswordReset"];
+        var passwordResetRedirectUrl = configuration["Url:PasswordReset"];
         var resetLink = passwordResetRedirectUrl + "?userId=" + user.Id + "&token=" + encodedToken;
 
-        BackgroundJob.Enqueue(() => emailService.SendPasswordResetLink(request.Email, resetLink));
+        BackgroundJob.Enqueue(() => emailService.SendPasswordResetLink(user.Email!, resetLink));
 
         return Success();
     }
@@ -262,7 +262,8 @@ public class AuthService(
             return Error(ErrorType.InvalidRequestError, ErrorCode.UserNotFound);
         }
 
-        var resetResult = await userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
+        var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.Token));
+        var resetResult = await userManager.ResetPasswordAsync(user, decodedToken, request.NewPassword);
         if (!resetResult.Succeeded)
         {
             var error = resetResult.Errors.First();
