@@ -2,15 +2,14 @@ import { useState } from 'react';
 import { SignupForm } from '../components/signup-form';
 import { type SignupData } from '../schemas/signup';
 import { authService } from '../api/service';
-import { ROUTE_PATHS } from '@/routes/paths';
-import { useNavigate } from 'react-router-dom';
 import { AuthLayout } from '@/components/layouts/auth-layout';
 import { getErrorMessage } from '@/utils/error';
+import { SignupSuccess } from '../components/signup-success';
 
 export function SignupPage() {
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSignup = async (data: SignupData) => {
     try {
@@ -27,7 +26,7 @@ export function SignupPage() {
         email: data.email,
       });
 
-      navigate(ROUTE_PATHS.SIGNUP_SUCCESS);
+      setIsSuccess(true);
     } catch (error) {
       const errorMessage = getErrorMessage(error);
       setError(errorMessage);
@@ -38,11 +37,15 @@ export function SignupPage() {
 
   return (
     <AuthLayout>
-      <SignupForm
-        onSubmit={handleSignup}
-        isLoading={isLoading}
-        error={error}
-      />
+      {isSuccess ? (
+        <SignupSuccess />
+      ) : (
+        <SignupForm
+          onSubmit={handleSignup}
+          isLoading={isLoading}
+          error={error}
+        />
+      )}
     </AuthLayout>
   );
 }
