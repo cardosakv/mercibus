@@ -4,7 +4,7 @@ import { authService } from '../api/service';
 import { getErrorMessage } from '@/utils/error';
 import type { ForgotPasswordData } from '../schemas/forgot-password';
 import { ForgotPasswordForm } from '../components/forgot-password-form';
-import { EmailConfirmCard } from '@/components/ui/email-confirm-card';
+import { MessageCard } from '@/components/ui/message-card';
 
 export function ForgotPasswordPage() {
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +32,7 @@ export function ForgotPasswordPage() {
   return (
     <AuthPageWrapper title="Mercibus - Forgot Password">
       {isAccountFound ? (
-        <EmailConfirmCard
+        <MessageCard
           title="Check Your Email"
           description="We've sent a password reset email to your inbox. Please check your email to complete the password reset process."
         />

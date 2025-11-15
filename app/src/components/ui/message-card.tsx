@@ -1,12 +1,12 @@
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { MailCheckIcon } from '@/components/ui/icons/lucide-mail-check';
 
-interface EmailConfirmCardProps {
+interface MessageCard {
   title: string;
   description: string;
 }
 
-export function EmailConfirmCard({ title, description }: EmailConfirmCardProps) {
+export function MessageCard({ title, description }: MessageCard) {
   return (
     <Card>
       <CardHeader className="text-center mb-6">

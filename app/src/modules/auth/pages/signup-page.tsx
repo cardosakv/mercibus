@@ -4,7 +4,7 @@ import { type SignupData } from '../schemas/signup';
 import { authService } from '../api/service';
 import { getErrorMessage } from '@/utils/error';
 import { AuthPageWrapper } from '@/components/ui/auth-page-wrapper';
-import { EmailConfirmCard } from '@/components/ui/email-confirm-card';
+import { MessageCard } from '@/components/ui/message-card';
 
 export function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +38,7 @@ export function SignupPage() {
   return (
     <AuthPageWrapper title="Mercibus - Sign Up">
       {isSuccess ? (
-        <EmailConfirmCard
+        <MessageCard
           title="Confirm Your Email"
           description="We've sent a confirmation email to your inbox. Please check your email to complete the registration process."
         />
